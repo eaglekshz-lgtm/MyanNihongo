@@ -1,0 +1,632 @@
+あ|あ|Ah|အာ|interjection
+ああ|ああ|like that|အဲဒီလိုပဲ|adverb
+あいさつ・する|あいさつ・する|to greet|နှုတ်ဆက်သည်|verb
+間|あいだ|a space|နေရာ|noun
+合う|あう|to match|ကိုက်ညီသည်|verb
+あかちゃん|あかちゃん|infant|ကလေး|noun
+上る|あがる|to rise|တက်သည်|verb
+赤ん坊|あかんぼう|baby|ကလေး|noun
+空く|あく|to open, to become empty|ဖွင့်သည်၊ဗလာဖြစ်သည်|verb
+アクセサリー|アクセサリー|accessory|ဆက်စပ်ပစ္စည်း|noun
+あげる|あげる|to give|ပေးသည်|verb
+浅い|あさい|shallow,superficial|တိမ်မြုပ်သော၊မျက်နှာပြင်ဆန်သော|adjective
+味|あじ|flavour|အရသာ|noun
+アジア|アジア|Asia|အာရှ|noun
+遊び|あそび|play|ကစားခြင်း|noun
+集る|あつまる|to gather|စုရုံးသည်|verb
+集める|あつめる|to collect something|စုဆောင်းသည်|verb
+アナウンサー|アナウンサー|announcer|ကြေညာသူ|noun
+アフリカ|アフリカ|Africa|အာဖရိက|noun
+アメリカ|アメリカ|America|အမေရိက|noun
+謝る|あやまる|to apologize|တောင်းပန်သည်|verb
+アルコール|アルコール|alcohol|အရက်ဆေး|noun
+アルバイト|アルバイト|part-time job|အချိန်ပိုင်းအလုပ်|noun
+安心|あんしん|relief|စိတ်ချမှု|noun
+安全|あんぜん|safety|လုံခြုံမှု|noun
+あんな|あんな|such|ထိုကဲ့သို့|adjective
+案内|あんない・する|to guide|လမ်းညွှန်သည်|verb
+以下|いか|less than|ထက်နည်း|adverb
+以外|いがい|with the exception of|မှတပါး|adverb
+医学|いがく|medical science|ဆေးပညာ|noun
+生きる|いきる|to live|နေထိုင်သည်|verb
+意見|いけん|opinion|ထင်မြင်ချက်|noun
+石|いし|stone|ကျောက်တုံး|noun
+いじめる|いじめる|to tease|နှောင့်ယှက်သည်|verb
+以上|いじょう|more than,this is all|ထက်ပို၊ဒါပဲ|adverb
+急ぐ|いそぐ|to hurry|မြန်သည်|verb
+致す|いたす|(humble) to do|(ရိုသေ)လုပ်သည်|verb
+いただく|いただく|(humble) to receive|(ရိုသေ)ရရှိသည်|verb
+一度|いちど|once|တစ်ခါ|adverb
+一生懸命|いっしょうけんめい|with utmost effort|အစွမ်းကုန်အားထုတ်မှု|adverb
+いっぱい|いっぱい|full|ပြည့်နှက်သော|adjective
+糸|いと|thread|ချည်မျှင်|noun
+以内|いない|within|အတွင်း|adverb
+田舎|いなか|countryside|ကျေးလက်ဒေသ|noun
+祈る|いのる|to pray|ဆုတောင်းသည်|verb
+いらっしゃる|いらっしゃる|(respectful) to be,to come or to go|(လေးစား)ရှိသည်၊လာသည်သို့မဟုတ်သွားသည်|verb
+植える|うえる|to plant,to grow|စိုက်ပျိုးသည်|verb
+うかがう|うかがう|to visit|လည်ပတ်သည်|verb
+受付|うけつけ|receipt|လက်ခံခြင်း|noun
+受ける|うける|to take a lesson or test|သင်ခန်းစာသို့မဟုတ်စမ်းသပ်မှုခံယူသည်|verb
+動く|うごく|to move|ရွှေ့သည်|verb
+うそ|うそ|a lie|လိမ်ညာ|noun
+うち|うち|within|အတွင်း|adverb
+打つ|うつ|to hit|ရိုက်သည်|verb
+美しい|うつくしい|beautiful|လှပသော|adjective
+写す|うつす|to copy or photograph|ကူးယူသို့မဟုတ်ဓာတ်ပုံရိုက်သည်|verb
+移る|うつる|to move house or transfer|အိမ်ရွှေ့သို့မဟုတ်လွှဲပြောင်းသည်|verb
+腕|うで|arm|လက်မောင်း|noun
+うまい|うまい|delicious|အရသာရှိသော|adjective
+裏|うら|reverse side|နောက်ကျောဘက်|noun
+売り場|うりば|place where things are sold|ပစ္စည်းရောင်းချရာနေရာ|noun
+うれしい|うれしい|glad|ပျော်ရွှင်သော|adjective
+うん|うん|(informal) yes|(အလွတ်သဘော)ဟုတ်ကဲ့|adverb
+運転|うんてん・する|to drive|မောင်းသည်|verb
+運転手|うんてんしゅ|driver|မောင်းသူ|noun
+運動|うんどう・する|to exercise|လေ့ကျင့်ခန်းလုပ်သည်|verb
+エスカレーター|エスカレーター|escalator|လှေကားထစ်|noun
+枝|えだ|branch, twig|အကိုင်း၊အညွှါ|noun
+選ぶ|えらぶ|to choose|ရွေးချယ်သည်|verb
+遠慮|えんりょ・する|to be reserved, to be restrained|ကန့်သတ်သည်၊ချုပ်တည်းသည်|verb
+おいでになる|おいでになる|(respectful) to be|(လေးစား)ရှိသည်|verb
+お祝い|おいわい|congratulation|ဂုဏ်ပြုမှု|noun
+オートバイ|オートバイ|motorcycle|မော်တော်ဆိုင်ကယ်|noun
+おかげ|おかげ|owing to|ကြောင့်|adverb
+おかしい|おかしい|strange or funny|ထူးဆန်းသောသို့မဟုတ်ရယ်စရာ|adjective
+億|おく|one hundred million|သန်းတစ်ရာ|noun
+屋上|おくじょう|rooftop|အမိုးပေါ်|noun
+贈り物|おくりもの|gift|လက်ဆောင်|noun
+送る|おくる|to send|ပို့သည်|verb
+遅れる|おくれる|to be late|နောက်ကျသည်|verb
+起す|おこす|to wake|နိုးသည်|verb
+行う|おこなう|to do|လုပ်ဆောင်သည်|verb
+怒る|おこる|to get angry,to be angry|ဒေါသထွက်သည်|verb
+押し入れ|おしいれ|closet|ဗီရို|noun
+お嬢さん|おじょうさん|young lady|မိန်းကလေး|noun
+お宅|おたく|(polite) your house|(ယဉ်ကျေး)သင့်အိမ်|noun
+落る|おちる|to fall or drop|ကျသည်|verb
+おっしゃる|おっしゃる|(respectful) to say|(လေးစား)ပြောသည်|verb
+夫|おっと|husband|ခင်ပွန်း|noun
+おつり|おつり|change from purchase, balance|ဝယ်ယူမှပြန်အမ်း၊လက်ကျန်|noun
+音|おと|sound,note|အသံ၊မှတ်စု|noun
+落す|おとす|to drop|ကျသည်|verb
+踊り|おどり|a dance|ကတစ်ခါ|noun
+踊る|おどる|to dance|ကသည်|verb
+驚く|おどろく|to be surprised|အံ့အားသင့်သည်|verb
+お祭り|おまつり|festival|ပွဲတော်|noun
+お見舞い|おみまい|calling on someone who is ill,enquiry|ဖျားနာနေသူကိုလည်ပတ်ခြင်း၊မေးမြန်းခြင်း|noun
+お土産|おみやげ|souvenir|အမှတ်တရပစ္စည်း|noun
+思い出す|おもいだす|to remember|မှတ်မိသည်|verb
+思う|おもう|to think,to feel|တွေးသည်၊ခံစားသည်|verb
+おもちゃ|おもちゃ|toy|ကစားစရာ|noun
+表|おもて|the front|ရှေ့ပိုင်း|noun
+親|おや|parents|မိဘများ|noun
+下りる|おりる|to get off|ဆင်းသည်|verb
+折る|おる|to break or to fold|ကျိုးသည်သို့မဟုတ်ခေါက်သည်|verb
+お礼|おれい|expression of gratitude|ကျေးဇူးတင်ရှိမှုဖော်ပြချက်|noun
+折れる|おれる|to break or be folded|ကျိုးသည်သို့မဟုတ်ခေါက်ခံရသည်|verb
+終わり|おわり|the end|အဆုံး|noun
+カーテン|カーテン|curtain|ပုံးကန်|noun
+海岸|かいがん|coast|ကမ်းရိုး|noun
+会議|かいぎ|meeting|အစည်းအဝေး|noun
+会議室|かいぎしつ|meeting room|အစည်းအဝေးအခန်း|noun
+会場|かいじょう|assembly hall or meeting place|စည်းဝေးခန်းသို့မဟုတ်အစည်းအဝေးနေရာ|noun
+会話|かいわ|conversation|စကားဝိုင်း|noun
+帰り|かえり|return|ပြန်လာခြင်း|noun
+変える|かえる|to change|ပြောင်းသည်|verb
+科学|かがく|science|သိပ္ပံ|noun
+鏡|かがみ|mirror|မှန်|noun
+掛ける|かける|to hang something|ချိတ်ဆွဲသည်|verb
+飾る|かざる|to decorate|အလှဆင်သည်|verb
+火事|かじ|fire|မီး|noun
+ガス|ガス|petrol|ဂက်စ်|noun
+ガソリン|ガソリン|petrol|ဓာတ်ဆီ|noun
+ガソリンスタンド|ガソリンスタンド|petrol station|ဓာတ်ဆီဆိုင်|noun
+堅/硬/固い|かたい|hard|ကြမ်း|adjective
+形|かたち|shape|ပုံသဏ္ဌာန်|noun
+片付ける|かたづける|to tidy up|ရှင်းသည်|verb
+課長|かちょう|section manager|ဌာနမန်နေဂျာ|noun
+勝つ|かつ|to win|နိုင်သည်|verb
+かっこう|かっこう|appearance|အသွင်အပြင်|noun
+家内|かない|housewife|အိမ်ရှင်မ|noun
+悲しい|かなしい|sad|ဝမ်းနည်းသော|adjective
+必ず|かならず|certainly,necessarily|အမှန်တကယ်၊လိုအပ်ချက်အရ|adverb
+お・金持ち|かねもち/おかねもち|rich man|ချမ်းသာသူ|noun
+彼女|かのじょ|she,girlfriend|သူမ၊ရည်းစား|noun
+壁|かべ|wall|နံရံ|noun
+かまう|かまう|to mind|ဂရုစိုက်သည်|verb
+髪|かみ|hair|ဆံပင်|noun
+噛む|かむ|to bite,to chew|ကိုက်သည်၊ဝါးသည်|verb
+通う|かよう|to commute|ပုံမှန်သွားသည်|verb
+ガラス|ガラス|a glass pane|ကျန်းပန်း|noun
+彼|かれ|he,boyfriend|သူ၊ရည်းစား|noun
+彼ら|かれら|they|သူတို့|noun
+乾く|かわく|to get dry|ခြောက်သည်|verb
+代わり|かわり|substitute,alternate|အစားထိုး၊အလှည့်ကျ|noun
+変わる|かわる|to change|ပြောင်းသည်|verb
+考える|かんがえる|to consider|စဉ်းစားသည်|verb
+関係|かんけい|relationship|ဆက်ဆံရေး|noun
+看護婦|かんごふ|female nurse|အမျိုးသမီးသူနာပြု|noun
+簡単|かんたん|simple|ရိုးရှင်းသော|adjective
+気|き|spirit,mood|စိတ်၊ခံစားချက်|noun
+機会|きかい|opportunity|အခွင့်အရေး|noun
+危険|きけん|danger|အန္တရာယ်|noun
+聞こえる|きこえる|to be heard|ကြားသည်|verb
+汽車|きしゃ|steam train|ရေနွေးရထား|noun
+技術|ぎじゅつ|art,technology,skill|အနုပညာ၊နည်းပညာ၊ကျွမ်းကျင်မှု|noun
+季節|きせつ|season|ရာသီ|noun
+規則|きそく|regulations|စည်းမျဉ်းများ|noun
+きっと|きっと|surely|သေချာစွာ|adverb
+絹|きぬ|silk|ပိုး|noun
+厳しい|きびしい|strict|တင်းကြပ်သော|adjective
+気分|きぶん|mood|ခံစားချက်|noun
+決る|きまる|to be decided|ဆုံးဖြတ်ခံရသည်|verb
+君|きみ|(informal) You (used by men towards women)|(အလွတ်သဘော)မင်း(ယောက်ျားများမှအမျိုးသမီးများသို့အသုံးပြု)|noun
+決める|きめる|to decide|ဆုံးဖြတ်သည်|verb
+気持ち|きもち|feeling,mood|ခံစားချက်၊ခံစားချက်|noun
+着物|きもの|kimono|ကီမိုနို|noun
+客|きゃく|guest,customer|ဧည့်သည်၊ဖောက်သည်|noun
+急|きゅう|urgent, steep|အရေးတကြီး၊မတ်စောက်သော|adjective
+急行|きゅうこう|speedy, express|မြန်ဆန်သော၊အမြန်|noun
+教育|きょういく|education|ပညာရေး|noun
+教会|きょうかい|church|ချာ့ချ်|noun
+競争|きょうそう|competition|ပြိုင်ဆိုင်မှု|noun
+興味|きょうみ|an interest|စိတ်ဝင်တစားရှိမှု|noun
+近所|きんじょ|neighbourhood|အနီးပတ်ဝန်းကျင်|noun
+具合|ぐあい|condition,health|အခြေအနေ၊ကျန်းမာရေး|noun
+空気|くうき|air,atmosphere|လေ၊လေထု|noun
+空港|くうこう|airport|လေဆိပ်|noun
+草|くさ|grass|မြက်|noun
+くださる|くださる|(respectful) to give|(လေးစား)ပေးသည်|verb
+首|くび|neck|လည်ပင်း|noun
+雲|くも|cloud|တိမ်|noun
+比べる|くらべる|to compare|နှိုင်းယှဉ်သည်|verb
+くれる|くれる|to give|ပေးသည်|verb
+暮れる|くれる|to get dark,to come to an end|မှောင်သည်၊အဆုံးရောက်သည်|verb
+くん|くん|suffix for familiar young male|ရင်းနှီးသောလူငယ်အထီးအတွက်နောက်ဆက်|noun
+毛|け|hair or fur|ဆံပင်သို့မဟုတ်အမွေး|noun
+計画|けいかく・する|to plan|အစီအမံချသည်|verb
+経験|けいけん・する|to experience|အတွေ့အကြုံရသည်|verb
+経済|けいざい|finance,economy|ဘဏ္ဍာ၊စီးပွားရေး|noun
+警察|けいさつ|police|ရဲ|noun
+ケーキ|ケーキ|cake|ကိတ်|noun
+けが・する|けが・する|to injure|ဒဏ်ရာရသည်|verb
+景色|けしき|scene,landscape|မြင်ကွင်း၊ရှုခင်း|noun
+消しゴム|けしゴム|eraser|ဖျက်ရန်ရာဘာ|noun
+下宿|げしゅく|lodging|နေထိုင်ရာ|noun
+けっして|けっして|never|ဘယ်တော့မှမဟုတ်|adverb
+けれど/けれども|けれど/けれども|however|သို့ရာတွင်|adverb
+原因|げんいん|cause,source|အကြောင်းရင်း၊အရင်းအမြစ်|noun
+けんか・する|けんか・する|to quarrel|ရန်ဖြစ်သည်|verb
+研究|けんきゅう|research|သုတေသန|noun
+研究室|けんきゅうしつ|study room,laboratory|လေ့လာခန်း၊ဓာတ်ခွဲခန်း|noun
+見物|けんぶつ|sightseeing|မြင်ကွင်းကြည့်သည်|noun
+こ|こ|child|ကလေး|noun
+こう|こう|this way|ဒီနည်း|adverb
+郊外|こうがい|outskirts|ဆင်ခြေတော|noun
+講義|こうぎ|lecture|ဟောပြောချက်|noun
+工業|こうぎょう|the manufacturing industry|စက်မှုလုပ်ငန်း|noun
+高校|こうこう|high school|အထက်တန်းကျောင်း|noun
+高校生|こうこうせい|high school student|အထက်တန်းကျောင်းသား|noun
+工場|こうじょう|factory|စက်ရုံ|noun
+校長|こうちょう|headmaster|ကျောင်းအုပ်|noun
+交通|こうつう|traffic,transportation|လမ်းပန်းဆက်သွယ်ရေး၊သယ်ယူပို့ဆောင်ရေး|noun
+講堂|こうどう|auditorium|ဟောပြောခန်း|noun
+高等学校|こうとうがっこう|high school|အထက်တန်းကျောင်း|noun
+公務員|こうむいん|government worker|အစိုးရဝန်ထမ်း|noun
+国際|こくさい|international|နိုင်ငံတကာ|adjective
+心|こころ|core,heart|အူတိုင်၊နှလုံး|noun
+ごしゅじん|ごしゅじん|(honorable) your husband|(ဂုဏ်ယူ)သင့်ခင်ပွန်း|noun
+故障|こしょう・する|to break-down|ပျက်စီးသည်|verb
+ご存じ|ごぞんじ|knowing,acquaintance|သိသည်၊ရင်းနှီးမှု|noun
+答|こたえ|response|အဖြေ|noun
+ごちそう|ごちそう|a feast|ပွဲခံ|noun
+こと|こと|thing,matter|အရာ၊ကိစ္စ|noun
+小鳥|ことり|small bird|ကလေးငှက်|noun
+このあいだ|このあいだ|the other day,recently|တစ်ရက်က၊မကြာသေး|adverb
+このごろ|このごろ|these days,nowadays|ဒီရက်များ၊ယခုခေတ်|adverb
+細かい|こまかい|small, fine|သေးငယ်သော၊ကောင်းမွန်သော|adjective
+ごみ|ごみ|rubbish|အမှိုက်|noun
+込む|こむ|to be crowded|ပြည့်နက်သည်|verb
+米|こめ|uncooked rice|ဆန်မချက်ရသေး|noun
+ごらんになる|ごらんになる|(respectful) to see|(လေးစား)ကြည့်သည်|verb
+これから|これから|after this|ဒီနောက်|adverb
+怖い|こわい|frightening|ကြောက်မက်ဖွယ်|adjective
+壊す|こわす|to break|ကျိုးသည်|verb
+壊れる|こわれる|to be broken|ကျိုးခံရသည်|verb
+コンサート|コンサート|concert|ကွန်ဆတ်|noun
+今度|こんど|now,next time|ယခု၊နောက်တစ်ခါ|adverb
+コンピュータ/コンピューター|コンピュータ/コンピューター|computer|ကွန်ပျူတာ|noun
+今夜|こんや|tonight|ယနေ့ည|noun
+最近|さいきん|latest,nowadays|နောက်ဆုံး၊ယခုခေတ်|adverb
+最後|さいご|last,end|နောက်ဆုံး၊အဆုံး|noun
+最初|さいしょ|beginning,first|အစ၊ပထမ|noun
+坂|さか|slope,hill|ဆင်ခြေ၊တောင်ကုန်း|noun
+探す|さがす|to look for|ရှာသည်|verb
+下る|さがる|to get down,to descend|ဆင်းသည်|verb
+盛ん|さかん|popularity,prosperous|ရေပန်းစားမှု၊ချမ်းသာ|adjective
+下げる|さげる|to hang,to lower,to move back|ချိတ်ဆွဲသည်၊နိမ့်သည်၊နောက်ပြန်ရွှေ့သည်|verb
+差し上げる|さしあげる|(polite) to give|(ယဉ်ကျေး)ပေးသည်|verb
+さっき|さっき|some time ago|ခဏက|adverb
+寂しい|さびしい|lonely|အထီးကျန်သော|adjective
+さ来月|さらいげつ|the month after next|နောက်လနောက်လ|noun
+さ来週|さらいしゅう|the week after next|နောက်ပတ်နောက်ပတ်|noun
+サラダ|サラダ|salad|ဆလဒ်|noun
+騒ぐ|さわぐ|to make noise,to be excited|ဆူညံသည်၊စိတ်လှုပ်ရှားသည်|verb
+触る|さわる|to touch|ထိသည်|verb
+産業|さんぎょう|industry|စက်မှု|noun
+サンダル|サンダル|sandal|ဖိနပ်|noun
+サンドイッチ|サンドイッチ|sandwich|ဆန်းဒွစ်|noun
+残念|ざんねん|disappointment|စိတ်ပျက်မှု|noun
+市|し|city|မြို့|noun
+字|じ|character|အက္ခရာ|noun
+試合|しあい|match,game|ပွဲ၊ဂိမ်း|noun
+仕方|しかた|method|နည်း|noun
+然る|しかる|a particular|အထူးတစ်ခု|adverb
+試験|しけん|examination|စာမေးပွဲ|noun
+事故|じこ|accident|မတော်တဆမှု|noun
+地震|じしん|earthquake|မြေငလျင်|noun
+時代|じだい|era|ခေတ်|noun
+下着|したぎ|underwear|အတွင်းဝတ်စုံ|noun
+支度|したく・する|to prepare|ပြင်ဆင်သည်|verb
+しっかり|しっかり|firmly,steadily|ခိုင်မာစွာ၊တည်ငြိမ်စွာ|adverb
+失敗|しっぱい|failure,mistake|ကျရှုံးမှု၊အမှား|noun
+辞典|じてん|dictionary|အဘိဓာန်|noun
+品物|しなもの|goods|ပစ္စည်းများ|noun
+しばらく|しばらく|little while|ခဏ|adverb
+島|しま|island|ကျွန်း|noun
+市民|しみん|citizen|နိုင်ငံသား|noun
+事務所|じむしょ|office|ရုံး|noun
+社会|しゃかい|society,public|လူ့အဖွဲ့အစည်း၊အများပြည်သူ|noun
+社長|しゃちょう|company president|ကုမ္ပဏီဥက္ကဋ္ဌ|noun
+じゃま|じゃま|hindrance,intrusion|အဟန့်အတား၊ကျူးကျော်မှု|noun
+ジャム|ジャム|jam|ဂျမ်း|noun
+自由|じゆう|freedom|လွတ်လပ်မှု|noun
+習慣|しゅうかん|custom,manners|ဓလေ့၊အမူအကျင့်|noun
+住所|じゅうしょ|an address,a residence|လိပ်စာ၊နေထိုင်ရာ|noun
+柔道|じゅうどう|judo|ဂျူဒို|noun
+十分|じゅうぶん|enough|လုံလောက်သော|adjective
+出席|しゅっせき・する|to attend|တက်ရောက်သည်|verb
+出発|しゅっぱつ・する|to depart|ထွက်ခွာသည်|verb
+趣味|しゅみ|hobby|ဝါသနာ|noun
+準備|じゅんび・する|to prepare|ပြင်ဆင်သည်|verb
+紹介|しょうかい|introduction|နိဒါန်း|noun
+小学校|しょうがっこう|elementary school|မူလတန်းကျောင်း|noun
+小説|しょうせつ|novel|ဝတ္တု|noun
+招待|しょうたい・する|to invite|ဖိတ်ခေါ်သည်|verb
+承知|しょうち・する|to consent|သဘောတူသည်|verb
+将来|しょうらい|future,prospects|အနာဂတ်၊အလားအလာ|noun
+食事|しょくじ・する|to have a meal|အစာစားသည်|verb
+食料品|しょくりょうひん|groceries|စားနပ်ရိက္ခာပစ္စည်းများ|noun
+女性|じょせい|woman|အမျိုးသမီး|noun
+知らせる|しらせる|to notify|အသိပေးသည်|verb
+調べる|しらべる|to investigate|စုံစမ်းသည်|verb
+人口|じんこう|population|လူဦးရေ|noun
+神社|じんじゃ|Shinto shrine|ရှင်တိုဘုရားကျောင်း|noun
+親切|しんせつ|kindness|ကြင်နာမှု|noun
+心配|しんぱい・する|to worry|စိုးရိမ်သည်|verb
+新聞社|しんぶんしゃ|newspaper company|သတင်းစာကုမ္ပဏီ|noun
+水泳|すいえい|swimming|ရေကူး|noun
+水道|すいどう|water supply|ရေပိုက်|noun
+ずいぶん|ずいぶん|extremely|အလွန်|adverb
+数学|すうがく|mathematics,arithmetic|သင်္ချာ၊ဂဏန်းပညာ|noun
+スーツ|スーツ|suit|ဝတ်စုံ|noun
+スーツケース|スーツケース|suitcase|ဆွစ်ကိတ်|noun
+過ぎる|すぎる|to exceed|ကျော်လွန်သည်|verb
+すく|すく|to become empty|ဗလာဖြစ်သည်|verb
+スクリーン|スクリーン|screen|မျက်နှာပြင်|noun
+凄い|すごい|terrific|ကြောက်မက်ဖွယ်|adjective
+進む|すすむ|to make progress|တိုးတက်သည်|verb
+すっかり|すっかり|completely|လုံးဝ|adverb
+すっと|すっと|straight,all of a sudden|ဖြောင့်စွာ၊ရုတ်တရက်|adverb
+ステーキ|ステーキ|steak|စတိတ်|noun
+捨てる|すてる|to throw away|ပစ်ချသည်|verb
+ステレオ|ステレオ|stereo|စတီရီယို|noun
+砂|すな|sand|သဲ|noun
+すばらしい|すばらしい|wonderful|အံ့မခန်း|adjective
+滑る|すべる|to slide,to slip|လျှော်သည်၊ချော်သည်|verb
+隅|すみ|corner,nook|ထောင့်၊အပေါက်|noun
+済む|すむ|to finish|ပြီးသည်|verb
+すり|すり|pickpocket|အိတ်ကြည့်သူ|noun
+すると|すると|then|ထို့နောက်|adverb
+生活|せいかつ・する|to live|နေထိုင်သည်|verb
+生産|せいさん・する|to produce|ထုတ်လုပ်သည်|verb
+政治|せいじ|politics,government|နိုင်ငံရေး၊အစိုးရ|noun
+西洋|せいよう|western countries|အနောက်နိုင်ငံများ|noun
+世界|せかい|the world|ကမ္ဘာ|noun
+席|せき|seat|ထိုင်ခုံ|noun
+説明|せつめい|explanation|ရှင်းပြချက်|noun
+背中|せなか|back of the body|ကိုယ်နောက်ကျော|noun
+ぜひ|ぜひ|without fail|မရှုံးနိုင်အောင်|adverb
+世話|せわ・する|to look after|ကြည့်ရှုသည်|verb
+線|せん|line|မျဉ်း|noun
+ぜんぜん|ぜんぜん|not entirely (used in a negative sentence)|လုံးဝမဟုတ်ပါ(အနုတ်လက္ခဏာဝါကျတွင်သုံး)|adverb
+戦争|せんそう|war|စစ်ပွဲ|noun
+先輩|せんぱい|senior|အကြီးတန်း|noun
+そう|そう|really|တကယ်|adverb
+相談|そうだん・する|to discuss|ဆွေးနွေးသည်|verb
+育てる|そだてる|to rear,to bring up|ပြုစုသည်၊မွေးသည်|verb
+卒業|そつぎょう|graduation|ဘွဲ့ရသည်|noun
+祖父|そふ|grandfather|အဘိုး|noun
+ソフト|ソフト|soft|နူးညံ့သော|adjective
+祖母|そぼ|grandmother|အဖွား|noun
+それで|それで|because of that|ဒါကြောင့်|adverb
+それに|それに|moreover|ထို့အပြင်|adverb
+それほど|それほど|to that extent|ထိုအတိုင်းအတာအထိ|adverb
+そろそろ|そろそろ|gradually,soon|တဖြည်းဖြည်း၊မကြာ|adverb
+そんな|そんな|that sort of|ထို့အမျိုးအစား|adjective
+そんなに|そんなに|so much,like that|ထို့မျှလောက်၊ထို့လို|adverb
+退院|たいいん・する|to leave hospital|ဆေးရုံမှဆင်းသည်|verb
+大学生|だいがくせい|university student|တက္ကသိုလ်ကျောင်းသား|noun
+大事|だいじ|important,valuable,serious matter|အရေးကြီး၊တန်ဖိုးရှိသော၊လေးလံသောကိစ္စ|adjective
+大体|だいたい|generally|ယေဘုယျအားဖြင့်|adverb
+たいてい|たいてい|usually|များသောအားဖြင့်|adverb
+タイプ|タイプ|type,style|အမျိုး၊ပုံစံ|noun
+大分|だいぶ|greatly|များစွာ|adverb
+台風|たいふう|typhoon|လေပြင်းမုန်တိုင်း|noun
+倒れる|たおれる|to break down|ပျက်စီးသည်|verb
+だから|だから|so,therefore|ဒါကြောင့်|adverb
+確か|たしか|definite|သေချာသော|adjective
+足す|たす|to add a number|ဂဏန်းထည့်သည်|verb
+訪ねる|たずねる|to visit|လည်ပတ်သည်|verb
+尋ねる|たずねる|to ask|မေးသည်|verb
+正しい|ただしい|correct|မှန်ကန်သော|adjective
+畳|たたみ|Japanese straw mat|ဂျပန်ကြမ်းဖျာ|noun
+立てる|たてる|to stand something up|မတ်တပ်ရပ်သည်|verb
+建てる|たてる|to build|ဆောက်သည်|verb
+例えば|たとえば|for example|ဥပမာအနေနှင့်|adverb
+棚|たな|shelves|စင်များ|noun
+楽しみ|たのしみ|joy|ပျော်ရွှင်မှု|noun
+楽む|たのしむ|to enjoy oneself|ကိုယ်တိုင်ပျော်သည်|verb
+たまに|たまに|occasionally|ရံဖန်ရံခါ|adverb
+ため|ため|in order to|အတွက်|adverb
+だめ|だめ|no good|မကောင်း|adjective
+足りる|たりる|to be enough|လုံလောက်သည်|verb
+男性|だんせい|male|အမျိုးသား|noun
+暖房|だんぼう|heating|အပူပေးစနစ်|noun
+血|ち|blood|သွေး|noun
+チェック・する|チェック・する|to check|စစ်ဆေးသည်|verb
+力|ちから|strength,power|အင်အား၊ခွန်အား|noun
+ちっとも|ちっとも|not at all (used with a negative verb)|လုံးဝမဟုတ်ပါ(အနုတ်လက္ခဏာကြိယာဖြင့်သုံး)|adverb
+ちゃん|ちゃん|suffix for familiar female person|ရင်းနှီးသောအမျိုးသမီးအတွက်နောက်ဆက်|noun
+注意|ちゅうい|caution|သတိပေးချက်|noun
+中学校|ちゅうがっこう|junior high school,middle school|အလယ်တန်းကျောင်း|noun
+注射|ちゅうしゃ|injection|ဆေးထိုး|noun
+駐車場|ちゅうしゃじょう|parking lot|ကားရပ်နားကွင်း|noun
+地理|ちり|geography|ပထဝီဝင်|noun
+捕まえる|つかまえる|to seize|ဖမ်းသည်|verb
+つき|つき|moon|လ|noun
+付く|つく|to be attached|ပူးတွဲသည်|verb
+漬ける|つける|to soak,to pickle|နှပ်သည်၊အချဉ်တည်သည်|verb
+都合|つごう|circumstances,convenience|အခြေအနေများ၊အဆင်ပြေမှု|noun
+伝える|つたえる|to report|အစီရင်ခံသည်|verb
+続く|つづく|to be continued|ဆက်လက်သည်|verb
+続ける|つづける|to continue|ဆက်လက်သည်|verb
+包む|つつむ|to wrap|ထုပ်သည်|verb
+妻|つま|(humble) wife|(ရိုသေ)ဇနီး|noun
+つもり|つもり|intention|ရည်ရွယ်ချက်|noun
+釣る|つる|to fish|ငါးမျှားသည်|verb
+連れる|つれる|to lead|ဦးဆောင်သည်|verb
+丁寧|ていねい|polite|ယဉ်ကျေးသော|adjective
+テキスト|テキスト|text,text book|စာသား၊စာအုပ်|noun
+適当|てきとう|suitability|သင့်လျော်မှု|noun
+できるだけ|できるだけ|as much as possible|တတ်နိုင်သမျှ|adverb
+手伝う|てつだう|to assist|ကူညီသည်|verb
+テニス|テニス|tennis|တင်နစ်|noun
+手袋|てぶくろ|glove|လက်အိတ်|noun
+寺|てら|temple|ဘုရားကျောင်း|noun
+点|てん|point,dot|အမှတ်၊အစက်|noun
+店員|てんいん|shop assistant|ဆိုင်ဝန်ထမ်း|noun
+天気予報|てんきよほう|weather forecast|ရာသီခန့်မှန်းချက်|noun
+電灯|でんとう|electric light|လျှပ်စစ်မီး|noun
+電報|でんぽう|telegram|တယ်လီဂရမ်|noun
+展覧会|てんらんかい|exhibition|ပြပွဲ|noun
+都|と|metropolitan|မြို့တော်|noun
+道具|どうぐ|tool,means|ကိရိယာ၊နည်း|noun
+とうとう|とうとう|finally, after all|နောက်ဆုံး၊နောက်ဆုံးအနေနှင့်|adverb
+動物園|どうぶつえん|zoo|တိရစ္ဆာန်ဥယျာဉ်|noun
+遠く|とおく|distant|ဝေးသော|adverb
+通る|とおる|to go through|ဖြတ်သန်းသည်|verb
+特に|とくに|particularly,especially|အထူးသဖြင့်၊အထူး|adverb
+特別|とくべつ|special|အထူး|adjective
+とこや|とこや|barber|ဆံပင်ညှပ်ဆိုင်|noun
+途中|とちゅう|on the way|လမ်းတွင်|noun
+特急|とっきゅう|limited express train (faster than an express train)|ကန့်သတ်အမြန်ရထားပို့ဆောင်ရေး(အမြန်ရထားထက်ပိုမြန်သော)|noun
+届ける|とどける|to reach|ရောက်ရှိသည်|verb
+泊まる|とまる|to lodge at|နေသည်|verb
+止める|とめる|to stop something|ရပ်သည်|verb
+取り替える|とりかえる|to exchange|လဲလှယ်သည်|verb
+泥棒|どろぼう|thief|သူခိုး|noun
+どんどん|どんどん|more and more|နောက်ထပ်နောက်ထပ်|adverb
+直す|なおす|to fix,to repair|ပြင်သည်၊ပြုပြင်သည်|verb
+直る|なおる|to be fixed,to be repaired|ပြင်ဆင်ခံရသည်၊ပြုပြင်ခံရသည်|verb
+治る|なおる|to be cured,to heal|ကုသခံရသည်၊ပျောက်ကင်းသည်|verb
+中々|なかなか|considerably|များစွာ|adverb
+泣く|なく|to weep|ငိုသည်|verb
+無くなる|なくなる|to disappear,to get lost|ပျောက်ဆုံးသည်|verb
+亡くなる|なくなる|to die|သေသည်|verb
+投げる|なげる|to throw or cast away|ပစ်သည်သို့မဟုတ်ပစ်ချသည်|verb
+なさる|なさる|(respectful) to do|(လေးစား)လုပ်သည်|verb
+鳴る|なる|to sound|မြည်သည်|verb
+なるべく|なるべく|as much as possible|တတ်နိုင်သမျှ|adverb
+なるほど|なるほど|now I understand|ယခုနားလည်ပါပြီ|adverb
+慣れる|なれる|to grow accustomed to|အလေ့အကျင့်ရသည်|verb
+におい|におい|a smell|အနံ့|noun
+苦い|にがい|bitter|ခါး|adjective
+二階建て|にかいだて|two storied|နှစ်ထပ်|noun
+逃げる|にげる|to escape|လွတ်မြောက်သည်|verb
+日記|にっき|journal|နေ့စဉ်မှတ်တမ်း|noun
+入院|にゅういん・する|to hospitalise|ဆေးရုံတက်သည်|verb
+入学|にゅうがく・する|to enter school or university|ကျောင်းသို့မဟုတ်တက္ကသိုလ်ဝင်သည်|verb
+似る|にる|to be similar|ဆင်တူသည်|verb
+人形|にんぎょう|doll, figure|အရုပ်၊ပုံ|noun
+盗む|ぬすむ|to steal|ခိုးသည်|verb
+塗る|ぬる|to paint,to plaster|ဆေးခြယ်သည်၊ပလာစတာလိမ်းသည်|verb
+ぬれる|ぬれる|to get wet|စိုသည်|verb
+ねだん|ねだん|price|ဈေး|noun
+熱|ねつ|fever|အဖျားရောဂါ|noun
+ねっしん|ねっしん|enthusiasm|စိတ်အားထက်သန်မှု|noun
+寝坊|ねぼう|sleeping in late|နောက်ကျအိပ်သည်|noun
+眠い|ねむい|sleepy|အိပ်ချင်သော|adjective
+眠る|ねむる|to sleep|အိပ်သည်|verb
+残る|のこる|to remain|ကျန်သည်|verb
+のど|のど|throat|လည်ချောင်း|noun
+乗り換える|のりかえる|to change between buses or trains|ဘတ်စ်ကားသို့မဟုတ်ရထားများကြားပြောင်းသည်|verb
+乗り物|のりもの|vehicle|ယာဉ်|noun
+葉|は|leaf|ရွက်|noun
+場合|ばあい|situation|အခြေအနေ|noun
+パート|パート|part time|အချိန်ပိုင်း|noun
+倍|ばい|double|နှစ်ဆ|noun
+拝見|はいけん・する|(humble) to look at|(ရိုသေ)ကြည့်သည်|verb
+歯医者|はいしゃ|dentist|သွားဆရာ|noun
+運ぶ|はこぶ|to transport|သယ်သည်|verb
+始める|はじめる|to begin|စသည်|verb
+場所|ばしょ|location|နေရာ|noun
+はず|はず|it should be so|ဖြစ်နိုင်သည်|noun
+恥ずかしい|はずかしい|embarrassed|ရှက်ကြောက်သော|adjective
+パソコン|パソコン|personal computer|ကိုယ်ပိုင်ကွန်ပျူတာ|noun
+発音|はつおん|pronunciation|အသံထုတ်မှု|noun
+はっきり|はっきり|clearly|ရှင်းလင်းစွာ|adverb
+花見|はなみ|cherry-blossom viewing|ချယ်ရီပွင့်လင်းကြည့်သည်|noun
+林|はやし|woods,forester|သစ်တော၊သစ်တောပိုင်ရှင်|noun
+払う|はらう|to pay|ပေးချေသည်|verb
+番組|ばんぐみ|television or radio program|ရုပ်မြင်သံကြားသို့မဟုတ်ရေဒီယိုပရိုဂရမ်|noun
+反対|はんたい|opposition|ဆန့်ကျင်မှု|noun
+ハンドバッグ|ハンドバッグ|handbag|လက်ကိုင်အိတ်|noun
+日|ひ|day, sun|နေ့၊နေ|noun
+火|ひ|fire|မီး|noun
+ピアノ|ピアノ|piano|ပီယာနို|noun
+冷える|ひえる|to grow cold|အေးသည်|verb
+光|ひかり|light|အလင်း|noun
+光る|ひかる|to shine,to glitter|တောက်ပသည်၊လက်ခန်းသည်|verb
+引き出し|ひきだし|drawer,drawing out|အံဆွဲ၊ဆွဲထုတ်ခြင်း|noun
+引き出す|ひきだす|to withdraw|ဆွဲထုတ်သည်|verb
+ひげ|ひげ|beard|မုတ်ဆိတ်|noun
+飛行場|ひこうじょう|airport|လေဆိပ်|noun
+久しぶり|ひさしぶり|after a long time|နှစ်ပေါင်းများစွာနောက်|adverb
+美術館|びじゅつかん|art gallery|အနုပညာပြတိုက်|noun
+非常に|ひじょうに|extremely|အလွန်|adverb
+びっくり・する|びっくり・する|to be surprised|အံ့အားသင့်သည်|verb
+引っ越す|ひっこす|to move house|အိမ်ရွှေ့သည်|verb
+必要|ひつよう|necessary|လိုအပ်သော|adjective
+ひどい|ひどい|awful|ကြောက်မက်ဖွယ်|adjective
+ビル|ビル|building or bill|အဆောက်အဦသို့မဟုတ်ဘီလ်|noun
+昼間|ひるま|daytime,during the day|နေ့အချိန်၊နေ့တွင်|noun
+昼休み|ひるやすみ|noon break|နေ့လယ်ပိုင်းအနားယူ|noun
+拾う|ひろう|to pick up,to gather|ကောက်သည်၊စုသည်|verb
+ファックス|ファックス|fax|ဖက်စ်|noun
+増える|ふえる|to increase|တိုးသည်|verb
+深い|ふかい|deep|နက်ရှိုင်းသော|adjective
+複雑|ふくざつ|complexity,complication|ရှုပ်ထွေးမှု၊ရှုပ်ထွေးမှု|noun
+復習|ふくしゅう|revision|ပြန်လည်လေ့ကျင့်|noun
+部長|ぶちょう|head of a section|ဌာနအကြီး|noun
+普通|ふつう|usually, or a train that stops at every station|များသောအားဖြင့်၊သို့မဟုတ်ဘူတာတိုင်းရပ်တန့်ရထား|adverb
+ぶどう|ぶどう|grapes|စပျစ်သီး|noun
+太る|ふとる|to become fat|ဝသည်|verb
+布団|ふとん|Japanese bedding, futon|ဂျပန်အိပ်ရာ၊ဖူတန်|noun
+舟|ふね|ship|သင်္ဘော|noun
+不便|ふべん|inconvenience|အဆင်မပြေမှု|noun
+踏む|ふむ|to step on|နင်းသည်|verb
+降り出す|ふりだす|to start to rain|မိုးရွာစသည်|verb
+プレゼント|プレゼント|present|လက်ဆောင်|noun
+文化|ぶんか|culture|ယဉ်ကျေးမှု|noun
+文学|ぶんがく|literature|စာပေ|noun
+文法|ぶんぽう|grammar|သဒ္ဒါ|noun
+別|べつ|different|ကွဲပြားသော|adjective
+ベル|ベル|bell|ခေါင်းလောင်း|noun
+変|へん|strange|ထူးဆန်းသော|adjective
+返事|へんじ|reply|ပြန်စာ|noun
+貿易|ぼうえき|trade|ကုန်သွယ်မှု|noun
+放送|ほうそう・する|to broadcast|ထုတ်လွှင့်သည်|verb
+法律|ほうりつ|law|ဥပဒေ|noun
+僕|ぼく|I (used by males)|ကျွန်တော်(ယောက်ျားများသုံး)|noun
+星|ほし|star|ကြယ်|noun
+ほど|ほど|extent|အတိုင်းအတာ|noun
+ほとんど|ほとんど|mostly|အများဆုံး|adverb
+ほめる|ほめる|to praise|ချီးကျူးသည်|verb
+翻訳|ほんやく|translation|ဘာသာပြန်ခြင်း|noun
+参る|まいる|(humble) to go,to come|(ရိုသေ)သွားသည်၊လာသည်|verb
+負ける|まける|to lose|ရှုံးသည်|verb
+まじめ|まじめ|serious|လေးလံသော|adjective
+まず|まず|first of all|ပထမအနေနှင့်|adverb
+または|または|or,otherwise|သို့မဟုတ်၊မဟုတ်ရင်|adverb
+間違える|まちがえる|to make a mistake|အမှားလုပ်သည်|verb
+間に合う|まにあう|to be in time for|အချိန်မှီသည်|verb
+周り|まわり|surroundings|ပတ်ဝန်းကျင်|noun
+回る|まわる|to go around|ပတ်သည်|verb
+漫画|まんが|comic|ကာတွန်း|noun
+真中|まんなか|middle|အလယ်|noun
+見える|みえる|to be in sight|မြင်သည်|verb
+湖|みずうみ|lake|ကန်|noun
+味噌|みそ|bean paste|ပဲငံပြာရည်|noun
+見つかる|みつかる|to be discovered|ရှာတွေ့ခံရသည်|verb
+見つける|みつける|to discover|ရှာတွေ့သည်|verb
+皆|みな|everybody|လူတိုင်း|noun
+港|みなと|harbour|ဆိပ်ကမ်း|noun
+向かう|むかう|to face|မျက်နှာမူသည်|verb
+迎える|むかえる|to go out to meet|တွေ့ဆုံရန်ထွက်သည်|verb
+昔|むかし|olden days, former|ရှေးခေတ်၊ယခင်|noun
+虫|むし|insect|ကောင်|noun
+息子|むすこ|(humble) son|(ရိုသေ)သား|noun
+娘|むすめ|(humble) daughter|(ရိုသေ)သမီး|noun
+無理|むり|impossible|မဖြစ်နိုင်|adjective
+召し上がる|めしあがる|(polite) to eat|(ယဉ်ကျေး)စားသည်|verb
+珍しい|めずらしい|rare|ရှားပါးသော|adjective
+申し上げる|もうしあげる|(humble) to say,to tell|(ရိုသေ)ပြောသည်၊ပြောသည်|verb
+申す|もうす|(humble) to be called,to say|(ရိုသေ)ခေါ်ခံရသည်၊ပြောသည်|verb
+もうすぐ|もうすぐ|soon|မကြာ|adverb
+もし|もし|if|ဆိုပါက|adverb
+もちろん|もちろん|of course|ဟုတ်ပါတယ်|adverb
+もっとも|もっとも|extremely|အလွန်|adverb
+戻る|もどる|to turn back|နောက်ပြန်လှည့်သည်|verb
+木綿|もめん|cotton|ချည်|noun
+もらう|もらう|to receive|ရသည်|verb
+森|もり|forest|သစ်တော|noun
+焼く|やく|to bake,to grill|ဖုတ်သည်၊ကင်သည်|verb
+約束|やくそく|promise|ကတိ|noun
+役に立つ|やくにたつ|to be helpful|ကူညီသည်|verb
+焼ける|やける|to burn,to be roasted|လောင်သည်၊ကင်ခံရသည်|verb
+優しい|やさしい|kind|ကြင်နာသော|adjective
+痩せる|やせる|to become thin|ပိန်သည်|verb
+やっと|やっと|at last|နောက်ဆုံးမှာ|adverb
+やはり/やっぱり|やはり/やっぱり|as I thought,absolutely|ငါတွေးသလို၊အမှန်ပဲ|adverb
+止む|やむ|to stop|ရပ်သည်|verb
+止める|やめる|to stop|ရပ်သည်|verb
+柔らかい|やわらかい|soft|နူးသော|adjective
+湯|ゆ|hot water|ရေပူ|noun
+輸出|ゆしゅつ・する|to export|တင်ပို့သည်|verb
+輸入|ゆにゅう・する|to import|တင်သွင်းသည်|verb
+指|ゆび|finger|လက်ချောင်း|noun
+指輪|ゆびわ|finger ring|လက်စွပ်|noun
+夢|ゆめ|dream|အိပ်မက်|noun
+揺れる|ゆれる|to shake,to sway|လှုပ်သည်၊လွှဲသည်|verb
+用|よう|use|အသုံး|noun
+用意|ようい|preparation|ပြင်ဆင်မှု|noun
+用事|ようじ|things to do|လုပ်ရန်အရာများ|noun
+汚れる|よごれる|to get dirty|ညစ်ပတ်သည်|verb
+予習|よしゅう|preparation for a lesson|သင်ခန်းစာအတွက်ပြင်ဆင်မှု|noun
+予定|よてい|arrangement|အစီအစဉ်|noun
+予約|よやく|reservation|ကြိုတင်မှာထားမှု|noun
+寄る|よる|to visit|လည်ပတ်သည်|verb
+喜ぶ|よろこぶ|to be delighted|ပျော်သည်|verb
+よろしい|よろしい|(respectful) OK,all right|(လေးစား)အိုကေ၊အားလုံးမှန်ပါတယ်|adjective
+理由|りゆう|reason|အကြောင်းရင်း|noun
+利用|りよう|utilization|အသုံးပြုမှု|noun
+両方|りょうほう|both sides|နှစ်ဖက်လုံး|noun
+旅館|りょかん|Japanese hotel|ဂျပန်ဟိုတယ်|noun
+留守|るす|absence|မရှိခြင်း|noun
+冷房|れいぼう|air conditioning|လေအေးစနစ်|noun
+歴史|れきし|history|သမိုင်း|noun
+レジ|レジ|register|မှတ်တမ်း|noun
+レポート/リポート|レポート/リポート|report|အစီရင်ခံစာ|noun
+連絡|れんらく|contact|ဆက်သွယ်မှု|noun
+ワープロ|ワープロ|word processor|စကားလုံးပရိုဆက်ဆာ|noun
+沸かす|わかす|to boil,to heat|ပွက်သည်၊အပူပေးသည်|verb
+別れる|わかれる|to separate|ခွဲသည်|verb
+沸く|わく|to boil, to grow hot,to get excited|ပွက်သည်၊ပူသည်၊စိတ်လှုပ်ရှားသည်|verb
+訳|わけ|meaning,reason|အဓိပ္ပာယ်၊အကြောင်းရင်း|noun
+忘れ物|わすれもの|lost article|ပျောက်ဆုံးပစ္စည်း|noun
+笑う|わらう|to laugh,to smile|ရယ်သည်၊ပြုံးသည်|verb
+割合|わりあい|rate,ratio,percentage|နှုန်း၊အချိုး၊ရာခိုင်နှုန်း|noun
+割れる|われる|to break|ကျိုးသည်|verb
+泳ぎ方|およぎかた|way of swimming|ရေကူးနည်း|noun

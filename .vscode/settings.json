@@ -1,0 +1,6 @@
+{
+    "dart.flutterSdkPath": null,
+    "dart.projectSearchDepth": 5,
+    "dart.flutterCreateIOSLanguage": "swift",
+    "dart.flutterCreateAndroidLanguage": "kotlin"
+}
