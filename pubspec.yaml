@@ -42,8 +42,13 @@ dependencies:
   path_provider: ^2.1.4
 
   # Network
-  dio: ^5.7.0
   connectivity_plus: ^6.1.0
+  
+  # Supabase
+  supabase_flutter: ^2.10.3
+  
+  # Environment variables
+  flutter_dotenv: ^5.1.0
 
   # UI & Design
   material_color_utilities: ^0.11.1
@@ -100,6 +105,7 @@ flutter:
     - assets/images/
     - assets/vocabulary/
     - assets/audio/
+    - .env
 
   # To add custom fonts to your application, add a fonts section here,
   # Note: Font files need to be downloaded separately from Google Fonts

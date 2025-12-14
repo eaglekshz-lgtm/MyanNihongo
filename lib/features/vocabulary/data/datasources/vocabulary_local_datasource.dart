@@ -23,7 +23,9 @@ class VocabularyLocalDataSource {
 
   /// Get vocabulary items by level
   Future<List<VocabularyItemModel>> getVocabularyByLevel(String level) async {
+    final normalizedLevel = level.toUpperCase();
     return _vocabularyBox.values
+        .where((item) => item.tag.toUpperCase() == normalizedLevel)
         .toList();
   }
 
@@ -33,22 +35,40 @@ class VocabularyLocalDataSource {
   }
 
   /// Save vocabulary items
-  /// Clears existing items before saving to prevent duplicates
+  /// Only clears items with the same tag before saving to prevent duplicates
   Future<void> saveVocabulary(List<VocabularyItemModel> items) async {
     if (items.isEmpty) return;
     
-    // Clear existing items to prevent ID conflicts
-    AppLogger.data('Clearing existing vocabulary', operation: 'DELETE');
-    await _vocabularyBox.clear();
+    // Get the tag from the first item (all items should have the same tag)
+    final tag = items.first.tag.toUpperCase();
+    
+    // Clear only existing items with the same tag to prevent duplicates
+    final existingItemsWithSameTag = _vocabularyBox.values
+        .where((item) => item.tag.toUpperCase() == tag)
+        .map((item) => item.id)
+        .toList();
+    
+    if (existingItemsWithSameTag.isNotEmpty) {
+      AppLogger.data(
+        'Clearing ${existingItemsWithSameTag.length} existing items with tag $tag',
+        operation: 'DELETE',
+      );
+      await _vocabularyBox.deleteAll(existingItemsWithSameTag);
+    }
     
     // Now save the new items
-    AppLogger.data('Saving ${items.length} new items', operation: 'SAVE');
+    AppLogger.data('Saving ${items.length} new items with tag $tag', operation: 'SAVE');
     final map = {for (var item in items) item.id: item};
     await _vocabularyBox.putAll(map);
     
     // Verify what was saved
-    final savedCount = _vocabularyBox.values.length;
-    AppLogger.info('Saved and verified: $savedCount items in Hive', 'LocalDataSource');
+    final savedCount = _vocabularyBox.values
+        .where((item) => item.tag.toUpperCase() == tag)
+        .length;
+    AppLogger.info(
+      'Saved and verified: $savedCount items with tag $tag in Hive',
+      'LocalDataSource',
+    );
   }
 
   /// Get user progress for a vocabulary item

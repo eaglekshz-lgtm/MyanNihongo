@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/theme/app_theme.dart';
 import 'core/constants/app_constants.dart';
 import 'core/routes/route_names.dart';
 import 'core/routes/app_routes.dart';
 import 'core/utils/logger.dart';
+import 'core/config/supabase_config.dart';
 import 'features/vocabulary/data/models/vocabulary_item_model.dart';
 import 'features/vocabulary/data/models/user_progress_model.dart';
 import 'features/vocabulary/data/models/block_progress_model.dart';
 import 'features/vocabulary/data/models/bookmark_model.dart';
+import 'features/vocabulary/data/models/user_streak_model.dart';
+import 'features/vocabulary/data/models/srs_card_model.dart';
+import 'features/vocabulary/data/models/system_update_model.dart';
 
 void main() async {
   // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Enable colored logs (uncomment if running in terminal that supports ANSI colors)
+  // Most IDE debug consoles don't support colors, so keep this commented by default
+  AppLogger.enableColors = true;
 
   try {
     await _initializeApp();
@@ -25,12 +35,10 @@ void main() async {
       error: e,
       stackTrace: stackTrace,
     );
-    
+
     // Run app with error screen
     runApp(
-      MaterialApp(
-        home: AppInitializationErrorScreen(error: e.toString()),
-      ),
+      MaterialApp(home: AppInitializationErrorScreen(error: e.toString())),
     );
   }
 }
@@ -38,6 +46,24 @@ void main() async {
 /// Initialize Hive and register adapters
 Future<void> _initializeApp() async {
   try {
+    // Load environment variables
+    await dotenv.load(fileName: '.env');
+    AppLogger.info('Environment variables loaded', 'Main');
+
+    // Initialize Supabase (only if configured)
+    if (SupabaseConfig.isConfigured) {
+      await Supabase.initialize(
+        url: SupabaseConfig.supabaseUrl,
+        anonKey: SupabaseConfig.supabaseAnonKey,
+      );
+      AppLogger.info('Supabase initialized', 'Main');
+    } else {
+      AppLogger.warning(
+        'Supabase not configured - multiplayer features will be disabled',
+        'Main',
+      );
+    }
+
     // Initialize Hive
     await Hive.initFlutter();
 
@@ -50,6 +76,9 @@ Future<void> _initializeApp() async {
     Hive.registerAdapter(QuizQuestionModelAdapter());
     Hive.registerAdapter(ExampleSentenceModelAdapter());
     Hive.registerAdapter(TranslationModelAdapter());
+    Hive.registerAdapter(UserStreakModelAdapter());
+    Hive.registerAdapter(SRSCardModelAdapter());
+    Hive.registerAdapter(SystemUpdateModelAdapter());
 
     // Open Hive boxes with error handling
     await Future.wait([
@@ -58,6 +87,9 @@ Future<void> _initializeApp() async {
       Hive.openBox<BlockProgressModel>(AppConstants.blockProgressBoxName),
       Hive.openBox<dynamic>(AppConstants.appPreferencesBoxName),
       Hive.openBox<BookmarkModel>(AppConstants.bookmarksBoxName),
+      Hive.openBox<UserStreakModel>(AppConstants.userStreakBoxName),
+      Hive.openBox<SRSCardModel>(AppConstants.srsCardsBoxName),
+      Hive.openBox<SystemUpdateModel>(AppConstants.systemUpdateBoxName),
     ]);
 
     AppLogger.info('App initialization completed successfully', 'Hive');
@@ -146,10 +178,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
 /// Error screen shown when app fails to initialize
 class AppInitializationErrorScreen extends StatelessWidget {
-  const AppInitializationErrorScreen({
-    super.key,
-    required this.error,
-  });
+  const AppInitializationErrorScreen({super.key, required this.error});
 
   final String error;
 
@@ -162,18 +191,11 @@ class AppInitializationErrorScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 80,
-                color: Colors.red,
-              ),
+              const Icon(Icons.error_outline, size: 80, color: Colors.red),
               const SizedBox(height: 24),
               const Text(
                 'App Initialization Failed',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),

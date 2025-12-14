@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myan_nihongo/core/enums/app_enums.dart';
 import '../../../data/models/vocabulary_item_model.dart';
 import 'recall_card_widget.dart';
 import 'absorb_card_widget.dart';
@@ -38,7 +39,7 @@ class SwipeableVocabularyCard extends StatelessWidget {
   }
 
   Widget _buildCard(bool isBookmarked) {
-    return learningMode == 'recall'
+    return learningMode == CardStyle.recallMode.code
         ? RecallCardWidget(
             item: item,
             isBookmarked: isBookmarked,

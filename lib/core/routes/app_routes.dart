@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'route_names.dart';
 import '../../features/vocabulary/presentation/pages/home_page.dart';
 import '../../features/vocabulary/presentation/pages/level_selection_page.dart';
-import '../../features/vocabulary/presentation/pages/category_selection_page.dart';
 import '../../features/vocabulary/presentation/pages/learning_mode_config_page.dart';
 import '../../features/vocabulary/presentation/pages/batch_selection_page.dart';
 import '../../features/vocabulary/presentation/pages/vocabulary_learning_page.dart';
@@ -28,66 +27,37 @@ class AppRoutes {
       case RouteNames.levelSelection:
         return _buildRoute(const LevelSelectionPage(), settings);
 
-      case RouteNames.categorySelection:
-        return _buildRoute(
-          const CategorySelectionPage(),
-          settings,
-        );
-
       case RouteNames.learningModeConfig:
-        return _buildRoute(
-          const LearningModeConfigPage(),
-          settings,
-        );
+        return _buildRoute(const LearningModeConfigPage(), settings);
 
       case RouteNames.batchSelection:
-        return _buildRoute(
-          const BatchSelectionPage(),
-          settings,
-        );
+        return _buildRoute(const BatchSelectionPage(), settings);
 
       case RouteNames.vocabularyLearning:
-        return _buildRoute(
-          const VocabularyLearningPage(),
-          settings,
-        );
+        return _buildRoute(const VocabularyLearningPage(), settings);
 
       case RouteNames.vocabularyQuiz:
-        return _buildRoute(
-          const VocabularyQuizPage(),
-          settings,
-        );
+        return _buildRoute(const VocabularyQuizPage(), settings);
 
       case RouteNames.bookmarkedVocabulary:
         return _buildRoute(const BookmarkedVocabularyPage(), settings);
 
       case RouteNames.learningModeSelection:
-        return _buildRoute(
-          const LearningModeSelectionPage(),
-          settings,
-        );
+        return _buildRoute(const LearningModeSelectionPage(), settings);
 
       case RouteNames.quizSetup:
         return _buildRoute(const QuizSetupPage(), settings);
 
       case RouteNames.quiz:
-        return _buildRoute(
-          const QuizPage(),
-          settings,
-        );
+        return _buildRoute(const QuizPage(), settings);
 
       case RouteNames.quizResult:
-        return _buildRoute(
-          const QuizResultPage(),
-          settings,
-        );
+        return _buildRoute(const QuizResultPage(), settings);
 
       default:
         return _buildRoute(
           Scaffold(
-            body: Center(
-              child: Text('Route not found: ${settings.name}'),
-            ),
+            body: Center(child: Text('Route not found: ${settings.name}')),
           ),
           settings,
         );
@@ -96,9 +66,6 @@ class AppRoutes {
 
   /// Build a material page route with custom transition
   static MaterialPageRoute _buildRoute(Widget page, RouteSettings settings) {
-    return MaterialPageRoute(
-      builder: (_) => page,
-      settings: settings,
-    );
+    return MaterialPageRoute(builder: (_) => page, settings: settings);
   }
 }

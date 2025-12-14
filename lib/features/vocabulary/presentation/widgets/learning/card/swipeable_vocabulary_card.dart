@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myan_nihongo/core/enums/app_enums.dart';
 
 import '../../../../data/models/vocabulary_item_model.dart';
 import 'recall_card_content.dart';
@@ -30,7 +31,7 @@ class SwipeableVocabularyCard extends StatelessWidget {
       child: bookmarkedIdsAsync.when(
         data: (bookmarkedIds) {
           final isBookmarked = bookmarkedIds.contains(item.id);
-          return learningMode == 'recall'
+          return learningMode == CardStyle.recallMode.code
               ? RecallCardContent(
                   item: item,
                   isBookmarked: isBookmarked,
@@ -43,7 +44,7 @@ class SwipeableVocabularyCard extends StatelessWidget {
                   onSpeak: onSpeak,
                 );
         },
-        loading: () => learningMode == 'recall'
+        loading: () => learningMode == CardStyle.recallMode.code
             ? RecallCardContent(
                 item: item,
                 isBookmarked: false,
@@ -55,7 +56,7 @@ class SwipeableVocabularyCard extends StatelessWidget {
                 flipController: flipController,
                 onSpeak: onSpeak,
               ),
-        error: (_, __) => learningMode == 'recall'
+        error: (_, __) => learningMode == CardStyle.recallMode.code
             ? RecallCardContent(
                 item: item,
                 isBookmarked: false,

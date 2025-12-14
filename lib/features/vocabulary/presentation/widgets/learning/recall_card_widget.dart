@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/theme/app_theme.dart';
+import '../../../../../core/providers/meaning_language_provider.dart';
 import '../../../data/models/vocabulary_item_model.dart';
 import 'card_components.dart';
 
-class RecallCardWidget extends StatelessWidget {
+class RecallCardWidget extends ConsumerWidget {
   final VocabularyItemModel item;
   final bool isBookmarked;
   final AnimationController flipController;
@@ -17,7 +19,9 @@ class RecallCardWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final meaningLanguage = ref.watch(meaningLanguageProvider);
+    
     return AnimatedBuilder(
       animation: flipController,
       builder: (context, _) {
@@ -37,12 +41,14 @@ class RecallCardWidget extends StatelessWidget {
                     item: item,
                     isBookmarked: isBookmarked,
                     showBack: true,
+                    meaningLanguage: meaningLanguage,
                   ),
                 )
               : QuizModeCardContent(
                   item: item,
                   isBookmarked: isBookmarked,
                   showBack: false,
+                  meaningLanguage: meaningLanguage,
                 ),
         );
       },
@@ -54,12 +60,14 @@ class QuizModeCardContent extends StatelessWidget {
   final VocabularyItemModel item;
   final bool isBookmarked;
   final bool showBack;
+  final MeaningLanguage meaningLanguage;
 
   const QuizModeCardContent({
     super.key,
     required this.item,
     required this.isBookmarked,
     required this.showBack,
+    required this.meaningLanguage,
   });
 
   @override
@@ -93,21 +101,24 @@ class QuizModeCardContent extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.min,
         children: [
           CategoryBadge(category: item.partOfSpeech),
-          // const SizedBox(height: 32),
           if (!showBack)
             JapaneseSide(japaneseWord: item.word)
-          else
+          else if (meaningLanguage == MeaningLanguage.burmese)
             BurmeseSide(
               burmeseWord: item.translations.burmese,
               japaneseReading: item.reading,
+            )
+          else
+            EnglishSide(
+              englishWord: item.translations.english,
+              japaneseReading: item.reading,
             ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 8),
         ],
       ),
     );

@@ -6,10 +6,11 @@ class AppConstants {
   // Private constructor to prevent instantiation
   AppConstants._();
 
-  // API Configuration
-  static const String baseUrl = 'https://api.myannihongo.com'; // Placeholder URL
-  static const String apiVersion = 'v1';
-  static const Duration apiTimeout = Duration(seconds: 30);
+  // API Configuration (deprecated - now using Supabase)
+  // Kept for reference if needed in future
+  // static const String baseUrl = 'https://api.myannihongo.com'; 
+  // static const String apiVersion = 'v1';
+  // static const Duration apiTimeout = Duration(seconds: 30);
 
   // Local Storage - Hive Box Names
   static const String vocabularyBoxName = 'vocabulary_box';
@@ -18,6 +19,9 @@ class AppConstants {
   static const String quizResultsBoxName = 'quiz_results_box';
   static const String appPreferencesBoxName = 'app_preferences_box';
   static const String bookmarksBoxName = 'bookmarks_box';
+  static const String userStreakBoxName = 'user_streak_box';
+  static const String srsCardsBoxName = 'srs_cards_box';
+  static const String systemUpdateBoxName = 'system_update_box';
 
   // Quiz Configuration
   static const int quizOptionsCount = 4;
@@ -73,7 +77,9 @@ class AppConstants {
   static const String unknownErrorMessage = 'An unexpected error occurred.';
 }
 
-/// API endpoint constants
+/// API endpoint constants (deprecated - now using Supabase)
+/// Kept for reference if needed in future
+/*
 class ApiEndpoints {
   // Private constructor to prevent instantiation
   ApiEndpoints._();
@@ -90,6 +96,7 @@ class ApiEndpoints {
     return '${AppConstants.baseUrl}/api/${AppConstants.apiVersion}$endpoint';
   }
 }
+*/
 
 /// Preference keys for local storage
 class PreferenceKeys {

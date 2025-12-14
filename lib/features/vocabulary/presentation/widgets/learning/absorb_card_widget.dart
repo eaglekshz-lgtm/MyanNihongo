@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/theme/app_theme.dart';
+import '../../../../../core/providers/meaning_language_provider.dart';
 import '../../../data/models/vocabulary_item_model.dart';
 
-class AbsorbCardWidget extends StatelessWidget {
+class AbsorbCardWidget extends ConsumerWidget {
   final VocabularyItemModel item;
   final bool isBookmarked;
   final AnimationController flipController;
@@ -19,28 +21,27 @@ class AbsorbCardWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final meaningLanguage = ref.watch(meaningLanguageProvider);
+
     return AnimatedBuilder(
       animation: flipController,
       builder: (context, _) {
         final isFlipped = flipController.value >= 0.5;
         final angle = flipController.value * 3.14;
-        
+
         return Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()
             ..setEntry(3, 2, 0.001)
             ..rotateY(angle),
           child: Container(
-            constraints: const BoxConstraints(
-              maxWidth: 400,
-              minHeight: 380,
-            ),
+            constraints: const BoxConstraints(maxWidth: 400, minHeight: 380),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(28),
               border: Border.all(
-                color: isBookmarked 
+                color: isBookmarked
                     ? AppTheme.secondaryColor.withValues(alpha: 0.3)
                     : AppTheme.primaryColor.withValues(alpha: 0.15),
                 width: 3,
@@ -70,6 +71,7 @@ class AbsorbCardWidget extends StatelessWidget {
                 item: item,
                 isFlipped: isFlipped,
                 onSpeak: onSpeak,
+                meaningLanguage: meaningLanguage,
               ),
             ),
           ),
@@ -83,12 +85,14 @@ class StudyModeCardContent extends StatelessWidget {
   final VocabularyItemModel item;
   final bool isFlipped;
   final Future<void> Function(String text)? onSpeak;
+  final MeaningLanguage meaningLanguage;
 
   const StudyModeCardContent({
     super.key,
     required this.item,
     required this.isFlipped,
     this.onSpeak,
+    required this.meaningLanguage,
   });
 
   @override
@@ -245,53 +249,26 @@ class StudyModeCardContent extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 24),
-            // Burmese translation
+            // Translation based on language preference
             Text(
-              item.translations.burmese,
-              style: AppTheme.burmeseText.copyWith(
-                fontSize: 23,
-                fontWeight: FontWeight.w800,
-                color: const Color(0xFF1A1A1A),
-                height: 1.6,
-                letterSpacing: 0.3,
-              ),
+              meaningLanguage == MeaningLanguage.burmese
+                  ? item.translations.burmese
+                  : item.translations.english,
+              style: meaningLanguage == MeaningLanguage.burmese
+                  ? AppTheme.burmeseText.copyWith(
+                      fontSize: 23,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF1A1A1A),
+                      height: 1.6,
+                      letterSpacing: 0.3,
+                    )
+                  : AppTheme.bodyLarge.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF1A1A1A),
+                      height: 1.4,
+                    ),
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 18),
-            // English translation
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.primaryColor.withValues(alpha: 0.1),
-                    AppTheme.primaryColor.withValues(alpha: 0.05),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.25),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.primaryColor.withValues(alpha: 0.08),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Text(
-                item.translations.english,
-                style: AppTheme.bodyLarge.copyWith(
-                  fontSize: 18,
-                  color: const Color(0xFF424242),
-                  fontWeight: FontWeight.w600,
-                  height: 1.5,
-                  letterSpacing: 0.3,
-                ),
-                textAlign: TextAlign.center,
-              ),
             ),
           ],
         ),
@@ -335,17 +312,18 @@ class StudyModeCardContent extends StatelessWidget {
     );
   }
 
-  Widget _buildExampleSentence(BuildContext context, int index, dynamic sentence) {
+  Widget _buildExampleSentence(
+    BuildContext context,
+    int index,
+    dynamic sentence,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [
-              Color(0xFFF5F9FF),
-              Colors.white,
-            ],
+            colors: [Color(0xFFF5F9FF), Colors.white],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -381,10 +359,7 @@ class StudyModeCardContent extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            AppTheme.primaryColor,
-            AppTheme.primaryVariant,
-          ],
+          colors: [AppTheme.primaryColor, AppTheme.primaryVariant],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -456,16 +431,9 @@ class StudyModeCardContent extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: color.withValues(alpha: 0.3),
-            width: 1,
-          ),
+          border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
         ),
-        child: Icon(
-          icon,
-          size: 18,
-          color: color,
-        ),
+        child: Icon(icon, size: 18, color: color),
       ),
     );
   }
@@ -477,32 +445,28 @@ class StudyModeCardContent extends StatelessWidget {
         content: const Text('Japanese sentence copied!'),
         duration: const Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        margin: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
     );
   }
 
   Widget _buildTranslations(dynamic sentence) {
+    final translationText = meaningLanguage == MeaningLanguage.burmese
+        ? sentence.burmese
+        : sentence.english;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.grey[200]!,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey[200]!, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Burmese translation
+          // Translation based on preference
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -512,45 +476,29 @@ class StudyModeCardContent extends StatelessWidget {
                   color: AppTheme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Icon(Icons.language, size: 14, color: AppTheme.primaryColor),
+                child: const Icon(
+                  Icons.language,
+                  size: 14,
+                  color: AppTheme.primaryColor,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  sentence.burmese,
-                  style: AppTheme.burmeseText.copyWith(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                    height: 1.5,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          // English translation
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppTheme.secondaryColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: const Icon(Icons.translate, size: 14, color: AppTheme.secondaryColor),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  sentence.english,
-                  style: AppTheme.bodySmall.copyWith(
-                    fontSize: 14,
-                    color: Colors.grey[700],
-                    fontWeight: FontWeight.w500,
-                    height: 1.4,
-                  ),
+                  translationText,
+                  style: meaningLanguage == MeaningLanguage.burmese
+                      ? AppTheme.burmeseText.copyWith(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                          height: 1.5,
+                        )
+                      : AppTheme.bodyMedium.copyWith(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                          height: 1.5,
+                        ),
                 ),
               ),
             ],

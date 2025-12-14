@@ -90,6 +90,8 @@ class VocabularyItemModel {
   final List<ExampleSentenceModel> exampleSentences;
   @HiveField(6)
   final QuizDataModel? quizzes;
+  @HiveField(7)
+  final String tag;
 
   VocabularyItemModel({
     required this.id,
@@ -99,6 +101,7 @@ class VocabularyItemModel {
     required this.translations,
     required this.exampleSentences,
     this.quizzes,
+    required this.tag,
   });
 
   factory VocabularyItemModel.fromJson(Map<String, dynamic> json) =>

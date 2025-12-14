@@ -1,42 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myan_nihongo/core/enums/app_enums.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/routes/route_names.dart';
 import '../../../../arguments/batch_selection_args.dart';
 import '../../../../arguments/vocabulary_learning_args.dart';
 import '../../data/providers/vocabulary_provider.dart';
 import '../../data/models/block_progress_model.dart';
-import '../../data/models/vocabulary_filter.dart';
 import '../widgets/page_header_widget.dart';
 
 class BatchSelectionPage extends ConsumerWidget {
   const BatchSelectionPage({super.key});
 
-  String _getAppBarTitle(String level, String? wordType) {
-    final wordTypeText = wordType != null && wordType != 'all'
-        ? ' - ${_formatWordType(wordType)}'
-        : '';
-    return '${level.toUpperCase()}$wordTypeText';
+  String _getAppBarTitle(String level) {
+    return level.toUpperCase();
   }
 
-  String _formatWordType(String type) {
-    switch (type.toLowerCase()) {
-      case 'noun':
-        return 'Nouns & Adverbs';
-      case 'verb':
-        return 'Verbs';
-      case 'adjective':
-        return 'Adjectives';
-      default:
-        return type;
-    }
-  }
-
-  String _getSubtitle(int totalWords, String? wordType) {
-    final wordTypeText = wordType != null && wordType != 'all'
-        ? '${_formatWordType(wordType)} • '
-        : '';
-    return '$wordTypeText$totalWords words available';
+  String _getSubtitle(int totalWords) {
+    return '$totalWords words available';
   }
 
   @override
@@ -44,28 +25,22 @@ class BatchSelectionPage extends ConsumerWidget {
     final args =
         ModalRoute.of(context)!.settings.arguments as BatchSelectionArgs?;
     final level = args?.level ?? 'N5';
-    final wordType = args?.wordType;
-    final learningMode = args?.learningMode ?? 'flip';
+    final learningMode = args?.learningMode ?? CardStyle.recallMode.code;
     final blockSize = args?.blockSize ?? 50;
 
-    final vocabularyAsync = ref.watch(
-      vocabularyByLevelAndTypeProvider(
-        VocabularyFilter(level: level, wordType: wordType ?? 'all'),
-      ),
+    // Use count provider instead of fetching all data
+    final vocabularyCountAsync = ref.watch(
+      vocabularyCountByLevelProvider(level),
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_getAppBarTitle(level, wordType)),
-        centerTitle: true,
-      ),
-      body: vocabularyAsync.when(
-        data: (vocabulary) {
-          if (vocabulary.isEmpty) {
+      appBar: AppBar(title: Text(_getAppBarTitle(level)), centerTitle: true),
+      body: vocabularyCountAsync.when(
+        data: (totalWords) {
+          if (totalWords == 0) {
             return const Center(child: Text('No vocabulary items available'));
           }
 
-          final totalWords = vocabulary.length;
           final totalBlocks = (totalWords / blockSize).ceil();
 
           return Column(
@@ -89,7 +64,7 @@ class BatchSelectionPage extends ConsumerWidget {
                   child: PageHeaderWidget(
                     icon: Icons.apps_rounded,
                     title: 'Select a Block to Study',
-                    subtitle: _getSubtitle(totalWords, wordType),
+                    subtitle: _getSubtitle(totalWords),
                   ),
                 ),
               ),
@@ -98,15 +73,14 @@ class BatchSelectionPage extends ConsumerWidget {
               Expanded(
                 child: _BlocksGridWithProgress(
                   level: level,
-                  wordType: wordType,
                   totalBlocks: totalBlocks,
                   blockSize: blockSize,
                   totalWords: totalWords,
                   learningMode: learningMode,
                   onNavigate: (ctx, startIndex, count) => _navigateToLearning(
                     ctx,
+                    ref,
                     level,
-                    wordType,
                     learningMode,
                     startIndex,
                     count,
@@ -140,25 +114,57 @@ class BatchSelectionPage extends ConsumerWidget {
     );
   }
 
-  void _navigateToLearning(
+  Future<void> _navigateToLearning(
     BuildContext context,
+    WidgetRef ref,
     String level,
-    String? wordType,
     String learningMode,
     int startIndex,
     int count,
-  ) {
-    Navigator.pushNamed(
-      context,
-      RouteNames.vocabularyLearning,
-      arguments: VocabularyLearningArgs(
-        level: level,
-        wordType: wordType,
-        learningMode: learningMode,
-        startIndex: startIndex,
-        batchSize: count,
-      ),
+  ) async {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
     );
+
+    try {
+      // Lazy load the vocabulary data for this block
+      final repository = ref.read(vocabularyRepositoryProvider);
+      await repository.getVocabularyByLevelWithRange(level, startIndex, count);
+
+      // Close loading indicator
+      if (context.mounted) {
+        Navigator.of(context).pop();
+
+        // Navigate to learning page
+        Navigator.pushNamed(
+          context,
+          RouteNames.vocabularyLearning,
+          arguments: VocabularyLearningArgs(
+            level: level,
+            wordType: null,
+            learningMode: learningMode,
+            startIndex: startIndex,
+            batchSize: count,
+          ),
+        );
+      }
+    } catch (e) {
+      // Close loading indicator
+      if (context.mounted) {
+        Navigator.of(context).pop();
+
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load vocabulary: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }
 
@@ -168,7 +174,6 @@ class BatchSelectionPage extends ConsumerWidget {
 
 class _BlocksGridWithProgress extends ConsumerWidget {
   final String level;
-  final String? wordType;
   final int totalBlocks;
   final int blockSize;
   final int totalWords;
@@ -177,7 +182,6 @@ class _BlocksGridWithProgress extends ConsumerWidget {
 
   const _BlocksGridWithProgress({
     required this.level,
-    required this.wordType,
     required this.totalBlocks,
     required this.blockSize,
     required this.totalWords,
@@ -188,7 +192,7 @@ class _BlocksGridWithProgress extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final blockProgressAsync = ref.watch(
-      blockProgressProvider((level: level, wordType: wordType)),
+      blockProgressProvider((level: level, wordType: null)),
     );
 
     return Container(

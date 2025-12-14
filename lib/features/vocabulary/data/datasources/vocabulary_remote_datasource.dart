@@ -1,94 +1,194 @@
-import 'package:dio/dio.dart';
-import '../../../../core/constants/app_constants.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/utils/logger.dart';
 import '../models/vocabulary_item_model.dart';
 
-/// Remote data source for vocabulary items using API
+/// Remote data source for vocabulary items using Supabase
 class VocabularyRemoteDataSource {
-  final Dio _dio;
+  final SupabaseClient _supabase;
 
-  VocabularyRemoteDataSource(this._dio);
+  VocabularyRemoteDataSource(this._supabase);
 
-  /// Fetch vocabulary items by JLPT level from API
+  /// Fetch vocabulary items by JLPT level from Supabase
+  /// Uses the 'japanese_words' table and filters by 'tag' column
   Future<List<VocabularyItemModel>> getVocabularyByLevel(String level) async {
     try {
-      final response = await _dio.get(
-        '${AppConstants.baseUrl}/api/vocabulary/level/$level',
-        options: Options(
-          sendTimeout: AppConstants.apiTimeout,
-          receiveTimeout: AppConstants.apiTimeout,
-        ),
+      AppLogger.info(
+        'Fetching vocabulary for level: $level from Supabase',
+        'VocabularyRemoteDataSource',
       );
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'] ?? response.data;
-        return data
-            .map((json) => VocabularyItemModel.fromJson(json as Map<String, dynamic>))
-            .toList();
-      } else {
-        throw ServerException(
-          message: 'Failed to load vocabulary',
-          statusCode: response.statusCode,
-        );
-      }
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.sendTimeout) {
-        throw const NetworkException(message: 'Connection timeout');
-      } else if (e.type == DioExceptionType.connectionError) {
-        throw const NetworkException(message: 'No internet connection');
-      } else if (e.response?.statusCode != null) {
-        throw ServerException(
-          message: 'Server error: ${e.response?.statusCode}',
-          statusCode: e.response?.statusCode,
-        );
-      } else {
-        throw const NetworkException(message: 'Network error occurred');
-      }
+      final response = await _supabase
+          .from('japanese_words')
+          .select()
+          .eq('tag', level)
+          .order('id', ascending: true);
+
+      AppLogger.data(
+        'Retrieved ${response.length} vocabulary items for level $level',
+        operation: 'READ',
+      );
+
+      return (response as List)
+          .map(
+            (json) =>
+                VocabularyItemModel.fromJson(json as Map<String, dynamic>),
+          )
+          .toList();
+    } on PostgrestException catch (e) {
+      AppLogger.error(
+        'Supabase error fetching vocabulary: ${e.message}',
+        tag: 'VocabularyRemoteDataSource',
+        error: e,
+      );
+      throw ServerException(
+        message: 'Failed to load vocabulary: ${e.message}',
+        statusCode: int.tryParse(e.code ?? '500'),
+      );
     } catch (e) {
+      AppLogger.error(
+        'Error parsing vocabulary data: $e',
+        tag: 'VocabularyRemoteDataSource',
+        error: e,
+      );
       throw DataException(message: 'Failed to parse vocabulary data: $e');
     }
   }
 
-  /// Fetch all vocabulary items from API
+  /// Fetch all vocabulary items from Supabase
   Future<List<VocabularyItemModel>> getAllVocabulary() async {
     try {
-      final response = await _dio.get(
-        '${AppConstants.baseUrl}/api/vocabulary',
-        options: Options(
-          sendTimeout: AppConstants.apiTimeout,
-          receiveTimeout: AppConstants.apiTimeout,
-        ),
+      AppLogger.info(
+        'Fetching all vocabulary from Supabase',
+        'VocabularyRemoteDataSource',
       );
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'] ?? response.data;
-        return data
-            .map((json) => VocabularyItemModel.fromJson(json as Map<String, dynamic>))
-            .toList();
-      } else {
-        throw ServerException(
-          message: 'Failed to load vocabulary',
-          statusCode: response.statusCode,
-        );
-      }
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.sendTimeout) {
-        throw const NetworkException(message: 'Connection timeout');
-      } else if (e.type == DioExceptionType.connectionError) {
-        throw const NetworkException(message: 'No internet connection');
-      } else if (e.response?.statusCode != null) {
-        throw ServerException(
-          message: 'Server error: ${e.response?.statusCode}',
-          statusCode: e.response?.statusCode,
-        );
-      } else {
-        throw const NetworkException(message: 'Network error occurred');
-      }
+      final response = await _supabase
+          .from('japanese_words')
+          .select()
+          .order('id', ascending: true);
+
+      AppLogger.data(
+        'Retrieved ${response.length} total vocabulary items',
+        operation: 'READ',
+      );
+
+      return (response as List)
+          .map(
+            (json) =>
+                VocabularyItemModel.fromJson(json as Map<String, dynamic>),
+          )
+          .toList();
+    } on PostgrestException catch (e) {
+      AppLogger.error(
+        'Supabase error fetching all vocabulary: ${e.message}',
+        tag: 'VocabularyRemoteDataSource',
+        error: e,
+      );
+      throw ServerException(
+        message: 'Failed to load vocabulary: ${e.message}',
+        statusCode: int.tryParse(e.code ?? '500'),
+      );
     } catch (e) {
+      AppLogger.error(
+        'Error parsing vocabulary data: $e',
+        tag: 'VocabularyRemoteDataSource',
+        error: e,
+      );
+      throw DataException(message: 'Failed to parse vocabulary data: $e');
+    }
+  }
+
+  /// Get the count of vocabulary items by JLPT level from Supabase
+  /// This is more efficient than fetching all data when you only need the count
+  Future<int> getVocabularyCountByLevel(String level) async {
+    try {
+      AppLogger.info(
+        'Fetching vocabulary count for level: $level from Supabase',
+        'VocabularyRemoteDataSource',
+      );
+
+      final response = await _supabase
+          .from('japanese_words')
+          .select('id')
+          .eq('tag', level)
+          .count(CountOption.exact);
+
+      final count = response.count;
+
+      AppLogger.data(
+        'Vocabulary count for level $level: $count',
+        operation: 'READ',
+      );
+
+      return count;
+    } on PostgrestException catch (e) {
+      AppLogger.error(
+        'Supabase error fetching vocabulary count: ${e.message}',
+        tag: 'VocabularyRemoteDataSource',
+        error: e,
+      );
+      throw ServerException(
+        message: 'Failed to get vocabulary count: ${e.message}',
+        statusCode: int.tryParse(e.code ?? '500'),
+      );
+    } catch (e) {
+      AppLogger.error(
+        'Error getting vocabulary count: $e',
+        tag: 'VocabularyRemoteDataSource',
+        error: e,
+      );
+      throw DataException(message: 'Failed to get vocabulary count: $e');
+    }
+  }
+
+  /// Fetch vocabulary items by JLPT level with range (offset and limit)
+  /// This allows lazy loading of vocabulary data
+  Future<List<VocabularyItemModel>> getVocabularyByLevelWithRange(
+    String level,
+    int offset,
+    int limit,
+  ) async {
+    try {
+      AppLogger.info(
+        'Fetching vocabulary for level: $level (offset: $offset, limit: $limit)',
+        'VocabularyRemoteDataSource',
+      );
+
+      final response = await _supabase
+          .from('japanese_words')
+          .select()
+          .eq('tag', level)
+          .order('id', ascending: true)
+          .range(offset, offset + limit - 1);
+
+      AppLogger.data(
+        'Retrieved ${response.length} vocabulary items for level $level',
+        operation: 'READ',
+      );
+
+      return (response as List)
+          .map(
+            (json) =>
+                VocabularyItemModel.fromJson(json as Map<String, dynamic>),
+          )
+          .toList();
+    } on PostgrestException catch (e) {
+      AppLogger.error(
+        'Supabase error fetching vocabulary range: ${e.message}',
+        tag: 'VocabularyRemoteDataSource',
+        error: e,
+      );
+      throw ServerException(
+        message: 'Failed to load vocabulary: ${e.message}',
+        statusCode: int.tryParse(e.code ?? '500'),
+      );
+    } catch (e) {
+      AppLogger.error(
+        'Error parsing vocabulary data: $e',
+        tag: 'VocabularyRemoteDataSource',
+        error: e,
+      );
       throw DataException(message: 'Failed to parse vocabulary data: $e');
     }
   }

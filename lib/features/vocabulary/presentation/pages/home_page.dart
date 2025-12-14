@@ -2,19 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/routes/route_names.dart';
-import '../../data/providers/vocabulary_provider.dart';
-import '../../data/providers/bookmark_providers.dart';
+import '../../data/providers/streak_provider.dart';
+import '../../data/providers/srs_provider.dart';
 import '../widgets/home_feature_card.dart';
+import '../widgets/streak_card_widget.dart';
+import '../widgets/srs_stats_widget.dart';
+import 'srs_review_page.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final vocabularyAsync = ref.watch(allVocabularyProvider);
-    final progressAsync = ref.watch(allUserProgressProvider);
-    final bookmarkCountAsync = ref.watch(bookmarkCountProvider);
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
 
+class _HomePageState extends ConsumerState<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    // Check streak status when home page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(userStreakProvider.notifier).checkStreakStatus();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
@@ -35,47 +48,109 @@ class HomePage extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _StatsSection(
-                            vocabularyAsync: vocabularyAsync,
-                            progressAsync: progressAsync,
-                            bookmarkCountAsync: bookmarkCountAsync,
-                          ),
-                          const SizedBox(height: 36),
+                          // Streak Card
+                          const StreakCardWidget(),
+                          const SizedBox(height: 20),
+
+                          // SRS Stats Widget
+                          const SRSStatsWidget(),
+                          const SizedBox(height: 32),
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                     colors: [
+                                      AppTheme.secondaryColor,
                                       AppTheme.secondaryColor.withValues(
-                                        alpha: 0.2,
-                                      ),
-                                      AppTheme.secondaryColor.withValues(
-                                        alpha: 0.1,
+                                        alpha: 0.85,
                                       ),
                                     ],
                                   ),
                                   borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppTheme.secondaryColor.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
                                 ),
                                 child: const Icon(
                                   Icons.school,
-                                  color: AppTheme.secondaryColor,
-                                  size: 24,
+                                  color: Colors.white,
+                                  size: 22,
                                 ),
                               ),
                               const SizedBox(width: 12),
                               Text(
                                 'Start Learning',
-                                style: AppTheme.headlineMedium.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[900],
-                                  fontSize: 22,
-                                ),
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.black87,
+                                      fontSize: 20,
+                                      letterSpacing: -0.3,
+                                    ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 18),
+                          const SizedBox(height: 16),
+                          Consumer(
+                            builder: (context, ref, child) {
+                              final stats = ref.watch(srsStatsProvider);
+
+                              if (stats.dueCards > 0) {
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 24),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SRSReviewPage(),
+                                        ),
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.all(16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      elevation: 0,
+                                      shadowColor: Colors.red.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.fact_check, size: 20),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'Review ${stats.dueCards} Cards Now',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              return const SizedBox.shrink();
+                            },
+                          ),
                           const _FeaturesSection(),
                           const SizedBox(height: 24),
                         ],
@@ -106,10 +181,7 @@ class _WelcomeHeader extends StatelessWidget {
     return Stack(
       children: [
         // Main gradient container
-        _HeaderGradientContainer(
-          statusBarHeight: statusBarHeight,
-          hour: hour,
-        ),
+        _HeaderGradientContainer(statusBarHeight: statusBarHeight, hour: hour),
         // Decorative circles for visual interest (const for no rebuilds)
         const _DecorativeCircle(size: 100, right: -20, top: 40, alpha: 0.1),
         const _DecorativeCircle(size: 60, right: 40, top: -10, alpha: 0.08),
@@ -162,7 +234,7 @@ class _HeaderGradientContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 20),
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -170,38 +242,67 @@ class _HeaderGradientContainer extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             AppTheme.primaryColor,
-            AppTheme.primaryColor.withValues(alpha: 0.85),
-            AppTheme.secondaryColor.withValues(alpha: 0.7),
+            AppTheme.primaryColor.withValues(alpha: 0.9),
           ],
         ),
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryColor.withValues(alpha: 0.3),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
+            color: AppTheme.primaryColor.withValues(alpha: 0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(24, statusBarHeight + 16, 24, 48),
+        padding: EdgeInsets.fromLTRB(24, statusBarHeight + 20, 24, 40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const _WavingHandIcon(),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.waving_hand,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
                 _TimeBasedGreetingBadge(hour: hour),
               ],
             ),
-            const SizedBox(height: 24),
-            const _WelcomeTitle(),
-            const SizedBox(height: 12),
-            const _WelcomeSubtitle(),
+            const SizedBox(height: 28),
+            Text(
+              'Welcome Back!',
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                fontSize: 32,
+                letterSpacing: -0.8,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Ready to continue your Japanese learning journey?',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.white.withValues(alpha: 0.9),
+                height: 1.5,
+                fontSize: 15,
+              ),
+            ),
           ],
         ),
       ),
@@ -209,37 +310,6 @@ class _HeaderGradientContainer extends StatelessWidget {
   }
 }
 
-/// Waving hand icon - const for no rebuilds
-class _WavingHandIcon extends StatelessWidget {
-  const _WavingHandIcon();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.25),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.3),
-          width: 2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: const Icon(
-        Icons.waving_hand,
-        color: Colors.white,
-        size: 32,
-      ),
-    );
-  }
-}
 
 /// Time-based greeting badge - only rebuilds when hour changes
 class _TimeBasedGreetingBadge extends StatelessWidget {
@@ -262,10 +332,7 @@ class _TimeBasedGreetingBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
@@ -291,248 +358,7 @@ class _TimeBasedGreetingBadge extends StatelessWidget {
   }
 }
 
-/// Welcome title - const for no rebuilds
-class _WelcomeTitle extends StatelessWidget {
-  const _WelcomeTitle();
 
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'Welcome Back!',
-      style: AppTheme.headlineLarge.copyWith(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-        fontSize: 36,
-        letterSpacing: -0.5,
-      ),
-    );
-  }
-}
-
-/// Welcome subtitle - const for no rebuilds
-class _WelcomeSubtitle extends StatelessWidget {
-  const _WelcomeSubtitle();
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'Ready to continue your Japanese learning journey?',
-      style: AppTheme.bodyLarge.copyWith(
-        color: Colors.white.withValues(alpha: 0.95),
-        height: 1.6,
-        fontSize: 16,
-      ),
-    );
-  }
-}
-
-/// Stats section with async data handling
-class _StatsSection extends StatelessWidget {
-  final AsyncValue vocabularyAsync;
-  final AsyncValue progressAsync;
-  final AsyncValue<int> bookmarkCountAsync;
-
-  const _StatsSection({
-    required this.vocabularyAsync,
-    required this.progressAsync,
-    required this.bookmarkCountAsync,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return vocabularyAsync.when(
-      data: (vocabulary) => progressAsync.when(
-        data: (progress) => bookmarkCountAsync.when(
-          data: (bookmarkCount) => _StatsGrid(
-            totalWords: vocabulary.length,
-            learnedWords: progress.length,
-            bookmarkedWords: bookmarkCount,
-          ),
-          loading: () => _StatsGrid(
-            totalWords: vocabulary.length,
-            learnedWords: progress.length,
-            bookmarkedWords: 0,
-          ),
-          error: (_, __) => _StatsGrid(
-            totalWords: vocabulary.length,
-            learnedWords: progress.length,
-            bookmarkedWords: 0,
-          ),
-        ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) => const _StatsGrid(
-          totalWords: 0,
-          learnedWords: 0,
-          bookmarkedWords: 0,
-        ),
-      ),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) =>
-          const _StatsGrid(totalWords: 0, learnedWords: 0, bookmarkedWords: 0),
-    );
-  }
-}
-
-/// Modern stats grid with better visual design
-class _StatsGrid extends StatelessWidget {
-  final int totalWords;
-  final int learnedWords;
-  final int bookmarkedWords;
-
-  const _StatsGrid({
-    required this.totalWords,
-    required this.learnedWords,
-    required this.bookmarkedWords,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.primaryColor.withValues(alpha: 0.2),
-                    AppTheme.primaryColor.withValues(alpha: 0.1),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(
-                Icons.trending_up,
-                color: AppTheme.primaryColor,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Your Progress',
-              style: AppTheme.titleLarge.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[900],
-                fontSize: 22,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 18),
-        Row(
-          children: [
-            Expanded(
-              child: _ModernStatCard(
-                icon: Icons.book_rounded,
-                label: 'Total',
-                value: totalWords.toString(),
-                color: AppTheme.primaryColor,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _ModernStatCard(
-                icon: Icons.check_circle_rounded,
-                label: 'Learned',
-                value: learnedWords.toString(),
-                color: AppTheme.successColor,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _ModernStatCard(
-                icon: Icons.bookmark_rounded,
-                label: 'Saved',
-                value: bookmarkedWords.toString(),
-                color: const Color(0xFFE53935),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-/// Modern compact stat card with enhanced visuals
-class _ModernStatCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-
-  const _ModernStatCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: 0.12),
-            color.withValues(alpha: 0.06),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withValues(alpha: 0.4), width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.15),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Icon(icon, color: color, size: 28),
-          ),
-          const SizedBox(height: 14),
-          Text(
-            value,
-            style: AppTheme.headlineMedium.copyWith(
-              fontWeight: FontWeight.bold,
-              color: color,
-              fontSize: 28,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: AppTheme.bodySmall.copyWith(
-              color: Colors.grey[700],
-              fontWeight: FontWeight.w700,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 /// Features section (const, never rebuilds)
 class _FeaturesSection extends StatelessWidget {
@@ -563,7 +389,8 @@ class _FeaturesSection extends StatelessWidget {
           title: 'Bookmarked Words',
           description: 'Review your saved vocabulary',
           color: const Color(0xFFE53935),
-          onTap: () => Navigator.pushNamed(context, RouteNames.bookmarkedVocabulary),
+          onTap: () =>
+              Navigator.pushNamed(context, RouteNames.bookmarkedVocabulary),
         ),
         const SizedBox(height: 12),
         HomeFeatureCard(

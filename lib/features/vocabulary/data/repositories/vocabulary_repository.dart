@@ -14,6 +14,18 @@ abstract class VocabularyRepository {
   /// Get vocabulary items by level only
   Future<List<VocabularyItemModel>> getVocabularyByLevel(String level);
 
+  /// Get the count of vocabulary items by level
+  /// More efficient than fetching all data when you only need the count
+  Future<int> getVocabularyCountByLevel(String level);
+
+  /// Get vocabulary items by level with range (offset and limit)
+  /// This allows lazy loading of vocabulary data
+  Future<List<VocabularyItemModel>> getVocabularyByLevelWithRange(
+    String level,
+    int offset,
+    int limit,
+  );
+
   /// Get all vocabulary items
   Future<List<VocabularyItemModel>> getAllVocabulary();
 

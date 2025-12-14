@@ -46,60 +46,143 @@ class BurmeseSide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-      child: _buildMainContent(context),
+    return Flexible(
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        child: _buildMainContent(context),
+      ),
     );
   }
 
   Widget _buildMainContent(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          burmeseWord,
-          style: AppTheme.burmeseText.copyWith(
-            fontSize: 32,
-            fontWeight: FontWeight.w800,
-            height: 1.6,
-            letterSpacing: 0.3,
-            color: const Color(0xFF1A1A1A),
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 32),
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 12,
-          ),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                AppTheme.primaryColor.withValues(alpha: 0.12),
-                AppTheme.primaryColor.withValues(alpha: 0.08),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: AppTheme.primaryColor.withValues(alpha: 0.2),
-              width: 1,
-            ),
-          ),
-          child: Text(
-            japaneseReading,
-            style: AppTheme.japaneseText.copyWith(
-              color: AppTheme.primaryColor,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              height: 1.3,
-              letterSpacing: 1,
+    // Replace "၊ " with newline for proper line breaks
+    final formattedText = burmeseWord.replaceAll('၊ ', '၊\n');
+    
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            formattedText,
+            style: AppTheme.burmeseText.copyWith(
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
+              height: 1.6,
+              letterSpacing: 0.3,
+              color: const Color(0xFF1A1A1A),
             ),
             textAlign: TextAlign.center,
           ),
-        ),
-      ],
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24,
+              vertical: 12,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppTheme.primaryColor.withValues(alpha: 0.12),
+                  AppTheme.primaryColor.withValues(alpha: 0.08),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+            child: Text(
+              japaneseReading,
+              style: AppTheme.japaneseText.copyWith(
+                color: AppTheme.primaryColor,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                height: 1.3,
+                letterSpacing: 1,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class EnglishSide extends StatelessWidget {
+  final String englishWord;
+  final String japaneseReading;
+
+  const EnglishSide({
+    super.key,
+    required this.englishWord,
+    required this.japaneseReading,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        child: _buildMainContent(context),
+      ),
+    );
+  }
+
+  Widget _buildMainContent(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            englishWord,
+            style: AppTheme.bodyLarge.copyWith(
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              height: 1.4,
+              letterSpacing: 0.3,
+              color: const Color(0xFF1A1A1A),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24,
+              vertical: 12,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppTheme.primaryColor.withValues(alpha: 0.12),
+                  AppTheme.primaryColor.withValues(alpha: 0.08),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+            child: Text(
+              japaneseReading,
+              style: AppTheme.japaneseText.copyWith(
+                color: AppTheme.primaryColor,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                height: 1.3,
+                letterSpacing: 1,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -119,10 +202,12 @@ class JapaneseSide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-      child: _buildMainContent(),
+    return Flexible(
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        child: _buildMainContent(),
+      ),
     );
   }
 

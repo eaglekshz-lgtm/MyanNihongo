@@ -46,3 +46,6 @@ app.*.map.json
 
 # Backup files
 *.backup
+
+# Environment variables
+.env

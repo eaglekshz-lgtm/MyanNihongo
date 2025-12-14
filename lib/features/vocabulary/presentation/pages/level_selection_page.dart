@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/routes/route_names.dart';
-import '../../../../arguments/category_selection_args.dart';
+import '../../../../arguments/learning_mode_config_args.dart';
 import '../widgets/page_header_widget.dart';
 import '../widgets/level_card_widget.dart';
 
@@ -47,44 +46,44 @@ class _LevelsList extends StatelessWidget {
       level: 'N5',
       title: 'JLPT N5',
       description: 'Beginner - Basic vocabulary and grammar',
-      color: AppTheme.successColor,
       difficulty: 'Easiest',
     ),
     _LevelData(
       level: 'N4',
       title: 'JLPT N4',
       description: 'Elementary - Simple everyday conversations',
-      color: Colors.lightGreen,
       difficulty: 'Easy',
     ),
     _LevelData(
       level: 'N3',
       title: 'JLPT N3',
       description: 'Intermediate - Daily life situations',
-      color: AppTheme.warningColor,
       difficulty: 'Medium',
     ),
     _LevelData(
       level: 'N2',
       title: 'JLPT N2',
       description: 'Upper intermediate - Various topics',
-      color: Colors.deepOrange,
       difficulty: 'Hard',
     ),
     _LevelData(
       level: 'N1',
       title: 'JLPT N1',
       description: 'Advanced - Complex topics and expressions',
-      color: AppTheme.errorColor,
       difficulty: 'Hardest',
     ),
   ];
 
-  void _navigateToCategory(BuildContext context, String level) {
+  void _navigateToLearningConfig(BuildContext context, String level) {
+    // Navigate directly to learning mode config, skipping category selection
+    // Default to 'all' word types (no filtering by category)
     Navigator.pushNamed(
       context,
-      RouteNames.categorySelection,
-      arguments: CategorySelectionArgs(level: level),
+      RouteNames.learningModeConfig,
+      arguments: LearningModeConfigArgs(
+        level: level,
+        wordType: null, // null means 'all' word types
+      ),
     );
   }
 
@@ -99,9 +98,8 @@ class _LevelsList extends StatelessWidget {
           level: levelData.level,
           title: levelData.title,
           description: levelData.description,
-          color: levelData.color,
           difficulty: levelData.difficulty,
-          onTap: () => _navigateToCategory(context, levelData.level),
+          onTap: () => _navigateToLearningConfig(context, levelData.level),
         );
       },
     );
@@ -113,14 +111,12 @@ class _LevelData {
   final String level;
   final String title;
   final String description;
-  final Color color;
   final String difficulty;
 
   const _LevelData({
     required this.level,
     required this.title,
     required this.description,
-    required this.color,
     required this.difficulty,
   });
 }

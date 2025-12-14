@@ -175,13 +175,14 @@ class VocabularyItemModelAdapter extends TypeAdapter<VocabularyItemModel> {
       translations: fields[4] as TranslationModel,
       exampleSentences: (fields[5] as List).cast<ExampleSentenceModel>(),
       quizzes: fields[6] as QuizDataModel?,
+      tag: fields[7] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, VocabularyItemModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -195,7 +196,9 @@ class VocabularyItemModelAdapter extends TypeAdapter<VocabularyItemModel> {
       ..writeByte(5)
       ..write(obj.exampleSentences)
       ..writeByte(6)
-      ..write(obj.quizzes);
+      ..write(obj.quizzes)
+      ..writeByte(7)
+      ..write(obj.tag);
   }
 
   @override
@@ -285,6 +288,7 @@ VocabularyItemModel _$VocabularyItemModelFromJson(Map<String, dynamic> json) =>
       quizzes: json['quizzes'] == null
           ? null
           : QuizDataModel.fromJson(json['quizzes'] as Map<String, dynamic>),
+      tag: json['tag'] as String,
     );
 
 Map<String, dynamic> _$VocabularyItemModelToJson(
@@ -298,4 +302,5 @@ Map<String, dynamic> _$VocabularyItemModelToJson(
       'example_sentences':
           instance.exampleSentences.map((e) => e.toJson()).toList(),
       'quizzes': instance.quizzes?.toJson(),
+      'tag': instance.tag,
     };

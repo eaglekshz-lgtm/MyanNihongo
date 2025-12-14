@@ -27,59 +27,68 @@ class AppTheme {
   static const Color defaultOptionColor = Color(0xFFFFFFFF);
   static const Color selectedOptionColor = Color(0xFFE3F2FD);
 
-  // Text styles with modern Google Fonts - Quicksand for smooth, friendly appearance
-  static TextStyle get headlineLarge => GoogleFonts.quicksand(
+  // Text styles with modern Google Fonts - Manrope for clean, geometric readability
+  static TextStyle get headlineLarge => GoogleFonts.manrope(
     fontSize: 32,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w700,
     letterSpacing: -0.5,
+    height: 1.2,
   );
 
-  static TextStyle get headlineMedium => GoogleFonts.quicksand(
+  static TextStyle get headlineMedium => GoogleFonts.manrope(
     fontSize: 28,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w700,
     letterSpacing: -0.5,
+    height: 1.2,
   );
 
-  static TextStyle get headlineSmall => GoogleFonts.quicksand(
+  static TextStyle get headlineSmall => GoogleFonts.manrope(
     fontSize: 24,
     fontWeight: FontWeight.w600,
     letterSpacing: -0.25,
+    height: 1.3,
   );
 
-  static TextStyle get titleLarge => GoogleFonts.quicksand(
+  static TextStyle get titleLarge => GoogleFonts.manrope(
     fontSize: 22,
     fontWeight: FontWeight.w600,
+    letterSpacing: -0.15,
+    height: 1.3,
+  );
+
+  static TextStyle get titleMedium => GoogleFonts.manrope(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
     letterSpacing: 0,
+    height: 1.4,
   );
 
-  static TextStyle get titleMedium => GoogleFonts.quicksand(
+  static TextStyle get bodyLarge => GoogleFonts.manrope(
     fontSize: 16,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w400,
     letterSpacing: 0.1,
+    height: 1.5,
   );
 
-  static TextStyle get bodyLarge => GoogleFonts.quicksand(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    letterSpacing: 0.1,
-  );
-
-  static TextStyle get bodyMedium => GoogleFonts.quicksand(
+  static TextStyle get bodyMedium => GoogleFonts.manrope(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
-    letterSpacing: 0.25,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.1,
+    height: 1.5,
   );
 
-  static TextStyle get bodySmall => GoogleFonts.quicksand(
+  static TextStyle get bodySmall => GoogleFonts.manrope(
     fontSize: 12,
-    fontWeight: FontWeight.w500,
-    letterSpacing: 0.4,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.15,
+    height: 1.5,
   );
 
-  static TextStyle get labelLarge => GoogleFonts.quicksand(
+  static TextStyle get labelLarge => GoogleFonts.manrope(
     fontSize: 14,
     fontWeight: FontWeight.w600,
     letterSpacing: 0.1,
+    height: 1.4,
   );
 
   // Japanese text style with Noto Sans JP
@@ -100,7 +109,7 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      fontFamily: GoogleFonts.quicksand().fontFamily,
+      fontFamily: GoogleFonts.manrope().fontFamily,
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
         brightness: Brightness.light,
@@ -108,13 +117,13 @@ class AppTheme {
         onSurface: onSurfaceColor,
         error: errorColor,
       ),
-      textTheme: GoogleFonts.quicksandTextTheme(),
+      textTheme: GoogleFonts.manropeTextTheme(),
       appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: true,
         backgroundColor: Colors.transparent,
         foregroundColor: onSurfaceColor,
-        titleTextStyle: GoogleFonts.quicksand(
+        titleTextStyle: GoogleFonts.manrope(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: onSurfaceColor,
@@ -201,12 +210,12 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
-      fontFamily: GoogleFonts.quicksand().fontFamily,
+      fontFamily: GoogleFonts.manrope().fontFamily,
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
         brightness: Brightness.dark,
       ),
-      textTheme: GoogleFonts.quicksandTextTheme(ThemeData.dark().textTheme),
+      textTheme: GoogleFonts.manropeTextTheme(ThemeData.dark().textTheme),
       appBarTheme: const AppBarTheme(
         elevation: 0,
         centerTitle: true,
