@@ -1,5 +1,5 @@
 /// Application-wide constants
-/// 
+///
 /// Contains all application constants including API configuration,
 /// local storage settings, quiz configuration, and UI defaults.
 class AppConstants {
@@ -8,7 +8,7 @@ class AppConstants {
 
   // API Configuration (deprecated - now using Supabase)
   // Kept for reference if needed in future
-  // static const String baseUrl = 'https://api.myannihongo.com'; 
+  // static const String baseUrl = 'https://api.myannihongo.com';
   // static const String apiVersion = 'v1';
   // static const Duration apiTimeout = Duration(seconds: 30);
 
@@ -27,12 +27,12 @@ class AppConstants {
   static const int quizOptionsCount = 4;
   static const int defaultQuestionsPerQuiz = 10;
   static const int maxQuestionsPerQuiz = 50;
-  
+
   // JLPT Levels - Use JLPTLevel enum instead
   // Kept for backward compatibility if needed
   static const String defaultJLPTLevel = 'N5';
   static const List<String> jlptLevels = ['N5', 'N4', 'N3', 'N2', 'N1'];
-  
+
   // Quiz Types - Use QuizType enum instead
   static const String quizTypeKanjiToHiragana = 'kanji_to_hiragana';
   static const String quizTypeHiraganaToKanji = 'hiragana_to_kanji';
@@ -70,8 +70,10 @@ class AppConstants {
   static const int maxCacheSize = 10000; // Maximum number of items to cache
 
   // Error Messages
-  static const String networkErrorMessage = 'Please check your internet connection and try again.';
-  static const String serverErrorMessage = 'Server error occurred. Please try again later.';
+  static const String networkErrorMessage =
+      'Please check your internet connection and try again.';
+  static const String serverErrorMessage =
+      'Server error occurred. Please try again later.';
   static const String cacheErrorMessage = 'Local storage error occurred.';
   static const String dataErrorMessage = 'Data format error occurred.';
   static const String unknownErrorMessage = 'An unexpected error occurred.';

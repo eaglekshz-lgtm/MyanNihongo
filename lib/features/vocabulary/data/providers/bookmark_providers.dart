@@ -45,7 +45,7 @@ List<VocabularyItemModel> _sortVocabularyByBookmarkDate(
   List<BookmarkModel> bookmarks,
 ) {
   if (vocabulary.isEmpty || bookmarks.isEmpty) return vocabulary;
-  
+
   return vocabulary..sort((a, b) {
     final bookmarkA = bookmarks.firstWhere(
       (bm) => bm.vocabularyId == a.id.toString(),
@@ -71,14 +71,14 @@ Future<List<VocabularyItemModel>> _fetchVocabularyForBookmarks(
   VocabularyLocalDataSource vocabularyDataSource,
 ) async {
   final vocabulary = <VocabularyItemModel>[];
-  
+
   for (final id in bookmarkIds) {
     final vocab = await vocabularyDataSource.getVocabularyById(id);
     if (vocab != null) {
       vocabulary.add(vocab);
     }
   }
-  
+
   return vocabulary;
 }
 
@@ -90,10 +90,10 @@ Future<List<VocabularyItemModel>> _fetchVocabularyForBookmarks(
 /// ✅ FIXED: Optimized to use synchronous Hive access and removed await in initial yield
 final allBookmarksProvider = StreamProvider<List<BookmarkModel>>((ref) async* {
   final box = ref.read(bookmarkBoxProvider);
-  
+
   // ✅ Synchronous initial yield (Hive is sync-capable)
   yield box.values.toList();
-  
+
   // Listen to changes in the bookmark box
   await for (final _ in box.watch()) {
     yield box.values.toList();
@@ -104,10 +104,10 @@ final allBookmarksProvider = StreamProvider<List<BookmarkModel>>((ref) async* {
 /// ✅ FIXED: Simplified to use direct box access
 final bookmarkedIdsProvider = StreamProvider<Set<String>>((ref) async* {
   final box = ref.read(bookmarkBoxProvider);
-  
+
   // Synchronous initial yield
   yield box.values.map((bm) => bm.vocabularyId).toSet();
-  
+
   // Listen to changes
   await for (final _ in box.watch()) {
     yield box.values.map((bm) => bm.vocabularyId).toSet();
@@ -121,23 +121,23 @@ final bookmarkedVocabularyProvider = StreamProvider<List<VocabularyItemModel>>((
 ) async* {
   final box = ref.read(bookmarkBoxProvider);
   final vocabularyDataSource = ref.read(vocabularyLocalDataSourceProvider);
-  
+
   // Helper function to get current bookmarked vocabulary
   Future<List<VocabularyItemModel>> getCurrentBookmarkedVocab() async {
     final bookmarks = box.values.toList();
     final bookmarkIds = bookmarks.map((bm) => bm.vocabularyId).toList();
-    
+
     final vocabulary = await _fetchVocabularyForBookmarks(
       bookmarkIds,
       vocabularyDataSource,
     );
-    
+
     return _sortVocabularyByBookmarkDate(vocabulary, bookmarks);
   }
-  
+
   // Initial fetch
   yield await getCurrentBookmarkedVocab();
-  
+
   // Listen to changes in the bookmark box
   await for (final _ in box.watch()) {
     yield await getCurrentBookmarkedVocab();
@@ -148,10 +148,10 @@ final bookmarkedVocabularyProvider = StreamProvider<List<VocabularyItemModel>>((
 /// ✅ FIXED: Simplified to use direct box access
 final bookmarkCountProvider = StreamProvider<int>((ref) async* {
   final box = ref.read(bookmarkBoxProvider);
-  
+
   // Synchronous initial count
   yield box.length;
-  
+
   // Listen to changes
   await for (final _ in box.watch()) {
     yield box.length;
@@ -185,17 +185,17 @@ class BookmarkNotifier extends StateNotifier<AsyncValue<Set<String>>> {
   Future<bool> toggleBookmark(String vocabularyId) async {
     // Store current state to restore on error
     final previousState = state;
-    
+
     // Set loading state
     state = const AsyncValue.loading();
-    
+
     try {
       final isBookmarked = await _dataSource.toggleBookmark(vocabularyId);
-      
+
       // Reload bookmarks to get updated state
       final ids = await _dataSource.getBookmarkedIds();
       state = AsyncValue.data(ids.toSet());
-      
+
       return isBookmarked;
     } catch (e, stack) {
       // Restore previous state and rethrow
@@ -208,7 +208,7 @@ class BookmarkNotifier extends StateNotifier<AsyncValue<Set<String>>> {
   /// ✅ FIXED: Added loading state during add operation
   Future<void> addBookmark(String vocabularyId) async {
     state = const AsyncValue.loading();
-    
+
     try {
       await _dataSource.addBookmark(vocabularyId);
       final ids = await _dataSource.getBookmarkedIds();
@@ -222,7 +222,7 @@ class BookmarkNotifier extends StateNotifier<AsyncValue<Set<String>>> {
   /// ✅ FIXED: Added loading state during remove operation
   Future<void> removeBookmark(String vocabularyId) async {
     state = const AsyncValue.loading();
-    
+
     try {
       await _dataSource.removeBookmark(vocabularyId);
       final ids = await _dataSource.getBookmarkedIds();

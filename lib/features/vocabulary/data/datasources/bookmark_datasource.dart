@@ -14,12 +14,16 @@ class BookmarkDataSource {
 
   /// Get all bookmarked vocabulary IDs
   Future<List<String>> getBookmarkedIds() async {
-    return _bookmarkBox.values.map((bookmark) => bookmark.vocabularyId).toList();
+    return _bookmarkBox.values
+        .map((bookmark) => bookmark.vocabularyId)
+        .toList();
   }
 
   /// Check if a vocabulary is bookmarked
   Future<bool> isBookmarked(String vocabularyId) async {
-    return _bookmarkBox.values.any((bookmark) => bookmark.vocabularyId == vocabularyId);
+    return _bookmarkBox.values.any(
+      (bookmark) => bookmark.vocabularyId == vocabularyId,
+    );
   }
 
   /// Add a bookmark

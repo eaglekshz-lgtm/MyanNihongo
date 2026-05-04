@@ -41,10 +41,11 @@ enum JLPTLevel {
   }
 
   /// Get all level codes
-  static List<String> get allCodes => JLPTLevel.values.map((e) => e.code).toList();
+  static List<String> get allCodes =>
+      JLPTLevel.values.map((e) => e.code).toList();
 
   /// Get all display names
-  static List<String> get allDisplayNames => 
+  static List<String> get allDisplayNames =>
       JLPTLevel.values.map((e) => e.displayName).toList();
 
   /// Default level
@@ -73,16 +74,15 @@ enum CardStyle {
   static CardStyle? fromCode(String? code) {
     if (code == null) return null;
     try {
-      return CardStyle.values.firstWhere(
-        (style) => style.code == code,
-      );
+      return CardStyle.values.firstWhere((style) => style.code == code);
     } catch (e) {
       return null;
     }
   }
 
   /// Get all card style codes
-  static List<String> get allCodes => CardStyle.values.map((e) => e.code).toList();
+  static List<String> get allCodes =>
+      CardStyle.values.map((e) => e.code).toList();
 
   /// Default card style
   static CardStyle get defaultStyle => CardStyle.recallMode;
@@ -90,10 +90,16 @@ enum CardStyle {
 
 /// Enum for quiz types
 enum QuizType {
-  kanjiToHiragana('kanji_to_hiragana', 'Kanji to Hiragana', 
-      'Choose the correct hiragana reading for the given kanji'),
-  hiraganaToKanji('hiragana_to_kanji', 'Hiragana to Kanji',
-      'Choose the correct kanji for the given hiragana');
+  kanjiToHiragana(
+    'kanji_to_hiragana',
+    'Kanji to Hiragana',
+    'Choose the correct hiragana reading for the given kanji',
+  ),
+  hiraganaToKanji(
+    'hiragana_to_kanji',
+    'Hiragana to Kanji',
+    'Choose the correct kanji for the given hiragana',
+  );
 
   const QuizType(this.code, this.displayName, this.description);
 
@@ -110,16 +116,15 @@ enum QuizType {
   static QuizType? fromCode(String? code) {
     if (code == null) return null;
     try {
-      return QuizType.values.firstWhere(
-        (type) => type.code == code,
-      );
+      return QuizType.values.firstWhere((type) => type.code == code);
     } catch (e) {
       return null;
     }
   }
 
   /// Get all quiz type codes
-  static List<String> get allCodes => QuizType.values.map((e) => e.code).toList();
+  static List<String> get allCodes =>
+      QuizType.values.map((e) => e.code).toList();
 
   /// Default quiz type
   static QuizType get defaultType => QuizType.kanjiToHiragana;

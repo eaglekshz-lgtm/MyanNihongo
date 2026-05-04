@@ -13,13 +13,18 @@ class StartQuizButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Flat glass bar that docks to the bottom edge — no strange rounded top corners
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.fixedBlack.withValues(
+              alpha: Theme.of(context).brightness == Brightness.dark
+                  ? 0.2
+                  : 0.05,
+            ),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -27,32 +32,35 @@ class StartQuizButton extends StatelessWidget {
       ),
       child: SafeArea(
         top: false,
-        child: ElevatedButton(
-          onPressed: isEnabled ? onPressed : null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: isEnabled
-                ? AppTheme.primaryColor
-                : Colors.grey[400],
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 2,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.play_arrow_rounded, size: 28),
-              const SizedBox(width: 8),
-              Text(
-                isEnabled ? 'Start Quiz' : 'No vocabulary available',
-                style: AppTheme.bodyLarge.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: isEnabled ? onPressed : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isEnabled
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-            ],
+              elevation: 0,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.play_arrow_rounded, size: 26),
+                const SizedBox(width: 8),
+                Text(
+                  isEnabled ? 'Start Quiz' : 'No vocabulary available',
+                  style: AppTheme.bodyLarge.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -14,20 +14,22 @@ class NoVocabularyWarning extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.warningColor.withValues(alpha: 0.15),
-            AppTheme.warningColor.withValues(alpha: 0.08),
+            Theme.of(context).colorScheme.warning.withValues(alpha: 0.15),
+            Theme.of(context).colorScheme.warning.withValues(alpha: 0.08),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.warningColor.withValues(alpha: 0.3),
+          color: Theme.of(context).colorScheme.warning.withValues(alpha: 0.3),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.warningColor.withValues(alpha: 0.15),
+            color: Theme.of(
+              context,
+            ).colorScheme.warning.withValues(alpha: 0.15),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -40,12 +42,14 @@ class NoVocabularyWarning extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppTheme.warningColor.withValues(alpha: 0.2),
+                color: Theme.of(
+                  context,
+                ).colorScheme.warning.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.warning_amber_rounded,
-                color: AppTheme.warningColor,
+                color: Theme.of(context).colorScheme.warning,
                 size: 28,
               ),
             ),
@@ -55,7 +59,9 @@ class NoVocabularyWarning extends StatelessWidget {
                 'No vocabulary available for $levelText.',
                 style: AppTheme.bodySmall.copyWith(
                   fontSize: 13,
-                  color: AppTheme.warningColor.withValues(alpha: 0.9),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.warning.withValues(alpha: 0.9),
                   fontWeight: FontWeight.w600,
                   height: 1.4,
                 ),

@@ -61,11 +61,11 @@ class SystemUpdateModel {
   /// Compares timestamps at second precision in UTC to avoid microsecond and timezone differences
   bool needsUpdate(DateTime? localLastUpdated) {
     if (localLastUpdated == null) return true;
-    
+
     // Convert both to UTC and normalize to second precision
     final serverUtc = lastUpdatedAt.toUtc();
     final localUtc = localLastUpdated.toUtc();
-    
+
     final serverTime = DateTime.utc(
       serverUtc.year,
       serverUtc.month,
@@ -74,7 +74,7 @@ class SystemUpdateModel {
       serverUtc.minute,
       serverUtc.second,
     );
-    
+
     final localTime = DateTime.utc(
       localUtc.year,
       localUtc.month,
@@ -83,7 +83,7 @@ class SystemUpdateModel {
       localUtc.minute,
       localUtc.second,
     );
-    
+
     return serverTime.isAfter(localTime);
   }
 
@@ -105,12 +105,6 @@ class SystemUpdateModel {
 
   @override
   int get hashCode {
-    return Object.hash(
-      id,
-      tag,
-      lastUpdatedAt,
-      description,
-      lastCheckedAt,
-    );
+    return Object.hash(id, tag, lastUpdatedAt, description, lastCheckedAt);
   }
 }

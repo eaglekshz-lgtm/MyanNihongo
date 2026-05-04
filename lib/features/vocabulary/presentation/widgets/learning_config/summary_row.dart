@@ -19,7 +19,7 @@ class SummaryRow extends StatelessWidget {
       children: [
         Icon(
           icon,
-          color: AppTheme.primaryColor.withValues(alpha: 0.7),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
           size: 20,
         ),
         const SizedBox(width: 12),
@@ -27,7 +27,9 @@ class SummaryRow extends StatelessWidget {
           child: Text(
             label,
             style: AppTheme.bodyMedium.copyWith(
-              color: Colors.grey[700],
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
         ),
@@ -35,7 +37,7 @@ class SummaryRow extends StatelessWidget {
           value,
           style: AppTheme.bodyMedium.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppTheme.primaryColor,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ],

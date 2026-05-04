@@ -10,7 +10,7 @@ class QuizArgs with _$QuizArgs {
   const factory QuizArgs({
     /// Optional JLPT level filter
     String? level,
-    
+
     /// Number of questions to include in quiz
     required int numberOfQuestions,
   }) = _QuizArgs;
@@ -19,9 +19,6 @@ class QuizArgs with _$QuizArgs {
 
   /// Create with default values
   factory QuizArgs.defaults({String? level}) {
-    return QuizArgs(
-      level: level,
-      numberOfQuestions: 10,
-    );
+    return QuizArgs(level: level, numberOfQuestions: 10);
   }
 }

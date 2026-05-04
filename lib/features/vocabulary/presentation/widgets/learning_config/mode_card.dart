@@ -26,11 +26,13 @@ class ModeCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppTheme.primaryColor.withValues(alpha: 0.1)
-              : Colors.grey[100],
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
+              : Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? AppTheme.primaryColor : Colors.grey[300]!,
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.outline,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -38,7 +40,11 @@ class ModeCard extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? AppTheme.primaryColor : Colors.grey[600],
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
               size: 32,
             ),
             const SizedBox(height: 8),
@@ -46,14 +52,18 @@ class ModeCard extends StatelessWidget {
               title,
               style: AppTheme.bodyMedium.copyWith(
                 fontWeight: FontWeight.bold,
-                color: isSelected ? AppTheme.primaryColor : Colors.grey[800],
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 4),
             Text(
               description,
               style: AppTheme.bodySmall.copyWith(
-                color: Colors.grey[600],
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
                 fontSize: 11,
               ),
               textAlign: TextAlign.center,

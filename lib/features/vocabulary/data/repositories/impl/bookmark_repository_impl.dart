@@ -8,9 +8,8 @@ import '../../datasources/bookmark_datasource.dart';
 class BookmarkRepositoryImpl implements BookmarkRepository {
   final BookmarkDataSource _dataSource;
 
-  BookmarkRepositoryImpl({
-    required BookmarkDataSource dataSource,
-  }) : _dataSource = dataSource;
+  BookmarkRepositoryImpl({required BookmarkDataSource dataSource})
+    : _dataSource = dataSource;
 
   @override
   Future<List<BookmarkModel>> getAllBookmarks() async {

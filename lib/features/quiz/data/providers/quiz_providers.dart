@@ -8,28 +8,27 @@ import '../../domain/entities/quiz_question.dart';
 
 /// Provider for quiz-enabled vocabulary items
 /// Uses autoDispose to clean up when widget is disposed
-final quizVocabularyProvider =
-    FutureProvider.family.autoDispose<List<VocabularyItemModel>, String?>((
-      ref,
-      level,
-    ) async {
+final quizVocabularyProvider = FutureProvider.family
+    .autoDispose<List<VocabularyItemModel>, String?>((ref, level) async {
       final allVocabulary = await ref.read(allVocabularyProvider.future);
 
       // Filter vocabulary items that have quiz data
-      final quizVocabulary = allVocabulary
-          .where((item) => item.quizzes != null)
-          .toList();
+      var quizVocabulary = allVocabulary.where((item) => item.quizzes != null);
 
-      // Note: Level filtering removed as it's no longer part of the model
-      // TODO: Add level filtering based on new data structure
+      // Apply level filtering if a specific level is requested
+      if (level != null && level != 'all') {
+        quizVocabulary = quizVocabulary.where(
+          (item) => item.tag.toUpperCase() == level.toUpperCase(),
+        );
+      }
 
-      return quizVocabulary;
+      return quizVocabulary.toList();
     });
 
 /// Provider for generating quiz questions using embedded quiz data
 /// Uses autoDispose to prevent memory leaks when navigating away from quiz
-final quizQuestionsProvider =
-    FutureProvider.family.autoDispose<List<QuizQuestion>, QuizConfig>((ref, config) async {
+final quizQuestionsProvider = FutureProvider.family
+    .autoDispose<List<QuizQuestion>, QuizConfig>((ref, config) async {
       // Get vocabulary items with quiz data
       final quizVocabulary = await ref.read(
         quizVocabularyProvider(config.level).future,
@@ -80,7 +79,7 @@ QuizQuestion? _generateQuestionFromEmbeddedData(VocabularyItemModel item) {
     final fallbackQuiz = useKanjiToHiragana
         ? item.quizzes!.hiraganaToKanji
         : item.quizzes!.kanjiToHiragana;
-    
+
     if (fallbackQuiz == null) {
       AppLogger.warning(
         'No quiz questions available for item ${item.id} (${item.word})',
@@ -88,15 +87,15 @@ QuizQuestion? _generateQuestionFromEmbeddedData(VocabularyItemModel item) {
       );
       return null;
     }
-    
+
     // Use fallback quiz
     return QuizQuestion(
       id: item.id.toString(),
       question: fallbackQuiz.question,
       options: fallbackQuiz.options.keys.toList(),
-      correctAnswerIndex: fallbackQuiz.options.entries
-          .toList()
-          .indexWhere((entry) => entry.value),
+      correctAnswerIndex: fallbackQuiz.options.entries.toList().indexWhere(
+        (entry) => entry.value,
+      ),
       explanation:
           '${item.translations.burmese} = ${item.word} (${item.reading})',
       vocabularyId: item.id.toString(),
@@ -107,9 +106,9 @@ QuizQuestion? _generateQuestionFromEmbeddedData(VocabularyItemModel item) {
     id: item.id.toString(),
     question: selectedQuiz.question,
     options: selectedQuiz.options.keys.toList(),
-    correctAnswerIndex: selectedQuiz.options.entries
-        .toList()
-        .indexWhere((entry) => entry.value),
+    correctAnswerIndex: selectedQuiz.options.entries.toList().indexWhere(
+      (entry) => entry.value,
+    ),
     explanation:
         '${item.translations.burmese} = ${item.word} (${item.reading})',
     vocabularyId: item.id.toString(),
@@ -123,7 +122,7 @@ class QuizConfig extends Equatable {
   final String? level;
 
   const QuizConfig({required this.numberOfQuestions, this.level});
-  
+
   @override
   List<Object?> get props => [numberOfQuestions, level];
 }

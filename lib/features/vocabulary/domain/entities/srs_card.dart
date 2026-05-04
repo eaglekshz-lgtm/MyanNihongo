@@ -2,11 +2,11 @@ import 'package:equatable/equatable.dart';
 
 /// SRS Level representing the learning stage of a vocabulary item
 enum SRSLevel {
-  newCard,    // First time seeing (0 days)
-  learning,   // < 21 days
-  young,      // 21+ days
-  mature,     // 2+ months (60 days)
-  mastered;   // 6+ months (180 days)
+  newCard, // First time seeing (0 days)
+  learning, // < 21 days
+  young, // 21+ days
+  mature, // 2+ months (60 days)
+  mastered; // 6+ months (180 days)
 
   /// Get display name for UI
   String get displayName {
@@ -97,9 +97,10 @@ class SRSCard extends Equatable {
     assert(quality >= 0 && quality <= 5, 'Quality must be between 0 and 5');
 
     final now = DateTime.now();
-    
+
     // Calculate new ease factor (SM-2 algorithm)
-    double newEaseFactor = easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+    double newEaseFactor =
+        easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
     newEaseFactor = newEaseFactor.clamp(1.3, 2.5);
 
     int newInterval;
@@ -178,13 +179,13 @@ class SRSCard extends Equatable {
 
   @override
   List<Object?> get props => [
-        vocabularyId,
-        easeFactor,
-        interval,
-        nextReviewDate,
-        repetitions,
-        level,
-        lastReviewDate,
-        lapses,
-      ];
+    vocabularyId,
+    easeFactor,
+    interval,
+    nextReviewDate,
+    repetitions,
+    level,
+    lastReviewDate,
+    lapses,
+  ];
 }

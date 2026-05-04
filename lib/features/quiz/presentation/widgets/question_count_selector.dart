@@ -65,7 +65,7 @@ class _QuestionCountSelectorState extends State<QuestionCountSelector> {
           'Available: ${widget.maxQuestions} words',
           style: AppTheme.bodySmall.copyWith(
             fontSize: 14,
-            color: Colors.grey[600],
+            color: Theme.of(context).colorScheme.neutral600,
           ),
         ),
         const SizedBox(height: 12),
@@ -104,14 +104,16 @@ class _QuestionCountSelectorState extends State<QuestionCountSelector> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
                 child: Text(
                   _displayValue.toString(),
                   style: AppTheme.titleLarge.copyWith(
-                    color: AppTheme.primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

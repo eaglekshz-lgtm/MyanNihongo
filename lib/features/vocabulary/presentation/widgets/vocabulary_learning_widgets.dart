@@ -3,13 +3,13 @@ import '../../../../core/theme/app_theme.dart';
 
 /// Progress header widget for vocabulary learning
 class VocabularyProgressHeader extends StatelessWidget {
-  final int displayIndex; // current viewing index
-  final int completedCount; // number of completed cards
+  final int displayIndex;
+  final int completedCount;
   final int totalCount;
   final String level;
-  final bool highlightSuccess; // when true, use success styling
-  final bool animate; // when true, animate progress change
-  final double? forcedProgress; // override progress (0..1) when provided
+  final bool highlightSuccess;
+  final bool animate;
+  final double? forcedProgress;
 
   const VocabularyProgressHeader({
     super.key,
@@ -24,15 +24,25 @@ class VocabularyProgressHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark
+              ? Theme.of(context).colorScheme.outlineVariant
+              : Theme.of(context).colorScheme.transparent,
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Theme.of(
+              context,
+            ).colorScheme.fixedBlack.withValues(alpha: isDark ? 0.3 : 0.06),
             blurRadius: 12,
             offset: const Offset(0, 2),
           ),
@@ -50,8 +60,8 @@ class VocabularyProgressHeader extends StatelessWidget {
             completedCount: completedCount,
             totalCount: totalCount,
             barColor: highlightSuccess
-                ? AppTheme.successColor
-                : AppTheme.primaryColor,
+                ? Theme.of(context).colorScheme.success
+                : cs.primary,
             animate: animate,
             forcedProgress: forcedProgress,
           ),
@@ -61,7 +71,6 @@ class VocabularyProgressHeader extends StatelessWidget {
   }
 }
 
-/// Progress info row with card count and level badge
 class _ProgressInfo extends StatelessWidget {
   final int displayIndex;
   final int totalCount;
@@ -83,6 +92,7 @@ class _ProgressInfo extends StatelessWidget {
           style: AppTheme.bodyLarge.copyWith(
             fontWeight: FontWeight.w700,
             fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         _LevelBadge(level: level),
@@ -91,40 +101,37 @@ class _ProgressInfo extends StatelessWidget {
   }
 }
 
-/// Level badge widget
 class _LevelBadge extends StatelessWidget {
   final String level;
-
   const _LevelBadge({required this.level});
 
-  Color _getLevelColor(String level) {
+  Color _getLevelColor(BuildContext context, String level) {
     switch (level.toUpperCase()) {
       case 'N5':
-        return const Color(0xFF4CAF50); // Green
+        return Theme.of(context).colorScheme.jlptN5;
       case 'N4':
-        return const Color(0xFF2196F3); // Blue
+        return Theme.of(context).colorScheme.jlptN4;
       case 'N3':
-        return const Color(0xFFFF9800); // Orange
+        return Theme.of(context).colorScheme.jlptN3;
       case 'N2':
-        return const Color(0xFFE91E63); // Pink
+        return Theme.of(context).colorScheme.jlptN2;
       case 'N1':
-        return const Color(0xFF9C27B0); // Purple
+        return Theme.of(context).colorScheme.jlptN1;
       default:
-        return AppTheme.primaryColor;
+        return Theme.of(context).colorScheme.jlptN4;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final levelColor = _getLevelColor(level);
-
+    final levelColor = _getLevelColor(context, level);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
       decoration: BoxDecoration(
-        color: levelColor.withValues(alpha: 0.12),
+        color: levelColor.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: levelColor.withValues(alpha: 0.3),
+          color: levelColor.withValues(alpha: 0.35),
           width: 1.5,
         ),
       ),
@@ -148,7 +155,6 @@ class _LevelBadge extends StatelessWidget {
   }
 }
 
-/// Progress bar widget with smooth animation
 class _ProgressBar extends StatelessWidget {
   final int completedCount;
   final int totalCount;
@@ -166,7 +172,6 @@ class _ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use forcedProgress when provided (e.g., animate to 100% on finish)
     final computed = totalCount == 0 ? 0.0 : (completedCount / totalCount);
     final progress = forcedProgress != null
         ? forcedProgress!.clamp(0.0, 1.0)
@@ -175,7 +180,6 @@ class _ProgressBar extends StatelessWidget {
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 600),
       curve: Curves.easeOutCubic,
-      // Animate only when explicitly requested
       tween: animate
           ? Tween<double>(begin: computed, end: progress)
           : Tween<double>(begin: progress, end: progress),
@@ -188,7 +192,9 @@ class _ProgressBar extends StatelessWidget {
                 Text(
                   'Progress',
                   style: AppTheme.bodySmall.copyWith(
-                    color: Colors.grey[600],
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.55),
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                     letterSpacing: 0.5,
@@ -197,7 +203,6 @@ class _ProgressBar extends StatelessWidget {
                 TweenAnimationBuilder<int>(
                   duration: const Duration(milliseconds: 600),
                   curve: Curves.easeOutCubic,
-                  // Animate percentage only when requested
                   tween: IntTween(
                     begin: animate
                         ? (computed * 100).toInt()
@@ -220,38 +225,10 @@ class _ProgressBar extends StatelessWidget {
                             ]
                           : null,
                     );
-                    return AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 260),
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeInCubic,
-                      transitionBuilder: (child, animation) {
-                        final curved = CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.easeOutBack,
-                          reverseCurve: Curves.easeInCubic,
-                        );
-                        return FadeTransition(
-                          opacity: curved,
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(0.05, 0),
-                              end: Offset.zero,
-                            ).animate(curved),
-                            child: ScaleTransition(
-                              scale: Tween<double>(
-                                begin: 0.98,
-                                end: 1.0,
-                              ).animate(curved),
-                              child: child,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        '$animatedPercentage%',
-                        key: ValueKey<int>(animatedPercentage),
-                        style: style,
-                      ),
+                    return Text(
+                      '$animatedPercentage%',
+                      key: ValueKey<int>(animatedPercentage),
+                      style: style,
                     );
                   },
                 ),
@@ -262,13 +239,13 @@ class _ProgressBar extends StatelessWidget {
               height: 10,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: barColor.withValues(alpha: 0.1),
+                color: barColor.withValues(alpha: 0.12),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: LinearProgressIndicator(
                   value: animatedProgress,
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Theme.of(context).colorScheme.transparent,
                   valueColor: AlwaysStoppedAnimation<Color>(barColor),
                 ),
               ),
@@ -284,7 +261,7 @@ class _ProgressBar extends StatelessWidget {
 class VocabularyCompletionScreen extends StatelessWidget {
   final String level;
   final int totalCards;
-  final int? blockNumber; // Block number if in batch mode
+  final int? blockNumber;
   final VoidCallback onRestart;
   final VoidCallback onExit;
 
@@ -301,7 +278,7 @@ class VocabularyCompletionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.successColor.withValues(alpha: 0.02),
+        color: Theme.of(context).scaffoldBackgroundColor,
       ),
       child: Center(
         child: Padding(
@@ -327,21 +304,26 @@ class VocabularyCompletionScreen extends StatelessWidget {
   }
 }
 
-/// Completion icon
 class _CompletionIcon extends StatelessWidget {
   const _CompletionIcon();
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final successColor = Theme.of(context).colorScheme.success;
     return Container(
       width: 140,
       height: 140,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         shape: BoxShape.circle,
+        border: Border.all(
+          color: successColor.withValues(alpha: 0.3),
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.successColor.withValues(alpha: 0.2),
+            color: successColor.withValues(alpha: 0.25),
             blurRadius: 30,
             offset: const Offset(0, 10),
             spreadRadius: 0,
@@ -351,20 +333,15 @@ class _CompletionIcon extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppTheme.successColor.withValues(alpha: 0.12),
+          color: successColor.withValues(alpha: 0.12),
           shape: BoxShape.circle,
         ),
-        child: const Icon(
-          Icons.check_circle_rounded,
-          size: 70,
-          color: AppTheme.successColor,
-        ),
+        child: Icon(Icons.check_circle_rounded, size: 70, color: successColor),
       ),
     );
   }
 }
 
-/// Completion title
 class _CompletionTitle extends StatelessWidget {
   const _CompletionTitle();
 
@@ -373,7 +350,7 @@ class _CompletionTitle extends StatelessWidget {
     return Text(
       'Great Job!',
       style: AppTheme.headlineLarge.copyWith(
-        color: AppTheme.successColor,
+        color: Theme.of(context).colorScheme.success,
         fontWeight: FontWeight.bold,
       ),
       textAlign: TextAlign.center,
@@ -381,11 +358,9 @@ class _CompletionTitle extends StatelessWidget {
   }
 }
 
-/// Completion message
 class _CompletionMessage extends StatelessWidget {
   final int totalCards;
   final int? blockNumber;
-
   const _CompletionMessage({required this.totalCards, this.blockNumber});
 
   @override
@@ -396,21 +371,23 @@ class _CompletionMessage extends StatelessWidget {
 
     return Text(
       message,
-      style: AppTheme.bodyLarge.copyWith(color: Colors.grey[700], height: 1.5),
+      style: AppTheme.bodyLarge.copyWith(
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+        height: 1.5,
+      ),
       textAlign: TextAlign.center,
     );
   }
 }
 
-/// Completion action buttons
 class _CompletionActions extends StatelessWidget {
   final VoidCallback onRestart;
   final VoidCallback onExit;
-
   const _CompletionActions({required this.onRestart, required this.onExit});
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       constraints: const BoxConstraints(maxWidth: 400),
       child: Column(
@@ -420,8 +397,8 @@ class _CompletionActions extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onRestart,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
+                backgroundColor: cs.primary,
+                foregroundColor: cs.onPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
@@ -436,7 +413,6 @@ class _CompletionActions extends StatelessWidget {
                   Text(
                     'Practice Again',
                     style: AppTheme.bodyLarge.copyWith(
-                      color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                     ),
@@ -452,7 +428,8 @@ class _CompletionActions extends StatelessWidget {
               onPressed: onExit,
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 18),
-                side: BorderSide(color: Colors.grey[300]!, width: 2),
+                side: BorderSide(color: cs.outline, width: 1.5),
+                foregroundColor: cs.onSurface,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -460,12 +437,16 @@ class _CompletionActions extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.home_rounded, size: 22, color: Colors.grey[700]),
+                  Icon(
+                    Icons.home_rounded,
+                    size: 22,
+                    color: cs.onSurface.withValues(alpha: 0.7),
+                  ),
                   const SizedBox(width: 10),
                   Text(
                     'Back to Home',
                     style: AppTheme.bodyLarge.copyWith(
-                      color: Colors.grey[700],
+                      color: cs.onSurface.withValues(alpha: 0.7),
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                     ),
@@ -504,7 +485,7 @@ class VocabularyActionButtons extends StatelessWidget {
               child: _ActionButton(
                 icon: Icons.check,
                 label: 'I Know This',
-                color: AppTheme.successColor,
+                color: Theme.of(context).colorScheme.success,
                 onTap: onKnow,
               ),
             ),
@@ -514,7 +495,7 @@ class VocabularyActionButtons extends StatelessWidget {
             child: _ActionButton(
               icon: Icons.close,
               label: 'Still Learning',
-              color: AppTheme.warningColor,
+              color: Theme.of(context).colorScheme.warning,
               onTap: onDontKnow,
             ),
           ),
@@ -524,7 +505,6 @@ class VocabularyActionButtons extends StatelessWidget {
   }
 }
 
-/// Individual action button
 class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -544,7 +524,7 @@ class _ActionButton extends StatelessWidget {
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        foregroundColor: Colors.white,
+        foregroundColor: Theme.of(context).colorScheme.fixedWhite,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -556,7 +536,7 @@ class _ActionButton extends StatelessWidget {
           Text(
             label,
             style: AppTheme.bodySmall.copyWith(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.fixedWhite,
               fontWeight: FontWeight.bold,
             ),
           ),

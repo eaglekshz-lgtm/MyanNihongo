@@ -11,6 +11,7 @@ import '../widgets/learning_config/card_style_section.dart';
 import '../widgets/learning_config/meaning_language_section.dart';
 import '../widgets/learning_config/summary_card.dart';
 import '../widgets/learning_config/start_button.dart';
+import '../../../../core/widgets/mesh_background.dart';
 
 /// Configuration constants for better maintenance
 const int kDefaultBlockSize = 20; // Fixed size of each block (always 20 words)
@@ -99,57 +100,54 @@ class _LearningModeConfigPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text('Learning Settings'),
-        elevation: 0,
-        backgroundColor: Colors.white,
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header
-                    HeaderSection(
-                      level: _level ?? 'N5',
-                      wordType: _wordType,
-                      totalWords: _totalWords,
-                    ),
-                    const SizedBox(height: 32),
+      appBar: AppBar(title: const Text('Learning Settings'), elevation: 0),
+      body: MeshBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      HeaderSection(
+                        level: _level ?? 'N5',
+                        wordType: _wordType,
+                        totalWords: _totalWords,
+                      ),
+                      const SizedBox(height: 32),
 
-                    // Card Style Selection
-                    CardStyleSection(
-                      selectedCardStyle: _selectedCardStyle,
-                      onCardStyleChanged: (style) =>
-                          setState(() => _selectedCardStyle = style),
-                    ),
-                    const SizedBox(height: 24),
+                      // Card Style Selection
+                      CardStyleSection(
+                        selectedCardStyle: _selectedCardStyle,
+                        onCardStyleChanged: (style) =>
+                            setState(() => _selectedCardStyle = style),
+                      ),
+                      const SizedBox(height: 24),
 
-                    // Meaning Language Selection
-                    const MeaningLanguageSection(),
-                    const SizedBox(height: 24),
+                      // Meaning Language Selection
+                      const MeaningLanguageSection(),
+                      const SizedBox(height: 24),
 
-                    // Summary Card (no batch size selection - always 20 words per block)
-                    SummaryCard(
-                      selectedCardStyle: _selectedCardStyle,
-                      totalWords: _totalWords,
-                      blocksCount: _getBlocksCount(),
-                    ),
-                  ],
+                      // Summary Card (no batch size selection - always 20 words per block)
+                      SummaryCard(
+                        selectedCardStyle: _selectedCardStyle,
+                        totalWords: _totalWords,
+                        blocksCount: _getBlocksCount(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // Start Button
-            StartButton(onPressed: _startLearning),
-          ],
+              // Start Button
+              StartButton(onPressed: _startLearning),
+            ],
+          ),
         ),
-      ),
+      ), // MeshBackground
     );
   }
 }

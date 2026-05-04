@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/glass_container.dart';
 
 /// Quiz progress header widget
 class QuizProgressHeader extends StatelessWidget {
@@ -62,10 +63,7 @@ class _QuizInfo extends StatelessWidget {
           'Question $currentQuestion of $totalQuestions',
           style: AppTheme.bodyMedium,
         ),
-        _QuizScore(
-          correctAnswers: correctAnswers,
-          wrongAnswers: wrongAnswers,
-        ),
+        _QuizScore(correctAnswers: correctAnswers, wrongAnswers: wrongAnswers),
       ],
     );
   }
@@ -76,31 +74,36 @@ class _QuizScore extends StatelessWidget {
   final int correctAnswers;
   final int wrongAnswers;
 
-  const _QuizScore({
-    required this.correctAnswers,
-    required this.wrongAnswers,
-  });
+  const _QuizScore({required this.correctAnswers, required this.wrongAnswers});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(Icons.check_circle, color: AppTheme.successColor, size: 20),
+        Icon(
+          Icons.check_circle,
+          color: Theme.of(context).colorScheme.success,
+          size: 20,
+        ),
         const SizedBox(width: 4),
         Text(
           '$correctAnswers',
           style: AppTheme.bodyMedium.copyWith(
-            color: AppTheme.successColor,
+            color: Theme.of(context).colorScheme.success,
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(width: 16),
-        const Icon(Icons.cancel, color: AppTheme.errorColor, size: 20),
+        Icon(
+          Icons.cancel,
+          color: Theme.of(context).colorScheme.error,
+          size: 20,
+        ),
         const SizedBox(width: 4),
         Text(
           '$wrongAnswers',
           style: AppTheme.bodyMedium.copyWith(
-            color: AppTheme.errorColor,
+            color: Theme.of(context).colorScheme.error,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -123,9 +126,9 @@ class _QuizProgressBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return LinearProgressIndicator(
       value: currentQuestion / totalQuestions,
-      backgroundColor: Colors.grey[300],
-      valueColor: const AlwaysStoppedAnimation<Color>(
-        AppTheme.primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+      valueColor: AlwaysStoppedAnimation<Color>(
+        Theme.of(context).colorScheme.primary,
       ),
     );
   }
@@ -151,10 +154,10 @@ class QuizQuestionCard extends StatelessWidget {
       padding: const EdgeInsets.all(32),
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withValues(alpha: 0.1),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: AppTheme.primaryColor.withValues(alpha: 0.3),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -164,7 +167,9 @@ class QuizQuestionCard extends StatelessWidget {
           Text(
             'What does this mean?',
             style: AppTheme.bodyMedium.copyWith(
-              color: Colors.grey[600],
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -173,7 +178,7 @@ class QuizQuestionCard extends StatelessWidget {
             japanese,
             style: AppTheme.headlineLarge.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppTheme.primaryColor,
+              color: Theme.of(context).colorScheme.primary,
               fontSize: 32,
             ),
             textAlign: TextAlign.center,
@@ -183,7 +188,9 @@ class QuizQuestionCard extends StatelessWidget {
             Text(
               romanization!,
               style: AppTheme.bodyLarge.copyWith(
-                color: Colors.grey[600],
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
@@ -214,32 +221,32 @@ class QuizOptionButton extends StatelessWidget {
     required this.onTap,
   });
 
-  Color _getBackgroundColor() {
-    if (!hasAnswered) {
-      return isSelected
-          ? AppTheme.primaryColor.withValues(alpha: 0.1)
-          : Colors.white;
+  // Returns the tint colour for the glass. Keep alpha LOW — the glass is
+  // already translucent; we just need a colour hint.
+  Color _getTintColor(BuildContext context) {
+    if (hasAnswered) {
+      if (isCorrect) return Theme.of(context).colorScheme.success;
+      if (isSelected) return Theme.of(context).colorScheme.error;
     }
-    if (isCorrect) {
-      return AppTheme.successColor.withValues(alpha: 0.1);
-    }
-    if (isSelected) {
-      return AppTheme.errorColor.withValues(alpha: 0.1);
-    }
-    return Colors.white;
+    if (isSelected) return Theme.of(context).colorScheme.primary;
+    return Theme.of(
+      context,
+    ).colorScheme.fixedWhite; // neutral: let the background show through
   }
 
-  Color _getBorderColor() {
+  Color _getBorderColor(BuildContext context) {
     if (!hasAnswered) {
-      return isSelected ? AppTheme.primaryColor : Colors.grey[300]!;
+      return isSelected
+          ? Theme.of(context).colorScheme.primary
+          : Theme.of(context).dividerColor;
     }
     if (isCorrect) {
-      return AppTheme.successColor;
+      return Theme.of(context).colorScheme.success;
     }
     if (isSelected) {
-      return AppTheme.errorColor;
+      return Theme.of(context).colorScheme.error;
     }
-    return Colors.grey[300]!;
+    return Theme.of(context).dividerColor;
   }
 
   IconData? _getIcon() {
@@ -249,25 +256,25 @@ class QuizOptionButton extends StatelessWidget {
     return null;
   }
 
-  Color? _getIconColor() {
+  Color? _getIconColor(BuildContext context) {
     if (!hasAnswered) return null;
-    if (isCorrect) return AppTheme.successColor;
-    if (isSelected) return AppTheme.errorColor;
+    if (isCorrect) return Theme.of(context).colorScheme.success;
+    if (isSelected) return Theme.of(context).colorScheme.error;
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
     final icon = _getIcon();
-    final iconColor = _getIconColor();
+    final iconColor = _getIconColor(context);
 
     final optionPrefix = String.fromCharCode(65 + optionIndex); // A, B, C, D
-    Color textColor = Colors.black;
+    Color textColor = Theme.of(context).colorScheme.onSurface;
     if (hasAnswered) {
       if (isCorrect) {
-        textColor = _getBorderColor();
+        textColor = _getBorderColor(context);
       } else if (isSelected) {
-        textColor = AppTheme.errorColor;
+        textColor = Theme.of(context).colorScheme.error;
       }
     }
     // Wrap with RepaintBoundary to isolate repaints to this widget only
@@ -275,17 +282,16 @@ class QuizOptionButton extends StatelessWidget {
       child: InkWell(
         onTap: hasAnswered ? null : onTap,
         borderRadius: BorderRadius.circular(16),
-        child: Container(
+        child: GlassContainer(
           width: double.infinity,
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: _getBackgroundColor(),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: _getBorderColor(),
-              width: 2,
-            ),
-          ),
+          blur: 12.0,
+          tintColor: _getTintColor(context),
+          tintOpacity: hasAnswered ? 0.18 : (isSelected ? 0.15 : 0.08),
+          borderColor: _getBorderColor(context),
+          borderWidth: 2,
+          borderRadius: BorderRadius.circular(16),
+          shadow: false,
           child: Row(
             children: [
               Expanded(
@@ -298,17 +304,15 @@ class QuizOptionButton extends StatelessWidget {
                 ),
               ),
               if (icon != null)
+                Icon(icon, color: iconColor, size: 28)
+              else
                 Icon(
-                  icon,
-                  color: iconColor,
-                  size: 28,
-                ) 
-                else
-                  Icon(
                   Icons.circle_outlined,
-                  color: Colors.grey[500]!,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.4),
                   size: 28,
-                ) 
+                ),
             ],
           ),
         ),
@@ -342,10 +346,10 @@ class QuizResultScreen extends StatelessWidget {
     return 'Keep Practicing! 📚';
   }
 
-  Color get _color {
-    if (_percentage >= 70) return AppTheme.successColor;
-    if (_percentage >= 50) return AppTheme.warningColor;
-    return AppTheme.errorColor;
+  Color _getColor(BuildContext context) {
+    if (_percentage >= 70) return Theme.of(context).colorScheme.success;
+    if (_percentage >= 50) return Theme.of(context).colorScheme.warning;
+    return Theme.of(context).colorScheme.error;
   }
 
   @override
@@ -356,7 +360,7 @@ class QuizResultScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _ResultIcon(color: _color),
+            _ResultIcon(color: _getColor(context)),
             const SizedBox(height: 32),
             _ResultTitle(message: _message),
             const SizedBox(height: 16),
@@ -366,10 +370,7 @@ class QuizResultScreen extends StatelessWidget {
               percentage: _percentage,
             ),
             const SizedBox(height: 48),
-            _ResultActions(
-              onRetry: onRetry,
-              onExit: onExit,
-            ),
+            _ResultActions(onRetry: onRetry, onExit: onExit),
           ],
         ),
       ),
@@ -392,11 +393,7 @@ class _ResultIcon extends StatelessWidget {
         color: color.withValues(alpha: 0.15),
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        Icons.emoji_events,
-        size: 80,
-        color: color,
-      ),
+      child: Icon(Icons.emoji_events, size: 80, color: color),
     );
   }
 }
@@ -411,9 +408,7 @@ class _ResultTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       message,
-      style: AppTheme.headlineLarge.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
+      style: AppTheme.headlineLarge.copyWith(fontWeight: FontWeight.bold),
       textAlign: TextAlign.center,
     );
   }
@@ -443,7 +438,7 @@ class _ResultScore extends StatelessWidget {
               '${percentage.toStringAsFixed(0)}%',
               style: AppTheme.headlineLarge.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppTheme.primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 fontSize: 48,
               ),
             ),
@@ -455,13 +450,13 @@ class _ResultScore extends StatelessWidget {
                   icon: Icons.check_circle,
                   label: 'Correct',
                   value: '$correctAnswers',
-                  color: AppTheme.successColor,
+                  color: Theme.of(context).colorScheme.success,
                 ),
                 _ScoreStat(
                   icon: Icons.cancel,
                   label: 'Wrong',
                   value: '$wrongAnswers',
-                  color: AppTheme.errorColor,
+                  color: Theme.of(context).colorScheme.error,
                 ),
               ],
             ),
@@ -502,7 +497,9 @@ class _ScoreStat extends StatelessWidget {
         Text(
           label,
           style: AppTheme.bodySmall.copyWith(
-            color: Colors.grey[600],
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -515,10 +512,7 @@ class _ResultActions extends StatelessWidget {
   final VoidCallback onRetry;
   final VoidCallback onExit;
 
-  const _ResultActions({
-    required this.onRetry,
-    required this.onExit,
-  });
+  const _ResultActions({required this.onRetry, required this.onExit});
 
   @override
   Widget build(BuildContext context) {
@@ -531,8 +525,8 @@ class _ResultActions extends StatelessWidget {
             icon: const Icon(Icons.replay),
             label: const Text('Try Again'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor,
-              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),

@@ -12,7 +12,8 @@ part of 'vocabulary_quiz_args.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$VocabularyQuizArgs {
@@ -41,15 +42,17 @@ mixin _$VocabularyQuizArgs {
 /// @nodoc
 abstract class $VocabularyQuizArgsCopyWith<$Res> {
   factory $VocabularyQuizArgsCopyWith(
-          VocabularyQuizArgs value, $Res Function(VocabularyQuizArgs) then) =
-      _$VocabularyQuizArgsCopyWithImpl<$Res, VocabularyQuizArgs>;
+    VocabularyQuizArgs value,
+    $Res Function(VocabularyQuizArgs) then,
+  ) = _$VocabularyQuizArgsCopyWithImpl<$Res, VocabularyQuizArgs>;
   @useResult
-  $Res call(
-      {String level,
-      String? wordType,
-      int numberOfQuestions,
-      bool showBurmeseMeaning,
-      String quizType});
+  $Res call({
+    String level,
+    String? wordType,
+    int numberOfQuestions,
+    bool showBurmeseMeaning,
+    String quizType,
+  });
 }
 
 /// @nodoc
@@ -73,54 +76,60 @@ class _$VocabularyQuizArgsCopyWithImpl<$Res, $Val extends VocabularyQuizArgs>
     Object? showBurmeseMeaning = null,
     Object? quizType = null,
   }) {
-    return _then(_value.copyWith(
-      level: null == level
-          ? _value.level
-          : level // ignore: cast_nullable_to_non_nullable
-              as String,
-      wordType: freezed == wordType
-          ? _value.wordType
-          : wordType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      numberOfQuestions: null == numberOfQuestions
-          ? _value.numberOfQuestions
-          : numberOfQuestions // ignore: cast_nullable_to_non_nullable
-              as int,
-      showBurmeseMeaning: null == showBurmeseMeaning
-          ? _value.showBurmeseMeaning
-          : showBurmeseMeaning // ignore: cast_nullable_to_non_nullable
-              as bool,
-      quizType: null == quizType
-          ? _value.quizType
-          : quizType // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            level: null == level
+                ? _value.level
+                : level // ignore: cast_nullable_to_non_nullable
+                      as String,
+            wordType: freezed == wordType
+                ? _value.wordType
+                : wordType // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            numberOfQuestions: null == numberOfQuestions
+                ? _value.numberOfQuestions
+                : numberOfQuestions // ignore: cast_nullable_to_non_nullable
+                      as int,
+            showBurmeseMeaning: null == showBurmeseMeaning
+                ? _value.showBurmeseMeaning
+                : showBurmeseMeaning // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            quizType: null == quizType
+                ? _value.quizType
+                : quizType // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$VocabularyQuizArgsImplCopyWith<$Res>
     implements $VocabularyQuizArgsCopyWith<$Res> {
-  factory _$$VocabularyQuizArgsImplCopyWith(_$VocabularyQuizArgsImpl value,
-          $Res Function(_$VocabularyQuizArgsImpl) then) =
-      __$$VocabularyQuizArgsImplCopyWithImpl<$Res>;
+  factory _$$VocabularyQuizArgsImplCopyWith(
+    _$VocabularyQuizArgsImpl value,
+    $Res Function(_$VocabularyQuizArgsImpl) then,
+  ) = __$$VocabularyQuizArgsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String level,
-      String? wordType,
-      int numberOfQuestions,
-      bool showBurmeseMeaning,
-      String quizType});
+  $Res call({
+    String level,
+    String? wordType,
+    int numberOfQuestions,
+    bool showBurmeseMeaning,
+    String quizType,
+  });
 }
 
 /// @nodoc
 class __$$VocabularyQuizArgsImplCopyWithImpl<$Res>
     extends _$VocabularyQuizArgsCopyWithImpl<$Res, _$VocabularyQuizArgsImpl>
     implements _$$VocabularyQuizArgsImplCopyWith<$Res> {
-  __$$VocabularyQuizArgsImplCopyWithImpl(_$VocabularyQuizArgsImpl _value,
-      $Res Function(_$VocabularyQuizArgsImpl) _then)
-      : super(_value, _then);
+  __$$VocabularyQuizArgsImplCopyWithImpl(
+    _$VocabularyQuizArgsImpl _value,
+    $Res Function(_$VocabularyQuizArgsImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of VocabularyQuizArgs
   /// with the given fields replaced by the non-null parameter values.
@@ -133,40 +142,43 @@ class __$$VocabularyQuizArgsImplCopyWithImpl<$Res>
     Object? showBurmeseMeaning = null,
     Object? quizType = null,
   }) {
-    return _then(_$VocabularyQuizArgsImpl(
-      level: null == level
-          ? _value.level
-          : level // ignore: cast_nullable_to_non_nullable
-              as String,
-      wordType: freezed == wordType
-          ? _value.wordType
-          : wordType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      numberOfQuestions: null == numberOfQuestions
-          ? _value.numberOfQuestions
-          : numberOfQuestions // ignore: cast_nullable_to_non_nullable
-              as int,
-      showBurmeseMeaning: null == showBurmeseMeaning
-          ? _value.showBurmeseMeaning
-          : showBurmeseMeaning // ignore: cast_nullable_to_non_nullable
-              as bool,
-      quizType: null == quizType
-          ? _value.quizType
-          : quizType // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+    return _then(
+      _$VocabularyQuizArgsImpl(
+        level: null == level
+            ? _value.level
+            : level // ignore: cast_nullable_to_non_nullable
+                  as String,
+        wordType: freezed == wordType
+            ? _value.wordType
+            : wordType // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        numberOfQuestions: null == numberOfQuestions
+            ? _value.numberOfQuestions
+            : numberOfQuestions // ignore: cast_nullable_to_non_nullable
+                  as int,
+        showBurmeseMeaning: null == showBurmeseMeaning
+            ? _value.showBurmeseMeaning
+            : showBurmeseMeaning // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        quizType: null == quizType
+            ? _value.quizType
+            : quizType // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$VocabularyQuizArgsImpl implements _VocabularyQuizArgs {
-  const _$VocabularyQuizArgsImpl(
-      {required this.level,
-      this.wordType,
-      required this.numberOfQuestions,
-      required this.showBurmeseMeaning,
-      required this.quizType});
+  const _$VocabularyQuizArgsImpl({
+    required this.level,
+    this.wordType,
+    required this.numberOfQuestions,
+    required this.showBurmeseMeaning,
+    required this.quizType,
+  });
 
   /// JLPT level (N5, N4, N3, N2, N1)
   @override
@@ -210,8 +222,14 @@ class _$VocabularyQuizArgsImpl implements _VocabularyQuizArgs {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, level, wordType,
-      numberOfQuestions, showBurmeseMeaning, quizType);
+  int get hashCode => Object.hash(
+    runtimeType,
+    level,
+    wordType,
+    numberOfQuestions,
+    showBurmeseMeaning,
+    quizType,
+  );
 
   /// Create a copy of VocabularyQuizArgs
   /// with the given fields replaced by the non-null parameter values.
@@ -220,16 +238,19 @@ class _$VocabularyQuizArgsImpl implements _VocabularyQuizArgs {
   @pragma('vm:prefer-inline')
   _$$VocabularyQuizArgsImplCopyWith<_$VocabularyQuizArgsImpl> get copyWith =>
       __$$VocabularyQuizArgsImplCopyWithImpl<_$VocabularyQuizArgsImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 }
 
 abstract class _VocabularyQuizArgs implements VocabularyQuizArgs {
-  const factory _VocabularyQuizArgs(
-      {required final String level,
-      final String? wordType,
-      required final int numberOfQuestions,
-      required final bool showBurmeseMeaning,
-      required final String quizType}) = _$VocabularyQuizArgsImpl;
+  const factory _VocabularyQuizArgs({
+    required final String level,
+    final String? wordType,
+    required final int numberOfQuestions,
+    required final bool showBurmeseMeaning,
+    required final String quizType,
+  }) = _$VocabularyQuizArgsImpl;
 
   /// JLPT level (N5, N4, N3, N2, N1)
   @override

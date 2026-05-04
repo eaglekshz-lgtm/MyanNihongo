@@ -35,8 +35,10 @@ class UserProgress extends Equatable {
     return UserProgress(
       vocabularyId: vocabularyId ?? this.vocabularyId,
       timesViewed: timesViewed ?? this.timesViewed,
-      timesAnsweredCorrectly: timesAnsweredCorrectly ?? this.timesAnsweredCorrectly,
-      timesAnsweredIncorrectly: timesAnsweredIncorrectly ?? this.timesAnsweredIncorrectly,
+      timesAnsweredCorrectly:
+          timesAnsweredCorrectly ?? this.timesAnsweredCorrectly,
+      timesAnsweredIncorrectly:
+          timesAnsweredIncorrectly ?? this.timesAnsweredIncorrectly,
       lastReviewed: lastReviewed ?? this.lastReviewed,
       isMastered: isMastered ?? this.isMastered,
     );
@@ -44,11 +46,11 @@ class UserProgress extends Equatable {
 
   @override
   List<Object?> get props => [
-        vocabularyId,
-        timesViewed,
-        timesAnsweredCorrectly,
-        timesAnsweredIncorrectly,
-        lastReviewed,
-        isMastered,
-      ];
+    vocabularyId,
+    timesViewed,
+    timesAnsweredCorrectly,
+    timesAnsweredIncorrectly,
+    lastReviewed,
+    isMastered,
+  ];
 }

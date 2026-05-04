@@ -26,9 +26,7 @@ class LearningModeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
@@ -44,10 +42,7 @@ class LearningModeCard extends StatelessWidget {
                 color.withValues(alpha: 0.05),
               ],
             ),
-            border: Border.all(
-              color: color.withValues(alpha: 0.3),
-              width: 2,
-            ),
+            border: Border.all(color: color.withValues(alpha: 0.3), width: 2),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,10 +91,7 @@ class _ModeCardIcon extends StatelessWidget {
   final IconData icon;
   final Color color;
 
-  const _ModeCardIcon({
-    required this.icon,
-    required this.color,
-  });
+  const _ModeCardIcon({required this.icon, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +111,7 @@ class _ModeCardIcon extends StatelessWidget {
       ),
       child: Icon(
         icon,
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.fixedWhite,
         size: 32,
       ),
     );
@@ -131,10 +123,7 @@ class _ModeCardTitle extends StatelessWidget {
   final String title;
   final Color color;
 
-  const _ModeCardTitle({
-    required this.title,
-    required this.color,
-  });
+  const _ModeCardTitle({required this.title, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -149,11 +138,7 @@ class _ModeCardTitle extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Icon(
-          Icons.arrow_forward,
-          color: color,
-          size: 20,
-        ),
+        Icon(Icons.arrow_forward, color: color, size: 20),
       ],
     );
   }
@@ -163,16 +148,14 @@ class _ModeCardTitle extends StatelessWidget {
 class _ModeCardDescription extends StatelessWidget {
   final String description;
 
-  const _ModeCardDescription({
-    required this.description,
-  });
+  const _ModeCardDescription({required this.description});
 
   @override
   Widget build(BuildContext context) {
     return Text(
       description,
       style: AppTheme.bodyMedium.copyWith(
-        color: Colors.grey[700],
+        color: Theme.of(context).colorScheme.neutral700,
         height: 1.5,
       ),
     );
@@ -184,10 +167,7 @@ class _ModeCardFeatures extends StatelessWidget {
   final List<String> features;
   final Color color;
 
-  const _ModeCardFeatures({
-    required this.features,
-    required this.color,
-  });
+  const _ModeCardFeatures({required this.features, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -204,10 +184,7 @@ class _FeatureItem extends StatelessWidget {
   final String feature;
   final Color color;
 
-  const _FeatureItem({
-    required this.feature,
-    required this.color,
-  });
+  const _FeatureItem({required this.feature, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -215,17 +192,13 @@ class _FeatureItem extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Icon(
-            Icons.check_circle,
-            color: color,
-            size: 20,
-          ),
+          Icon(Icons.check_circle, color: color, size: 20),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               feature,
               style: AppTheme.bodySmall.copyWith(
-                color: Colors.grey[800],
+                color: Theme.of(context).colorScheme.neutral800,
                 fontWeight: FontWeight.w500,
               ),
             ),

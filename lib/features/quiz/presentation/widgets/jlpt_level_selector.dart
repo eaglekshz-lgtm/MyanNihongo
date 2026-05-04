@@ -24,11 +24,15 @@ class LevelChipWidget extends StatelessWidget {
       onSelected: (selected) {
         onSelected(selected ? level : null);
       },
-      backgroundColor: Colors.grey[200],
-      selectedColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
-      checkmarkColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+      selectedColor: Theme.of(
+        context,
+      ).colorScheme.primary.withValues(alpha: 0.2),
+      checkmarkColor: Theme.of(context).colorScheme.primary,
       labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: isSelected ? Theme.of(context).primaryColor : Colors.grey[700],
+        color: isSelected
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
     );
@@ -57,13 +61,15 @@ class JLPTLevelSelector extends StatelessWidget {
           selectedLevel: selectedLevel,
           onSelected: onSelected,
         ),
-        ...JLPTLevel.values.map((level) => LevelChipWidget(
-          key: ValueKey(level),
-          label: level.code,
-          level: level,
-          selectedLevel: selectedLevel,
-          onSelected: onSelected,
-        )),
+        ...JLPTLevel.values.map(
+          (level) => LevelChipWidget(
+            key: ValueKey(level),
+            label: level.code,
+            level: level,
+            selectedLevel: selectedLevel,
+            onSelected: onSelected,
+          ),
+        ),
       ],
     );
   }

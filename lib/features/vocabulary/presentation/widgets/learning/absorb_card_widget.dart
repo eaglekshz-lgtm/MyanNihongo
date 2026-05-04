@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../../core/widgets/glass_container.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/theme/app_theme.dart';
@@ -29,40 +30,29 @@ class AbsorbCardWidget extends ConsumerWidget {
       builder: (context, _) {
         final isFlipped = flipController.value >= 0.5;
         final angle = flipController.value * 3.14;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
         return Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()
             ..setEntry(3, 2, 0.001)
             ..rotateY(angle),
-          child: Container(
+          child: GlassContainer(
             constraints: const BoxConstraints(maxWidth: 400, minHeight: 380),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(
-                color: isBookmarked
-                    ? AppTheme.secondaryColor.withValues(alpha: 0.3)
-                    : AppTheme.primaryColor.withValues(alpha: 0.15),
-                width: 3,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                  spreadRadius: 0,
-                ),
-                BoxShadow(
-                  color: isBookmarked
-                      ? AppTheme.secondaryColor.withValues(alpha: 0.08)
-                      : AppTheme.primaryColor.withValues(alpha: 0.06),
-                  blurRadius: 40,
-                  offset: const Offset(0, 12),
-                  spreadRadius: -4,
-                ),
-              ],
-            ),
+            blur: 0.0,
+            tintColor: isDark
+                ? Theme.of(context).colorScheme.learningDarkSurface
+                : Theme.of(context).colorScheme.primaryContainer,
+            tintOpacity: 1.0,
+            borderRadius: BorderRadius.circular(32),
+            borderColor: isBookmarked
+                ? Theme.of(
+                    context,
+                  ).colorScheme.secondary.withValues(alpha: 0.60)
+                : (isDark
+                      ? Theme.of(context).colorScheme.learningDarkOutline
+                      : Theme.of(context).colorScheme.outlineVariant),
+            borderWidth: isBookmarked ? 2.0 : 1.5,
             padding: const EdgeInsets.all(28),
             child: Transform(
               transform: Matrix4.rotationY(isFlipped ? 3.14 : 0),
@@ -98,11 +88,12 @@ class StudyModeCardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: !isFlipped ? _buildFront() : _buildBack(context),
+      child: !isFlipped ? _buildFront(context) : _buildBack(context),
     );
   }
 
-  Widget _buildFront() {
+  Widget _buildFront(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -112,17 +103,25 @@ class StudyModeCardContent extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.12),
+              color: isDark
+                  ? Theme.of(context).colorScheme.primaryContainer
+                  : Theme.of(context).colorScheme.secondaryContainer,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppTheme.primaryColor.withValues(alpha: 0.25),
+                color: isDark
+                    ? Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.25)
+                    : Theme.of(context).colorScheme.outlineVariant,
                 width: 1.5,
               ),
             ),
             child: Text(
               item.partOfSpeech.toUpperCase(),
               style: AppTheme.bodySmall.copyWith(
-                color: AppTheme.primaryColor,
+                color: isDark
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onPrimaryContainer,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.0,
                 fontSize: 13,
@@ -137,11 +136,11 @@ class StudyModeCardContent extends StatelessWidget {
         //     alignment: Alignment.centerRight,
         //     child: Container(
         //       decoration: BoxDecoration(
-        //         color: AppTheme.primaryColor.withValues(alpha: 0.1),
+        //         color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         //         borderRadius: BorderRadius.circular(12),
         //       ),
         //       child: IconButton(
-        //         icon: const Icon(Icons.volume_up_rounded, color: AppTheme.primaryColor),
+        //         icon: Icon(Icons.volume_up_rounded, color: Theme.of(context).colorScheme.primary),
         //         iconSize: 26,
         //         padding: const EdgeInsets.all(8),
         //         onPressed: () => onSpeak!(item.word),
@@ -159,10 +158,12 @@ class StudyModeCardContent extends StatelessWidget {
               fontWeight: FontWeight.w900,
               height: 1.1,
               letterSpacing: 2,
-              color: const Color(0xFF1A1A1A),
+              color: Theme.of(context).colorScheme.onSurface,
               shadows: [
                 Shadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.fixedBlack.withValues(alpha: 0.1),
                   offset: const Offset(0, 2),
                   blurRadius: 4,
                 ),
@@ -176,22 +177,31 @@ class StudyModeCardContent extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                AppTheme.primaryColor.withValues(alpha: 0.12),
-                AppTheme.primaryColor.withValues(alpha: 0.08),
-              ],
-            ),
+            color: isDark
+                ? null
+                : Theme.of(context).colorScheme.surfaceContainerHighest,
+            gradient: isDark
+                ? LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.primaryContainer,
+                      Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer.withValues(alpha: 0.8),
+                    ],
+                  )
+                : null,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: AppTheme.primaryColor.withValues(alpha: 0.2),
+              color: isDark
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
+                  : Theme.of(context).colorScheme.outlineVariant,
               width: 1,
             ),
           ),
           child: Text(
             item.reading,
             style: AppTheme.japaneseText.copyWith(
-              color: AppTheme.primaryColor,
+              color: Theme.of(context).colorScheme.primary,
               fontSize: 24,
               fontWeight: FontWeight.w700,
               height: 1.3,
@@ -206,13 +216,18 @@ class StudyModeCardContent extends StatelessWidget {
           height: 2,
           width: 80,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.transparent,
-                AppTheme.primaryColor.withValues(alpha: 0.3),
-                Colors.transparent,
-              ],
-            ),
+            color: isDark ? null : Theme.of(context).colorScheme.outlineVariant,
+            gradient: isDark
+                ? LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.transparent,
+                      Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.3),
+                      Theme.of(context).colorScheme.transparent,
+                    ],
+                  )
+                : null,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -227,7 +242,11 @@ class StudyModeCardContent extends StatelessWidget {
                 Container(
                   width: 30,
                   height: 1,
-                  color: AppTheme.primaryColor.withValues(alpha: 0.3),
+                  color: isDark
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.3)
+                      : Theme.of(context).colorScheme.outlineVariant,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -237,14 +256,22 @@ class StudyModeCardContent extends StatelessWidget {
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
-                      color: AppTheme.primaryColor.withValues(alpha: 0.7),
+                      color: isDark
+                          ? Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.7)
+                          : Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),
                 Container(
                   width: 30,
                   height: 1,
-                  color: AppTheme.primaryColor.withValues(alpha: 0.3),
+                  color: isDark
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.3)
+                      : Theme.of(context).colorScheme.outlineVariant,
                 ),
               ],
             ),
@@ -258,14 +285,14 @@ class StudyModeCardContent extends StatelessWidget {
                   ? AppTheme.burmeseText.copyWith(
                       fontSize: 23,
                       fontWeight: FontWeight.w800,
-                      color: const Color(0xFF1A1A1A),
+                      color: Theme.of(context).colorScheme.onSurface,
                       height: 1.6,
                       letterSpacing: 0.3,
                     )
                   : AppTheme.bodyLarge.copyWith(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF1A1A1A),
+                      color: Theme.of(context).colorScheme.onSurface,
                       height: 1.4,
                     ),
               textAlign: TextAlign.center,
@@ -277,31 +304,45 @@ class StudyModeCardContent extends StatelessWidget {
   }
 
   Widget _buildBack(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 8),
         if (item.exampleSentences.isEmpty) ...[
           const SizedBox(height: 40),
-          Icon(Icons.info_outline, size: 48, color: Colors.grey[400]),
+          Icon(
+            Icons.info_outline,
+            size: 48,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.4),
+          ),
           const SizedBox(height: 16),
           Text(
             'No example sentences available',
             style: AppTheme.bodyLarge.copyWith(
-              color: Colors.grey[600],
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
           ),
         ] else ...[
-          Text(
-            'Example Sentences',
-            style: AppTheme.titleMedium.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppTheme.primaryColor,
+          Center(
+            child: Text(
+              'Example Sentences',
+              style: AppTheme.titleLarge.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isDark
+                    ? Theme.of(context).colorScheme.secondary
+                    : Theme.of(context).colorScheme.primary,
+                fontSize: 22,
+              ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           ...item.exampleSentences.asMap().entries.map((entry) {
             final index = entry.key;
             final sentence = entry.value;
@@ -317,65 +358,61 @@ class StudyModeCardContent extends StatelessWidget {
     int index,
     dynamic sentence,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.only(bottom: 20.0),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFF5F9FF), Colors.white],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(12),
+          color: isDark
+              ? Theme.of(context).colorScheme.learningDarkElevated
+              : Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: AppTheme.primaryColor.withValues(alpha: 0.2),
-            width: 1,
+            color: isDark
+                ? Theme.of(context).colorScheme.learningDarkOutlineAlt
+                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+            width: 1.5,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.primaryColor.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildExampleBadge(index),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildExampleBadge(context, index),
+                _buildActionButtons(context, sentence),
+              ],
+            ),
             const SizedBox(height: 12),
             _buildJapaneseSentence(context, sentence),
             const SizedBox(height: 12),
-            _buildTranslations(sentence),
+            _buildTranslations(context, sentence),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildExampleBadge(int index) {
+  Widget _buildExampleBadge(BuildContext context, int index) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppTheme.primaryColor, AppTheme.primaryVariant],
-        ),
+        color: isDark
+            ? Theme.of(context).colorScheme.learningDarkPrimaryContainer
+            : Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryColor.withValues(alpha: 0.3),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Text(
         'Example ${index + 1}',
         style: AppTheme.bodySmall.copyWith(
-          fontSize: 11,
+          fontSize: 13,
           fontWeight: FontWeight.w700,
-          color: Colors.white,
+          color: isDark
+              ? Theme.of(context).colorScheme.learningDarkBadgeForeground
+              : Theme.of(context).colorScheme.onPrimaryContainer,
           letterSpacing: 0.5,
         ),
       ),
@@ -383,57 +420,72 @@ class StudyModeCardContent extends StatelessWidget {
   }
 
   Widget _buildJapaneseSentence(BuildContext context, dynamic sentence) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Text(
-            sentence.japanese,
-            style: AppTheme.japaneseText.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-              height: 1.4,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        _buildActionButtons(context, sentence),
-      ],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Text(
+      sentence.japanese,
+      style: AppTheme.japaneseText.copyWith(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: isDark
+            ? Theme.of(context).colorScheme.fixedWhite
+            : Theme.of(context).colorScheme.onSurface,
+        height: 1.4,
+      ),
     );
   }
 
   Widget _buildActionButtons(BuildContext context, dynamic sentence) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         if (onSpeak != null)
           _buildIconButton(
             Icons.volume_up_rounded,
             () => onSpeak!(sentence.japanese),
-            AppTheme.primaryColor,
+            isDark
+                ? Theme.of(context).colorScheme.learningDarkIconFill
+                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+            isDark
+                ? Theme.of(context).colorScheme.learningDarkIconBorder
+                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+            isDark
+                ? Theme.of(context).colorScheme.learningDarkIconAccent
+                : Theme.of(context).colorScheme.primary,
           ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 8),
         _buildIconButton(
           Icons.copy_rounded,
           () => _copyToClipboard(context, sentence.japanese),
-          AppTheme.secondaryColor,
+          Theme.of(context).colorScheme.transparent,
+          isDark
+              ? Theme.of(context).colorScheme.learningDarkSecondaryIconBorder
+              : Theme.of(context).colorScheme.secondary.withValues(alpha: 0.3),
+          isDark
+              ? Theme.of(context).colorScheme.learningDarkMutedForeground
+              : Theme.of(context).colorScheme.secondary,
         ),
       ],
     );
   }
 
-  Widget _buildIconButton(IconData icon, VoidCallback onTap, Color color) {
+  Widget _buildIconButton(
+    IconData icon,
+    VoidCallback onTap,
+    Color bgColor,
+    Color borderColor,
+    Color iconColor,
+  ) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+          color: bgColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: borderColor, width: 1.5),
         ),
-        child: Icon(icon, size: 18, color: color),
+        child: Icon(icon, size: 18, color: iconColor),
       ),
     );
   }
@@ -451,52 +503,62 @@ class StudyModeCardContent extends StatelessWidget {
     );
   }
 
-  Widget _buildTranslations(dynamic sentence) {
+  Widget _buildTranslations(BuildContext context, dynamic sentence) {
     final translationText = meaningLanguage == MeaningLanguage.burmese
         ? sentence.burmese
         : sentence.english;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!, width: 1),
+        color: isDark
+            ? Theme.of(context).colorScheme.learningDarkSurfaceAlt
+            : Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark
+              ? Theme.of(context).colorScheme.learningDarkTranslationOutline
+              : Theme.of(context).colorScheme.outlineVariant,
+          width: 1.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Translation based on preference
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: const Icon(
-                  Icons.language,
-                  size: 14,
-                  color: AppTheme.primaryColor,
-                ),
+              Icon(
+                Icons.language,
+                size: 22,
+                color: isDark
+                    ? Theme.of(context).colorScheme.learningCardGradientStart
+                    : Theme.of(context).colorScheme.primary,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   translationText,
                   style: meaningLanguage == MeaningLanguage.burmese
                       ? AppTheme.burmeseText.copyWith(
-                          fontSize: 15,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                          height: 1.5,
+                          color: isDark
+                              ? Theme.of(
+                                  context,
+                                ).colorScheme.learningDarkBodyForeground
+                              : Theme.of(context).colorScheme.onSurface,
+                          height: 1.6,
                         )
                       : AppTheme.bodyMedium.copyWith(
-                          fontSize: 14,
+                          fontSize: 15,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black87,
+                          color: isDark
+                              ? Theme.of(
+                                  context,
+                                ).colorScheme.learningDarkBodyForeground
+                              : Theme.of(context).colorScheme.onSurface,
                           height: 1.5,
                         ),
                 ),

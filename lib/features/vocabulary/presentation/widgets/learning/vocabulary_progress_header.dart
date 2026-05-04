@@ -34,10 +34,7 @@ class VocabularyProgressHeader extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildProgressText(),
-              _buildLevel(),
-            ],
+            children: [_buildProgressText(context), _buildLevel()],
           ),
           const SizedBox(height: 8),
           _buildProgressBar(progress),
@@ -46,21 +43,26 @@ class VocabularyProgressHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressText() {
+  Widget _buildProgressText(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return RichText(
       text: TextSpan(
-        style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          color: Colors.black87,
+        style: TextStyle(
+          fontSize: isDark ? 20 : 15,
+          fontWeight: isDark ? FontWeight.w700 : FontWeight.w600,
+          color: isDark
+              ? Theme.of(context).colorScheme.secondary
+              : Theme.of(context).colorScheme.onSurface,
         ),
         children: [
           TextSpan(
             text: '${displayIndex + 1}',
-            style: const TextStyle(
-              color: AppTheme.primaryColor,
-              fontSize: 16,
-            ),
+            style: isDark
+                ? null
+                : TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 16,
+                  ),
           ),
           const TextSpan(text: ' / '),
           TextSpan(text: totalCount.toString()),
@@ -70,19 +72,27 @@ class VocabularyProgressHeader extends StatelessWidget {
   }
 
   Widget _buildLevel() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Text(
-        level,
-        style: const TextStyle(
-          color: AppTheme.primaryColor,
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
+    return Builder(
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.12),
+            width: 1.5,
+          ),
+        ),
+        child: Text(
+          level,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.5,
+          ),
         ),
       ),
     );
@@ -96,10 +106,13 @@ class VocabularyProgressHeader extends StatelessWidget {
       tween: Tween<double>(begin: 0, end: progress),
       curve: animate ? Curves.easeOutCubic : Curves.easeInOut,
       builder: (context, value, _) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
           height: 6,
           decoration: BoxDecoration(
-            color: Colors.grey[200],
+            color: isDark
+                ? Theme.of(context).colorScheme.learningDarkSurface
+                : Theme.of(context).dividerColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(3),
           ),
           child: FractionallySizedBox(
@@ -107,18 +120,23 @@ class VocabularyProgressHeader extends StatelessWidget {
             widthFactor: value,
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: highlightSuccess
-                      ? [
-                          const Color(0xFF66BB6A),
-                          const Color(0xFF43A047),
-                        ]
-                      : [
-                          AppTheme.primaryColor,
-                          AppTheme.primaryColor.withValues(alpha: 0.8),
-                        ],
-                ),
+                color: isDark
+                    ? Theme.of(context).colorScheme.secondary
+                    : (highlightSuccess
+                          ? Theme.of(context).colorScheme.success
+                          : Theme.of(context).colorScheme.primary),
                 borderRadius: BorderRadius.circular(3),
+                boxShadow: isDark
+                    ? [
+                        BoxShadow(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondary.withValues(alpha: 0.6),
+                          blurRadius: 8,
+                          offset: const Offset(0, 0),
+                        ),
+                      ]
+                    : null,
               ),
             ),
           ),

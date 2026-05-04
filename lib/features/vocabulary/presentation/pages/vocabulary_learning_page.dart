@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/logger.dart';
 
 import '../../../../arguments/vocabulary_learning_args.dart';
@@ -15,8 +16,6 @@ import '../widgets/learning/learning_screen.dart';
 
 // Constants
 const kDefaultLevel = 'N5';
-const kCardGradientStartColor = Color(0xFF4DB8FF);
-const kCardGradientEndColor = Color(0xFF2196F3);
 const kCardBorderRadius = 28.0;
 const kJapaneseFontSize = 62.0;
 const kSuccessAnimationDuration = Duration(milliseconds: 1500);
@@ -53,7 +52,8 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
   bool _hasLoadedCheckpoint = false;
   bool _isInitializing = true;
   int _lastCompletedCount = 0; // Track actual completed count
-  int _viewingIndex = 0; // Track actual viewing position (separate from completion)
+  int _viewingIndex =
+      0; // Track actual viewing position (separate from completion)
   bool _isFinishing = false; // Show success animation on last advance
 
   @override
@@ -74,7 +74,8 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
           ModalRoute.of(context)!.settings.arguments as VocabularyLearningArgs?;
       _level = args?.level ?? VocabularyLearningConstants.defaultLevel;
       _wordType = args?.wordType;
-      _learningMode = args?.learningMode ?? VocabularyLearningConstants.defaultLearningMode;
+      _learningMode =
+          args?.learningMode ?? VocabularyLearningConstants.defaultLearningMode;
       _startIndex = args?.startIndex;
       _batchSize = args?.batchSize;
 
@@ -89,7 +90,7 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
     _tts.stop();
     _flipController.dispose();
     super.dispose();
-  }  // ============================================================================
+  } // ============================================================================
   // Helper Methods
   // ============================================================================
 
@@ -348,7 +349,10 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
     }
   }
 
-  Future<void> _handleNext(VocabularyItemModel item, int totalVocabularyLength) async {
+  Future<void> _handleNext(
+    VocabularyItemModel item,
+    int totalVocabularyLength,
+  ) async {
     // If this is the last card, play finish animation then go to completion
     if (_viewingIndex == totalVocabularyLength - 1) {
       setState(() {
@@ -391,9 +395,14 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
       ),
     );
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(_getAppBarTitle()),
+        backgroundColor: Theme.of(context).colorScheme.transparent,
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -402,13 +411,29 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
           ),
         ],
       ),
-      body: _isInitializing
-          ? const Center(child: CircularProgressIndicator())
-          : vocabularyAsync.when(
-              data: (allVocabulary) => _buildLearningContent(allVocabulary),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text('Error: $error')),
+      body: Stack(
+        children: [
+          // Base: pure black / light background from palette
+          Positioned.fill(
+            child: Container(
+              color: isDark
+                  ? Theme.of(context).colorScheme.learningDeepScaffold
+                  : Theme.of(context).colorScheme.surface,
             ),
+          ),
+          SafeArea(
+            child: _isInitializing
+                ? const Center(child: CircularProgressIndicator())
+                : vocabularyAsync.when(
+                    data: (allVocabulary) =>
+                        _buildLearningContent(allVocabulary),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (error, _) => Center(child: Text('Error: $error')),
+                  ),
+          ),
+        ],
+      ),
     );
   }
 

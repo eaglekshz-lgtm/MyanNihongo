@@ -35,9 +35,7 @@ class SystemUpdateDataSource {
         return null;
       }
 
-      final systemUpdate = SystemUpdateModel.fromJson(
-        response,
-      );
+      final systemUpdate = SystemUpdateModel.fromJson(response);
 
       AppLogger.data(
         'Retrieved system update for $tag: last updated at ${systemUpdate.lastUpdatedAt}',
@@ -92,7 +90,7 @@ class SystemUpdateDataSource {
       // Update with current check time
       final updatedModel = update.copyWith(lastCheckedAt: DateTime.now());
       await _localBox.put(update.tag, updatedModel);
-      
+
       AppLogger.data(
         'Saved system update for ${update.tag} to local cache',
         operation: 'SAVE',
@@ -124,7 +122,7 @@ class SystemUpdateDataSource {
 
       // Get local update info
       final localUpdate = await getLocalSystemUpdate(tag);
-      
+
       if (localUpdate == null) {
         // No local cache, need to fetch
         AppLogger.info(
@@ -136,7 +134,7 @@ class SystemUpdateDataSource {
 
       // Compare timestamps
       final needsUpdate = serverUpdate.needsUpdate(localUpdate.lastUpdatedAt);
-      
+
       AppLogger.info(
         'Update check for $tag: Server=${serverUpdate.lastUpdatedAt}, Local=${localUpdate.lastUpdatedAt}, NeedsUpdate=$needsUpdate',
         'SystemUpdateDataSource',

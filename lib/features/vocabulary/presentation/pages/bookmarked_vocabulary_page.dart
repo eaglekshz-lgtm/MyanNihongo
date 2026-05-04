@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/vocabulary_item_model.dart';
 import '../../data/providers/bookmark_providers.dart';
+import '../../../../core/widgets/mesh_background.dart';
+import '../../../../core/widgets/glass_container.dart';
 
 class BookmarkedVocabularyPage extends ConsumerWidget {
   const BookmarkedVocabularyPage({super.key});
@@ -43,32 +45,34 @@ class BookmarkedVocabularyPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: bookmarkedVocabularyAsync.when(
-        data: (vocabulary) {
-          debugPrint('Bookmarked vocabulary count: ${vocabulary.length}');
-          if (vocabulary.isEmpty) {
-            return const _EmptyStateWidget();
-          }
-          return _VocabularyListWidget(
-            vocabulary: vocabulary,
-            bookmarkNotifier: bookmarkNotifier,
-          );
-        },
-        loading: () => const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Loading bookmarked words...'),
-            ],
+      body: MeshBackground(
+        child: bookmarkedVocabularyAsync.when(
+          data: (vocabulary) {
+            debugPrint('Bookmarked vocabulary count: ${vocabulary.length}');
+            if (vocabulary.isEmpty) {
+              return const _EmptyStateWidget();
+            }
+            return _VocabularyListWidget(
+              vocabulary: vocabulary,
+              bookmarkNotifier: bookmarkNotifier,
+            );
+          },
+          loading: () => const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Loading bookmarked words...'),
+              ],
+            ),
           ),
+          error: (error, stack) {
+            debugPrint('Error loading bookmarks: $error');
+            debugPrint('Stack trace: $stack');
+            return _ErrorStateWidget(error: error.toString());
+          },
         ),
-        error: (error, stack) {
-          debugPrint('Error loading bookmarks: $error');
-          debugPrint('Stack trace: $stack');
-          return _ErrorStateWidget(error: error.toString());
-        },
       ),
     );
   }
@@ -92,27 +96,29 @@ class BookmarkedVocabularyPage extends ConsumerWidget {
               // Use repository method instead of direct data source access
               final repository = ref.read(bookmarkRepositoryProvider);
               await repository.clearAllBookmarks();
-              
+
               // Invalidate providers to trigger UI updates
               ref.invalidate(allBookmarksProvider);
               ref.invalidate(bookmarkCountProvider);
               ref.invalidate(bookmarkedVocabularyProvider);
-              
+
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('All bookmarks cleared'),
-                    backgroundColor: AppTheme.successColor,
+                  SnackBar(
+                    content: const Text('All bookmarks cleared'),
+                    backgroundColor: Theme.of(context).colorScheme.success,
                   ),
                 );
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.errorColor,
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
             child: Text(
               'Clear All',
-              style: AppTheme.bodyMedium.copyWith(color: Colors.white),
+              style: AppTheme.bodyMedium.copyWith(
+                color: Theme.of(context).colorScheme.fixedWhite,
+              ),
             ),
           ),
         ],
@@ -139,16 +145,30 @@ class _EmptyStateWidget extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.bookmark_border, size: 120, color: Colors.grey[300]),
+            Icon(
+              Icons.bookmark_border,
+              size: 120,
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.3),
+            ),
             const SizedBox(height: 24),
             Text(
               'No Bookmarks Yet',
-              style: AppTheme.headlineMedium.copyWith(color: Colors.grey[600]),
+              style: AppTheme.headlineMedium.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
             ),
             const SizedBox(height: 12),
             Text(
               'Bookmark words while learning to review them later',
-              style: AppTheme.bodyMedium.copyWith(color: Colors.grey[500]),
+              style: AppTheme.bodyMedium.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.5),
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -156,9 +176,13 @@ class _EmptyStateWidget extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[300]!),
+                border: Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.outline.withValues(alpha: 0.3),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,7 +191,9 @@ class _EmptyStateWidget extends ConsumerWidget {
                     'Debug Info:',
                     style: AppTheme.bodySmall.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey[700],
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -226,19 +252,31 @@ class _ErrorStateWidget extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 80, color: AppTheme.errorColor),
+            Icon(
+              Icons.error_outline,
+              size: 80,
+              color: Theme.of(context).colorScheme.error,
+            ),
             const SizedBox(height: 16),
             Text(
               'Error Loading Bookmarks',
-              style: AppTheme.titleLarge.copyWith(color: AppTheme.errorColor),
+              style: AppTheme.titleLarge.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
             ),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.red[50],
+                color: Theme.of(
+                  context,
+                ).colorScheme.errorContainer.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.red[200]!),
+                border: Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.error.withValues(alpha: 0.3),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,13 +285,15 @@ class _ErrorStateWidget extends ConsumerWidget {
                     'Error Details:',
                     style: AppTheme.bodySmall.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.red[900],
+                      color: Theme.of(context).colorScheme.onErrorContainer,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     error,
-                    style: AppTheme.bodySmall.copyWith(color: Colors.red[700]),
+                    style: AppTheme.bodySmall.copyWith(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   bookmarkCount.when(
@@ -298,22 +338,30 @@ class _VocabularyListWidget extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withValues(alpha: 0.1),
+            color: Theme.of(
+              context,
+            ).colorScheme.primaryContainer.withValues(alpha: 0.4),
             border: Border(
               bottom: BorderSide(
-                color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.1),
               ),
             ),
           ),
           child: Row(
             children: [
-              const Icon(Icons.bookmark, color: Color(0xFFE53935), size: 24),
+              Icon(
+                Icons.bookmark,
+                color: Theme.of(context).colorScheme.bookmarkActive,
+                size: 24,
+              ),
               const SizedBox(width: 12),
               Text(
                 '${vocabulary.length} ${vocabulary.length == 1 ? 'Word' : 'Words'} Bookmarked',
                 style: AppTheme.titleMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ],
@@ -351,9 +399,16 @@ class _VocabularyCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    return GlassContainer(
+      blur: 15.0,
+      tintColor: Theme.of(context).colorScheme.primary,
+      tintOpacity: 0.08,
+      borderRadius: BorderRadius.circular(16),
+      borderColor: Theme.of(
+        context,
+      ).colorScheme.primary.withValues(alpha: 0.15),
+      borderWidth: 1.0,
+      shadow: true,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -367,13 +422,15 @@ class _VocabularyCardWidget extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     _getCategoryIcon(item.partOfSpeech),
                     size: 20,
-                    color: AppTheme.primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -385,7 +442,9 @@ class _VocabularyCardWidget extends StatelessWidget {
                       Text(
                         item.partOfSpeech.toUpperCase(),
                         style: AppTheme.bodySmall.copyWith(
-                          color: Colors.grey[700],
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -398,13 +457,15 @@ class _VocabularyCardWidget extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: AppTheme.infoColor.withValues(alpha: 0.1),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.info.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           _getJLPTLevel(item.id),
                           style: AppTheme.bodySmall.copyWith(
-                            color: AppTheme.infoColor,
+                            color: Theme.of(context).colorScheme.info,
                             fontWeight: FontWeight.bold,
                             fontSize: 10,
                           ),
@@ -418,12 +479,14 @@ class _VocabularyCardWidget extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE53935).withValues(alpha: 0.1),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.bookmarkActive.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.bookmark, size: 20),
-                    color: const Color(0xFFE53935),
+                    color: Theme.of(context).colorScheme.bookmarkActive,
                     onPressed: () =>
                         _removeBookmark(context, item.id, bookmarkNotifier),
                     tooltip: 'Remove bookmark',
@@ -435,7 +498,10 @@ class _VocabularyCardWidget extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Divider
-            Container(height: 1, color: Colors.grey[200]),
+            Container(
+              height: 1,
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: 16),
 
             // Main content - Japanese word
@@ -447,21 +513,23 @@ class _VocabularyCardWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                          item.word,
-                          style: AppTheme.japaneseText.copyWith(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryColor,
-                          ),
+                        item.word,
+                        style: AppTheme.japaneseText.copyWith(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          item.reading,
-                          style: AppTheme.bodyMedium.copyWith(
-                            fontStyle: FontStyle.italic,
-                            color: Colors.grey[600],
-                          ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        item.reading,
+                        style: AppTheme.bodyMedium.copyWith(
+                          fontStyle: FontStyle.italic,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
+                      ),
                     ],
                   ),
                 ),
@@ -473,7 +541,9 @@ class _VocabularyCardWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -482,10 +552,10 @@ class _VocabularyCardWidget extends StatelessWidget {
                   // English meaning
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.translate,
                         size: 16,
-                        color: AppTheme.secondaryColor,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -493,7 +563,7 @@ class _VocabularyCardWidget extends StatelessWidget {
                           item.translations.english,
                           style: AppTheme.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey[800],
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ),
@@ -501,15 +571,20 @@ class _VocabularyCardWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   // Divider
-                  Container(height: 1, color: Colors.grey[200]),
+                  Container(
+                    height: 1,
+                    color: Theme.of(
+                      context,
+                    ).dividerColor.withValues(alpha: 0.3),
+                  ),
                   const SizedBox(height: 12),
                   // Burmese translation
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.language,
                         size: 16,
-                        color: AppTheme.successColor,
+                        color: Theme.of(context).colorScheme.success,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -518,7 +593,7 @@ class _VocabularyCardWidget extends StatelessWidget {
                           style: AppTheme.burmeseText.copyWith(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey[800],
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ),
@@ -576,16 +651,19 @@ class _VocabularyCardWidget extends StatelessWidget {
   ) {
     bookmarkNotifier.removeBookmark(vocabularyId.toString());
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Row(
           children: [
-            Icon(Icons.bookmark_border, color: Colors.white),
-            SizedBox(width: 8),
-            Text('Removed from bookmarks'),
+            Icon(
+              Icons.bookmark_border,
+              color: Theme.of(context).colorScheme.fixedWhite,
+            ),
+            const SizedBox(width: 8),
+            const Text('Removed from bookmarks'),
           ],
         ),
-        backgroundColor: AppTheme.infoColor,
-        duration: Duration(seconds: 2),
+        backgroundColor: Theme.of(context).colorScheme.info,
+        duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
     );

@@ -64,8 +64,8 @@ UserProgressModel _$UserProgressModelFromJson(Map<String, dynamic> json) =>
       vocabularyId: json['vocabularyId'] as String,
       timesViewed: (json['timesViewed'] as num).toInt(),
       timesAnsweredCorrectly: (json['timesAnsweredCorrectly'] as num).toInt(),
-      timesAnsweredIncorrectly:
-          (json['timesAnsweredIncorrectly'] as num).toInt(),
+      timesAnsweredIncorrectly: (json['timesAnsweredIncorrectly'] as num)
+          .toInt(),
       lastReviewed: DateTime.parse(json['lastReviewed'] as String),
       isMastered: json['isMastered'] as bool,
     );

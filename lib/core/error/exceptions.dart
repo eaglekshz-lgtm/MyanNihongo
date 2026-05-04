@@ -5,14 +5,10 @@
 library;
 
 /// Exception thrown when a server request fails
-/// 
+///
 /// Includes HTTP status code and optional error details for debugging.
 class ServerException implements Exception {
-  const ServerException({
-    required this.message,
-    this.statusCode,
-    this.details,
-  });
+  const ServerException({required this.message, this.statusCode, this.details});
 
   final String message;
   final int? statusCode;
@@ -32,13 +28,10 @@ class ServerException implements Exception {
 }
 
 /// Exception thrown when network connectivity fails
-/// 
+///
 /// Used for connectivity issues, timeouts, or DNS failures.
 class NetworkException implements Exception {
-  const NetworkException({
-    required this.message,
-    this.details,
-  });
+  const NetworkException({required this.message, this.details});
 
   final String message;
   final String? details;
@@ -54,13 +47,10 @@ class NetworkException implements Exception {
 }
 
 /// Exception thrown when local cache operations fail
-/// 
+///
 /// Includes Hive storage errors, file system errors, etc.
 class CacheException implements Exception {
-  const CacheException({
-    required this.message,
-    this.details,
-  });
+  const CacheException({required this.message, this.details});
 
   final String message;
   final String? details;
@@ -76,13 +66,10 @@ class CacheException implements Exception {
 }
 
 /// Exception thrown when data parsing or validation fails
-/// 
+///
 /// Used for JSON parsing errors, data format issues, etc.
 class DataException implements Exception {
-  const DataException({
-    required this.message,
-    this.details,
-  });
+  const DataException({required this.message, this.details});
 
   final String message;
   final String? details;
@@ -98,13 +85,10 @@ class DataException implements Exception {
 }
 
 /// Exception thrown when a requested resource is not found
-/// 
+///
 /// Used for 404 errors, missing vocabulary items, etc.
 class NotFoundException implements Exception {
-  const NotFoundException({
-    required this.message,
-    this.details,
-  });
+  const NotFoundException({required this.message, this.details});
 
   final String message;
   final String? details;
@@ -120,13 +104,10 @@ class NotFoundException implements Exception {
 }
 
 /// Exception thrown when authentication or authorization fails
-/// 
+///
 /// Used for login failures, expired tokens, permission errors, etc.
 class AuthException implements Exception {
-  const AuthException({
-    required this.message,
-    this.details,
-  });
+  const AuthException({required this.message, this.details});
 
   final String message;
   final String? details;
@@ -142,13 +123,10 @@ class AuthException implements Exception {
 }
 
 /// Exception thrown for unexpected or unhandled errors
-/// 
+///
 /// Fallback exception when the error type is not recognized.
 class UnknownException implements Exception {
-  const UnknownException({
-    required this.message,
-    this.details,
-  });
+  const UnknownException({required this.message, this.details});
 
   final String message;
   final String? details;

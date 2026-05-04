@@ -7,6 +7,7 @@ import '../../domain/models/quiz_args.dart';
 import '../../domain/models/quiz_result_args.dart';
 import '../../data/providers/quiz_providers.dart';
 import '../../data/providers/quiz_state_notifier.dart';
+import '../../../../core/widgets/mesh_background.dart';
 import '../../domain/entities/quiz_question.dart';
 
 class QuizPage extends ConsumerStatefulWidget {
@@ -63,13 +64,21 @@ class _QuizPageState extends ConsumerState<QuizPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Theme.of(context).colorScheme.neutral400,
+            ),
             const SizedBox(height: 16),
             Text('No questions available', style: AppTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
               'Try selecting a different level',
-              style: AppTheme.bodyMedium.copyWith(color: Colors.grey[600]),
+              style: AppTheme.bodyMedium.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
@@ -77,8 +86,8 @@ class _QuizPageState extends ConsumerState<QuizPage> {
               icon: const Icon(Icons.arrow_back),
               label: const Text('Go Back'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
             ),
           ],
@@ -101,7 +110,11 @@ class _QuizPageState extends ConsumerState<QuizPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error, size: 64, color: Colors.red),
+            Icon(
+              Icons.error,
+              size: 64,
+              color: Theme.of(context).colorScheme.error,
+            ),
             const SizedBox(height: 16),
             const Text(
               'Failed to load quiz',
@@ -110,7 +123,11 @@ class _QuizPageState extends ConsumerState<QuizPage> {
             const SizedBox(height: 8),
             Text(
               'Please check your connection and try again',
-              style: AppTheme.bodyMedium.copyWith(color: Colors.grey[600]),
+              style: AppTheme.bodyMedium.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -119,8 +136,8 @@ class _QuizPageState extends ConsumerState<QuizPage> {
               icon: const Icon(Icons.arrow_back),
               label: const Text('Go Back'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
             ),
           ],
@@ -200,7 +217,7 @@ class _QuizContentState extends ConsumerState<_QuizContent> {
               child: Text(
                 'Score: ${quizState.correctAnswers}',
                 style: AppTheme.titleMedium.copyWith(
-                  color: AppTheme.successColor,
+                  color: Theme.of(context).colorScheme.success,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -208,210 +225,232 @@ class _QuizContentState extends ConsumerState<_QuizContent> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Progress indicator
-            _ProgressIndicatorWidget(
-              currentQuestionIndex: quizState.currentQuestionIndex,
-              totalQuestions: widget.questions.length,
-            ),
+      body: MeshBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Progress indicator
+              _ProgressIndicatorWidget(
+                currentQuestionIndex: quizState.currentQuestionIndex,
+                totalQuestions: widget.questions.length,
+              ),
 
-            // Question card
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Question number
-                    Text(
-                      'Question ${quizState.currentQuestionIndex + 1} of ${widget.questions.length}',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Question text
-                    Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppTheme.primaryColor.withValues(alpha: 0.15),
-                              AppTheme.secondaryColor.withValues(alpha: 0.08),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: AppTheme.primaryColor.withValues(alpha: 0.3),
-                            width: 2,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Text(
-                            currentQuestion.question,
-                            style: AppTheme.titleLarge.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryVariant,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+              // Question card
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Question number
+                      Text(
+                        'Question ${quizState.currentQuestionIndex + 1} of ${widget.questions.length}',
+                        style: AppTheme.bodyMedium.copyWith(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 16),
 
-                    // Options
-                    ...List.generate(
-                      currentQuestion.options.length,
-                      (index) => _OptionCardWidget(
-                        question: currentQuestion,
-                        index: index,
-                        selectedAnswerIndex: quizState.selectedAnswerIndex,
-                        hasAnswered: quizState.hasAnswered,
-                        onSelectAnswer: (answerIndex) {
-                          // ✅ FIXED: Use proper family provider
-                          ref
-                              .read(quizStateNotifier.notifier)
-                              .selectAnswer(answerIndex);
-                        },
-                      ),
-                    ),
-
-                    // Explanation (shown after answering)
-                    if (quizState.hasAnswered) ...[
-                      const SizedBox(height: 24),
+                      // Question text
                       Card(
-                        elevation: 3,
+                        elevation: 4,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors:
-                                  quizState.selectedAnswerIndex ==
-                                      currentQuestion.correctAnswerIndex
-                                  ? [
-                                      AppTheme.successColor.withValues(
-                                        alpha: 0.15,
-                                      ),
-                                      AppTheme.successColor.withValues(
-                                        alpha: 0.08,
-                                      ),
-                                    ]
-                                  : [
-                                      AppTheme.errorColor.withValues(
-                                        alpha: 0.15,
-                                      ),
-                                      AppTheme.errorColor.withValues(
-                                        alpha: 0.08,
-                                      ),
-                                    ],
+                              colors: [
+                                Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.15),
+                                Theme.of(
+                                  context,
+                                ).colorScheme.secondary.withValues(alpha: 0.08),
+                              ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color:
-                                  quizState.selectedAnswerIndex ==
-                                      currentQuestion.correctAnswerIndex
-                                  ? AppTheme.successColor.withValues(alpha: 0.4)
-                                  : AppTheme.errorColor.withValues(alpha: 0.4),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withValues(alpha: 0.3),
                               width: 2,
                             ),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(18),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      quizState.selectedAnswerIndex ==
-                                              currentQuestion.correctAnswerIndex
-                                          ? Icons.check_circle
-                                          : Icons.cancel,
-                                      color:
-                                          quizState.selectedAnswerIndex ==
-                                              currentQuestion.correctAnswerIndex
-                                          ? AppTheme.successColor
-                                          : AppTheme.errorColor,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      quizState.selectedAnswerIndex ==
-                                              currentQuestion.correctAnswerIndex
-                                          ? 'Correct!'
-                                          : 'Incorrect',
-                                      style: AppTheme.titleMedium.copyWith(
-                                        color:
-                                            quizState.selectedAnswerIndex ==
-                                                currentQuestion
-                                                    .correctAnswerIndex
-                                            ? AppTheme.successColor
-                                            : AppTheme.errorColor,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  currentQuestion.explanation,
-                                  style: AppTheme.bodyMedium.copyWith(
-                                    color: AppTheme.onSurfaceColor,
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ],
+                            padding: const EdgeInsets.all(24),
+                            child: Text(
+                              currentQuestion.question,
+                              style: AppTheme.titleLarge.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
                       ),
+                      const SizedBox(height: 24),
+
+                      // Options
+                      ...List.generate(
+                        currentQuestion.options.length,
+                        (index) => _OptionCardWidget(
+                          question: currentQuestion,
+                          index: index,
+                          selectedAnswerIndex: quizState.selectedAnswerIndex,
+                          hasAnswered: quizState.hasAnswered,
+                          onSelectAnswer: (answerIndex) {
+                            // ✅ FIXED: Use proper family provider
+                            ref
+                                .read(quizStateNotifier.notifier)
+                                .selectAnswer(answerIndex);
+                          },
+                        ),
+                      ),
+
+                      // Explanation (shown after answering)
+                      if (quizState.hasAnswered) ...[
+                        const SizedBox(height: 24),
+                        Card(
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors:
+                                    quizState.selectedAnswerIndex ==
+                                        currentQuestion.correctAnswerIndex
+                                    ? [
+                                        Theme.of(context).colorScheme.success
+                                            .withValues(alpha: 0.15),
+                                        Theme.of(context).colorScheme.success
+                                            .withValues(alpha: 0.08),
+                                      ]
+                                    : [
+                                        Theme.of(context).colorScheme.error
+                                            .withValues(alpha: 0.15),
+                                        Theme.of(context).colorScheme.error
+                                            .withValues(alpha: 0.08),
+                                      ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color:
+                                    quizState.selectedAnswerIndex ==
+                                        currentQuestion.correctAnswerIndex
+                                    ? Theme.of(context).colorScheme.success
+                                          .withValues(alpha: 0.4)
+                                    : Theme.of(context).colorScheme.error
+                                          .withValues(alpha: 0.4),
+                                width: 2,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(18),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        quizState.selectedAnswerIndex ==
+                                                currentQuestion
+                                                    .correctAnswerIndex
+                                            ? Icons.check_circle
+                                            : Icons.cancel,
+                                        color:
+                                            quizState.selectedAnswerIndex ==
+                                                currentQuestion
+                                                    .correctAnswerIndex
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.success
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.error,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        quizState.selectedAnswerIndex ==
+                                                currentQuestion
+                                                    .correctAnswerIndex
+                                            ? 'Correct!'
+                                            : 'Incorrect',
+                                        style: AppTheme.titleMedium.copyWith(
+                                          color:
+                                              quizState.selectedAnswerIndex ==
+                                                  currentQuestion
+                                                      .correctAnswerIndex
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.success
+                                              : Theme.of(
+                                                  context,
+                                                ).colorScheme.error,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    currentQuestion.explanation,
+                                    style: AppTheme.bodyMedium.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
 
-            // Next button (shown after answering)
-            if (quizState.hasAnswered)
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref.read(quizStateNotifier.notifier).nextQuestion();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: Text(
-                    quizState.currentQuestionIndex < widget.questions.length - 1
-                        ? 'Next Question'
-                        : 'Finish Quiz',
-                    style: AppTheme.titleMedium.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+              // Next button (shown after answering)
+              if (quizState.hasAnswered)
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ref.read(quizStateNotifier.notifier).nextQuestion();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: Text(
+                      quizState.currentQuestionIndex <
+                              widget.questions.length - 1
+                          ? 'Next Question'
+                          : 'Finish Quiz',
+                      style: AppTheme.titleMedium.copyWith(
+                        color: Theme.of(context).colorScheme.fixedWhite,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
-      ),
+      ), // MeshBackground
     );
   }
 }
@@ -446,7 +485,7 @@ class _ProgressIndicatorWidget extends StatelessWidget {
               Text(
                 '${((currentQuestionIndex / totalQuestions) * 100).toStringAsFixed(0)}%',
                 style: AppTheme.bodyMedium.copyWith(
-                  color: AppTheme.primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -455,9 +494,11 @@ class _ProgressIndicatorWidget extends StatelessWidget {
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: currentQuestionIndex / totalQuestions,
-            backgroundColor: Colors.grey[300],
-            valueColor: const AlwaysStoppedAnimation<Color>(
-              AppTheme.primaryColor,
+            backgroundColor: Theme.of(
+              context,
+            ).dividerColor.withValues(alpha: 0.1),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              Theme.of(context).colorScheme.primary,
             ),
           ),
         ],
@@ -492,15 +533,21 @@ class _OptionCardWidget extends StatelessWidget {
 
     if (hasAnswered) {
       if (isCorrect) {
-        backgroundColor = AppTheme.successColor.withValues(alpha: 0.12);
-        borderColor = AppTheme.successColor;
+        backgroundColor = Theme.of(
+          context,
+        ).colorScheme.success.withValues(alpha: 0.12);
+        borderColor = Theme.of(context).colorScheme.success;
       } else if (isSelected) {
-        backgroundColor = AppTheme.errorColor.withValues(alpha: 0.12);
-        borderColor = AppTheme.errorColor;
+        backgroundColor = Theme.of(
+          context,
+        ).colorScheme.error.withValues(alpha: 0.12);
+        borderColor = Theme.of(context).colorScheme.error;
       }
     } else if (isSelected) {
-      backgroundColor = AppTheme.primaryColor.withValues(alpha: 0.12);
-      borderColor = AppTheme.primaryColor;
+      backgroundColor = Theme.of(
+        context,
+      ).colorScheme.primary.withValues(alpha: 0.12);
+      borderColor = Theme.of(context).colorScheme.primary;
     }
 
     return Padding(
@@ -510,7 +557,10 @@ class _OptionCardWidget extends StatelessWidget {
         color: backgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: borderColor ?? Colors.transparent, width: 2),
+          side: BorderSide(
+            color: borderColor ?? Theme.of(context).colorScheme.transparent,
+            width: 2,
+          ),
         ),
         child: InkWell(
           onTap: hasAnswered ? null : () => onSelectAnswer(index),
@@ -524,10 +574,10 @@ class _OptionCardWidget extends StatelessWidget {
                   height: 32,
                   decoration: BoxDecoration(
                     color: hasAnswered && isCorrect
-                        ? AppTheme.correctAnswerColor
+                        ? Theme.of(context).colorScheme.success
                         : hasAnswered && isSelected
-                        ? AppTheme.incorrectAnswerColor
-                        : Colors.grey[300],
+                        ? Theme.of(context).colorScheme.error
+                        : Theme.of(context).dividerColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -535,8 +585,10 @@ class _OptionCardWidget extends StatelessWidget {
                       String.fromCharCode(65 + index), // A, B, C, D
                       style: AppTheme.bodyMedium.copyWith(
                         color: hasAnswered && (isCorrect || isSelected)
-                            ? Colors.white
-                            : Colors.grey[700],
+                            ? Theme.of(context).colorScheme.fixedWhite
+                            : Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.6),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -554,14 +606,14 @@ class _OptionCardWidget extends StatelessWidget {
                   ),
                 ),
                 if (hasAnswered && isCorrect)
-                  const Icon(
+                  Icon(
                     Icons.check_circle,
-                    color: AppTheme.correctAnswerColor,
+                    color: Theme.of(context).colorScheme.success,
                   ),
                 if (hasAnswered && isSelected && !isCorrect)
-                  const Icon(
+                  Icon(
                     Icons.cancel,
-                    color: AppTheme.incorrectAnswerColor,
+                    color: Theme.of(context).colorScheme.error,
                   ),
               ],
             ),

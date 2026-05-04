@@ -123,7 +123,11 @@ class BlockProgressModel extends BlockProgress {
   }
 
   /// Generate block ID from parameters
-  static String generateBlockId(String level, String? wordType, int blockNumber) {
+  static String generateBlockId(
+    String level,
+    String? wordType,
+    int blockNumber,
+  ) {
     final type = wordType ?? 'all';
     return '${level}_${type}_$blockNumber';
   }

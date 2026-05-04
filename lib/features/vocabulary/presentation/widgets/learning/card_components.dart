@@ -4,27 +4,31 @@ import '../../../../../../core/theme/app_theme.dart';
 class CategoryBadge extends StatelessWidget {
   final String category;
 
-  const CategoryBadge({
-    super.key,
-    required this.category,
-  });
+  const CategoryBadge({super.key, required this.category});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withValues(alpha: 0.12),
+        color: isDark
+            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12)
+            : Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: AppTheme.primaryColor.withValues(alpha: 0.25),
-          width: 1.5,
+          color: isDark
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.25)
+              : Theme.of(context).colorScheme.outlineVariant,
+          width: 1.2,
         ),
       ),
       child: Text(
         category.toUpperCase(),
         style: AppTheme.bodySmall.copyWith(
-          color: AppTheme.primaryColor,
+          color: isDark
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.onPrimaryContainer,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
           fontSize: 13,
@@ -58,7 +62,8 @@ class BurmeseSide extends StatelessWidget {
   Widget _buildMainContent(BuildContext context) {
     // Replace "၊ " with newline for proper line breaks
     final formattedText = burmeseWord.replaceAll('၊ ', '၊\n');
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -71,33 +76,33 @@ class BurmeseSide extends StatelessWidget {
               fontWeight: FontWeight.w800,
               height: 1.6,
               letterSpacing: 0.3,
-              color: const Color(0xFF1A1A1A),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 12,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppTheme.primaryColor.withValues(alpha: 0.12),
-                  AppTheme.primaryColor.withValues(alpha: 0.08),
-                ],
-              ),
+              color: isDark
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.08)
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                color: isDark
+                    ? Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.15)
+                    : Theme.of(context).colorScheme.outlineVariant,
                 width: 1,
               ),
             ),
             child: Text(
               japaneseReading,
               style: AppTheme.japaneseText.copyWith(
-                color: AppTheme.primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
                 height: 1.3,
@@ -134,6 +139,7 @@ class EnglishSide extends StatelessWidget {
   }
 
   Widget _buildMainContent(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -146,33 +152,33 @@ class EnglishSide extends StatelessWidget {
               fontWeight: FontWeight.w800,
               height: 1.4,
               letterSpacing: 0.3,
-              color: const Color(0xFF1A1A1A),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 12,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppTheme.primaryColor.withValues(alpha: 0.12),
-                  AppTheme.primaryColor.withValues(alpha: 0.08),
-                ],
-              ),
+              color: isDark
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.08)
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                color: isDark
+                    ? Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.15)
+                    : Theme.of(context).colorScheme.outlineVariant,
                 width: 1,
               ),
             ),
             child: Text(
               japaneseReading,
               style: AppTheme.japaneseText.copyWith(
-                color: AppTheme.primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
                 height: 1.3,
@@ -190,40 +196,37 @@ class EnglishSide extends StatelessWidget {
 class JapaneseSide extends StatelessWidget {
   static const double kCardBorderRadius = 28.0;
   static const double kJapaneseFontSize = 62.0;
-  static const Color kCardGradientStartColor = Color(0xFF4DB8FF);
-  static const Color kCardGradientEndColor = Color(0xFF2196F3);
 
   final String japaneseWord;
 
-  const JapaneseSide({
-    super.key,
-    required this.japaneseWord,
-  });
+  const JapaneseSide({super.key, required this.japaneseWord});
 
   @override
   Widget build(BuildContext context) {
     return Flexible(
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        child: _buildMainContent(),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+        child: _buildMainContent(context),
       ),
     );
   }
 
-  Widget _buildMainContent() {
+  Widget _buildMainContent(BuildContext context) {
     return Center(
       child: Text(
         japaneseWord,
         style: AppTheme.japaneseText.copyWith(
-          fontSize: 64,
+          fontSize: 60,
           fontWeight: FontWeight.w900,
           height: 1.1,
           letterSpacing: 2,
-          color: const Color(0xFF1A1A1A),
+          color: Theme.of(context).colorScheme.onSurface,
           shadows: [
             Shadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Theme.of(
+                context,
+              ).colorScheme.fixedBlack.withValues(alpha: 0.1),
               offset: const Offset(0, 2),
               blurRadius: 4,
             ),

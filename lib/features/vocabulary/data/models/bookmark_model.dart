@@ -10,10 +10,7 @@ class BookmarkModel {
   @HiveField(1)
   final DateTime bookmarkedAt;
 
-  BookmarkModel({
-    required this.vocabularyId,
-    required this.bookmarkedAt,
-  });
+  BookmarkModel({required this.vocabularyId, required this.bookmarkedAt});
 
   @override
   bool operator ==(Object other) =>

@@ -11,10 +11,10 @@ class QuizResultArgs with _$QuizResultArgs {
   const factory QuizResultArgs({
     /// Total number of questions in the quiz
     required int totalQuestions,
-    
+
     /// Number of questions answered correctly
     required int correctAnswers,
-    
+
     /// Optional JLPT level of the quiz
     String? level,
   }) = _QuizResultArgs;

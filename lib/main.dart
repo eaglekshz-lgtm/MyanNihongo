@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -106,7 +108,7 @@ class MyanNihongoApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'MyanNihongo - Learn Burmese to Japanese',
-      theme: AppTheme.lightTheme,
+      theme: AppTheme.darkPaletteLightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
@@ -127,47 +129,62 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Timer? _navigationTimer;
+
   @override
   void initState() {
     super.initState();
     _initializeApp();
   }
 
-  Future<void> _initializeApp() async {
-    // Simulate loading time
-    await Future.delayed(const Duration(seconds: 2));
-
-    // Navigate to home screen using named route
-    if (mounted) {
+  void _initializeApp() {
+    _navigationTimer = Timer(const Duration(seconds: 2), () {
+      if (!mounted) return;
       Navigator.of(context).pushReplacementNamed(RouteNames.home);
-    }
+    });
+  }
+
+  @override
+  void dispose() {
+    _navigationTimer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.school, size: 100, color: Colors.white),
+            Icon(
+              Icons.school,
+              size: 100,
+              color: Theme.of(context).colorScheme.fixedWhite,
+            ),
             const SizedBox(height: 24),
             Text(
               'MyanNihongo',
               style: AppTheme.headlineLarge.copyWith(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.fixedWhite,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'Learn Burmese to Japanese',
-              style: AppTheme.titleMedium.copyWith(color: Colors.white70),
+              style: AppTheme.titleMedium.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.fixedWhite.withValues(alpha: 0.7),
+              ),
             ),
             const SizedBox(height: 48),
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Theme.of(context).colorScheme.fixedWhite,
+              ),
             ),
           ],
         ),
@@ -191,7 +208,11 @@ class AppInitializationErrorScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 80, color: Colors.red),
+              Icon(
+                Icons.error_outline,
+                size: 80,
+                color: Theme.of(context).colorScheme.error,
+              ),
               const SizedBox(height: 24),
               const Text(
                 'App Initialization Failed',
@@ -207,7 +228,12 @@ class AppInitializationErrorScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Error details: $error',
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
                 textAlign: TextAlign.center,
               ),
             ],

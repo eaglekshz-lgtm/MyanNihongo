@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../../core/widgets/mesh_background.dart';
 
+import '../../../../../core/theme/app_theme.dart';
 import '../../../data/models/vocabulary_item_model.dart';
 import '../../../data/providers/bookmark_providers.dart';
 import 'action_buttons.dart';
@@ -38,8 +40,9 @@ class LearningScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentItem = vocabulary[viewingIndex];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return SafeArea(
+    final content = SafeArea(
       child: Column(
         children: [
           VocabularyProgressHeader(
@@ -51,55 +54,31 @@ class LearningScreen extends StatelessWidget {
             animate: isFinishing,
             forcedProgress: isFinishing ? 1.0 : null,
           ),
-          Expanded(
-            child: _buildVocabularyCard(currentItem),
-          ),
+          Expanded(child: _buildVocabularyCard(currentItem)),
           const SizedBox(height: 10),
-          _buildActionButtons(
-            context,
-            currentItem,
-            vocabulary.length,
-          ),
+          _buildActionButtons(context, currentItem, vocabulary.length),
         ],
       ),
     );
+
+    return isDark ? content : MeshBackground(child: content);
   }
 
   Widget _buildVocabularyCard(VocabularyItemModel item) {
     return Consumer(
       builder: (context, ref, _) {
         final bookmarkedIdsAsync = ref.watch(bookmarkedIdsProvider);
-        
+
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0.3, 0.0),
-                    end: Offset.zero,
-                  ).animate(
-                    CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeOut,
-                    ),
-                  ),
-                  child: child,
-                ),
-              );
-            },
-            child: SwipeableVocabularyCard(
-              key: ValueKey('card-$viewingIndex'),
-              item: item,
-              learningMode: learningMode ?? 'recall',
-              flipController: flipController,
-              bookmarkedIdsAsync: bookmarkedIdsAsync,
-              onFlipTap: onFlipTap,
-              onSpeak: onSpeak,
-            ),
+          child: SwipeableVocabularyCard(
+            key: ValueKey('card-$viewingIndex'),
+            item: item,
+            learningMode: learningMode ?? 'recall',
+            flipController: flipController,
+            bookmarkedIdsAsync: bookmarkedIdsAsync,
+            onFlipTap: onFlipTap,
+            onSpeak: onSpeak,
           ),
         );
       },
@@ -114,7 +93,7 @@ class LearningScreen extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final bookmarkedIdsAsync = ref.watch(bookmarkedIdsProvider);
-        
+
         return bookmarkedIdsAsync.when(
           data: (bookmarkedIds) => _buildButtons(
             context,
@@ -123,20 +102,10 @@ class LearningScreen extends StatelessWidget {
             bookmarkedIds.contains(item.id.toString()),
             totalVocabularyLength,
           ),
-          loading: () => _buildButtons(
-            context,
-            ref,
-            item,
-            false,
-            totalVocabularyLength,
-          ),
-          error: (_, __) => _buildButtons(
-            context,
-            ref,
-            item,
-            false,
-            totalVocabularyLength,
-          ),
+          loading: () =>
+              _buildButtons(context, ref, item, false, totalVocabularyLength),
+          error: (_, __) =>
+              _buildButtons(context, ref, item, false, totalVocabularyLength),
         );
       },
     );
@@ -170,15 +139,13 @@ class LearningScreen extends StatelessWidget {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: _buildBookmarkSnackBarContent(isBookmarked),
+        content: _buildBookmarkSnackBarContent(context, isBookmarked),
         backgroundColor: isBookmarked
-            ? const Color(0xFFFF9800)
-            : const Color(0xFF424242),
+            ? Theme.of(context).colorScheme.secondary
+            : Theme.of(context).colorScheme.surfaceContainerHighest,
         duration: const Duration(milliseconds: 2500),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: EdgeInsets.only(
           top: MediaQuery.of(context).padding.top + 16,
           left: 16,
@@ -190,18 +157,25 @@ class LearningScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBookmarkSnackBarContent(bool isBookmarked) {
+  Widget _buildBookmarkSnackBarContent(
+    BuildContext context,
+    bool isBookmarked,
+  ) {
     return Row(
       children: [
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: Theme.of(
+              context,
+            ).colorScheme.fixedWhite.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
-            isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-            color: Colors.white,
+            isBookmarked
+                ? Icons.bookmark_rounded
+                : Icons.bookmark_border_rounded,
+            color: Theme.of(context).colorScheme.fixedWhite,
             size: 24,
           ),
         ),
@@ -213,8 +187,8 @@ class LearningScreen extends StatelessWidget {
             children: [
               Text(
                 isBookmarked ? 'Saved!' : 'Removed',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.fixedWhite,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.2,
@@ -225,7 +199,9 @@ class LearningScreen extends StatelessWidget {
                     ? 'Word added to your bookmarks'
                     : 'Word removed from bookmarks',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.fixedWhite.withValues(alpha: 0.9),
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -234,8 +210,12 @@ class LearningScreen extends StatelessWidget {
           ),
         ),
         Icon(
-          isBookmarked ? Icons.check_circle_rounded : Icons.info_outline_rounded,
-          color: Colors.white.withValues(alpha: 0.9),
+          isBookmarked
+              ? Icons.check_circle_rounded
+              : Icons.info_outline_rounded,
+          color: Theme.of(
+            context,
+          ).colorScheme.fixedWhite.withValues(alpha: 0.9),
           size: 22,
         ),
       ],

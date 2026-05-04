@@ -217,20 +217,20 @@ class VocabularyItemModelAdapter extends TypeAdapter<VocabularyItemModel> {
 // **************************************************************************
 
 ExampleSentenceModel _$ExampleSentenceModelFromJson(
-        Map<String, dynamic> json) =>
-    ExampleSentenceModel(
-      japanese: json['japanese'] as String,
-      english: json['english'] as String,
-      burmese: json['burmese'] as String,
-    );
+  Map<String, dynamic> json,
+) => ExampleSentenceModel(
+  japanese: json['japanese'] as String,
+  english: json['english'] as String,
+  burmese: json['burmese'] as String,
+);
 
 Map<String, dynamic> _$ExampleSentenceModelToJson(
-        ExampleSentenceModel instance) =>
-    <String, dynamic>{
-      'japanese': instance.japanese,
-      'english': instance.english,
-      'burmese': instance.burmese,
-    };
+  ExampleSentenceModel instance,
+) => <String, dynamic>{
+  'japanese': instance.japanese,
+  'english': instance.english,
+  'burmese': instance.burmese,
+};
 
 TranslationModel _$TranslationModelFromJson(Map<String, dynamic> json) =>
     TranslationModel(
@@ -239,10 +239,7 @@ TranslationModel _$TranslationModelFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$TranslationModelToJson(TranslationModel instance) =>
-    <String, dynamic>{
-      'english': instance.english,
-      'burmese': instance.burmese,
-    };
+    <String, dynamic>{'english': instance.english, 'burmese': instance.burmese};
 
 QuizQuestionModel _$QuizQuestionModelFromJson(Map<String, dynamic> json) =>
     QuizQuestionModel(
@@ -261,11 +258,13 @@ QuizDataModel _$QuizDataModelFromJson(Map<String, dynamic> json) =>
       kanjiToHiragana: json['kanji_to_hiragana'] == null
           ? null
           : QuizQuestionModel.fromJson(
-              json['kanji_to_hiragana'] as Map<String, dynamic>),
+              json['kanji_to_hiragana'] as Map<String, dynamic>,
+            ),
       hiraganaToKanji: json['hiragana_to_kanji'] == null
           ? null
           : QuizQuestionModel.fromJson(
-              json['hiragana_to_kanji'] as Map<String, dynamic>),
+              json['hiragana_to_kanji'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$QuizDataModelToJson(QuizDataModel instance) =>
@@ -281,7 +280,8 @@ VocabularyItemModel _$VocabularyItemModelFromJson(Map<String, dynamic> json) =>
       reading: json['reading'] as String,
       partOfSpeech: json['part_of_speech'] as String,
       translations: TranslationModel.fromJson(
-          json['translations'] as Map<String, dynamic>),
+        json['translations'] as Map<String, dynamic>,
+      ),
       exampleSentences: (json['example_sentences'] as List<dynamic>)
           .map((e) => ExampleSentenceModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -292,15 +292,16 @@ VocabularyItemModel _$VocabularyItemModelFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$VocabularyItemModelToJson(
-        VocabularyItemModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'word': instance.word,
-      'reading': instance.reading,
-      'part_of_speech': instance.partOfSpeech,
-      'translations': instance.translations.toJson(),
-      'example_sentences':
-          instance.exampleSentences.map((e) => e.toJson()).toList(),
-      'quizzes': instance.quizzes?.toJson(),
-      'tag': instance.tag,
-    };
+  VocabularyItemModel instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'word': instance.word,
+  'reading': instance.reading,
+  'part_of_speech': instance.partOfSpeech,
+  'translations': instance.translations.toJson(),
+  'example_sentences': instance.exampleSentences
+      .map((e) => e.toJson())
+      .toList(),
+  'quizzes': instance.quizzes?.toJson(),
+  'tag': instance.tag,
+};

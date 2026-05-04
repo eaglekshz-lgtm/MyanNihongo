@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:myan_nihongo/core/theme/app_theme.dart';
 import '../../../../core/routes/route_names.dart';
 import '../../../../arguments/learning_mode_config_args.dart';
-import '../widgets/page_header_widget.dart';
 import '../widgets/level_card_widget.dart';
 
 class LevelSelectionPage extends StatelessWidget {
@@ -10,25 +10,68 @@ class LevelSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select JLPT Level'),
-        centerTitle: true,
-      ),
-      body: const SafeArea(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(title: const Text('Select JLPT Level'), centerTitle: true),
+      body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              PageHeaderWidget(
-                icon: Icons.school,
-                title: 'Choose Your Level',
-                subtitle: 'Select the JLPT level you want to practice',
+              const SizedBox(height: 8),
+              Center(
+                child: Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Theme.of(context).colorScheme.bannerGradientStart,
+                        Theme.of(context).colorScheme.bannerGradientEnd,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(22),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).colorScheme.bannerGradientStart
+                            .withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.school,
+                    color: Theme.of(context).colorScheme.fixedWhite,
+                    size: 36,
+                  ),
+                ),
               ),
-              SizedBox(height: 32),
-              Expanded(
-                child: _LevelsList(),
+              const SizedBox(height: 24),
+              Text(
+                'Choose Your Level',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                textAlign: TextAlign.center,
               ),
+              const SizedBox(height: 8),
+              Text(
+                'Select the JLPT level you want to practice',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              const Expanded(child: _LevelsList()),
             ],
           ),
         ),
@@ -45,31 +88,31 @@ class _LevelsList extends StatelessWidget {
     _LevelData(
       level: 'N5',
       title: 'JLPT N5',
-      description: 'Beginner - Basic vocabulary and grammar',
+      description: 'Beginner · Basic vocabulary and grammar',
       difficulty: 'Easiest',
     ),
     _LevelData(
       level: 'N4',
       title: 'JLPT N4',
-      description: 'Elementary - Simple everyday conversations',
+      description: 'Elementary · Simple everyday conversations',
       difficulty: 'Easy',
     ),
     _LevelData(
       level: 'N3',
       title: 'JLPT N3',
-      description: 'Intermediate - Daily life situations',
+      description: 'Intermediate · Daily life situations',
       difficulty: 'Medium',
     ),
     _LevelData(
       level: 'N2',
       title: 'JLPT N2',
-      description: 'Upper intermediate - Various topics',
+      description: 'Upper intermediate · Complex topics',
       difficulty: 'Hard',
     ),
     _LevelData(
       level: 'N1',
       title: 'JLPT N1',
-      description: 'Advanced - Complex topics and expressions',
+      description: 'Advanced · Native-level fluency',
       difficulty: 'Hardest',
     ),
   ];
@@ -90,6 +133,7 @@ class _LevelsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      physics: const BouncingScrollPhysics(),
       itemCount: _levels.length,
       separatorBuilder: (_, __) => const SizedBox(height: 16),
       itemBuilder: (context, index) {

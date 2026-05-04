@@ -70,20 +70,21 @@ class UserStreak extends Equatable {
       studyDates: studyDates ?? this.studyDates,
       totalStudyDays: totalStudyDays ?? this.totalStudyDays,
       studiedToday: studiedToday ?? this.studiedToday,
-      streakFreezesAvailable: streakFreezesAvailable ?? this.streakFreezesAvailable,
+      streakFreezesAvailable:
+          streakFreezesAvailable ?? this.streakFreezesAvailable,
       streakStartDate: streakStartDate ?? this.streakStartDate,
     );
   }
 
   @override
   List<Object?> get props => [
-        currentStreak,
-        longestStreak,
-        lastStudyDate,
-        studyDates,
-        totalStudyDays,
-        studiedToday,
-        streakFreezesAvailable,
-        streakStartDate,
-      ];
+    currentStreak,
+    longestStreak,
+    lastStudyDate,
+    studyDates,
+    totalStudyDays,
+    studiedToday,
+    streakFreezesAvailable,
+    streakStartDate,
+  ];
 }

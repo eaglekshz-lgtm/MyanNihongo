@@ -25,13 +25,15 @@ class EmptyVocabularyWidget extends StatelessWidget {
             Text(
               'Configure Your Quiz',
               style: AppTheme.headlineMedium.copyWith(
-                color: AppTheme.primaryColor,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'Select the difficulty level and number of questions',
-              style: AppTheme.bodyMedium.copyWith(color: Colors.grey[600]),
+              style: AppTheme.bodyMedium.copyWith(
+                color: Theme.of(context).colorScheme.neutral600,
+              ),
             ),
             const SizedBox(height: 32),
             Text(
@@ -49,14 +51,14 @@ class EmptyVocabularyWidget extends StatelessWidget {
             ElevatedButton(
               onPressed: null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[300],
-                foregroundColor: Colors.grey[600],
+                backgroundColor: Theme.of(context).colorScheme.neutral300,
+                foregroundColor: Theme.of(context).colorScheme.neutral600,
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               child: Text(
                 'No vocabulary available',
                 style: AppTheme.titleMedium.copyWith(
-                  color: Colors.grey[600],
+                  color: Theme.of(context).colorScheme.neutral600,
                   fontWeight: FontWeight.bold,
                 ),
               ),

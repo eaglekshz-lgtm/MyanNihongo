@@ -12,7 +12,8 @@ part of 'quiz_result_args.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$QuizResultArgs {
@@ -35,8 +36,9 @@ mixin _$QuizResultArgs {
 /// @nodoc
 abstract class $QuizResultArgsCopyWith<$Res> {
   factory $QuizResultArgsCopyWith(
-          QuizResultArgs value, $Res Function(QuizResultArgs) then) =
-      _$QuizResultArgsCopyWithImpl<$Res, QuizResultArgs>;
+    QuizResultArgs value,
+    $Res Function(QuizResultArgs) then,
+  ) = _$QuizResultArgsCopyWithImpl<$Res, QuizResultArgs>;
   @useResult
   $Res call({int totalQuestions, int correctAnswers, String? level});
 }
@@ -60,29 +62,33 @@ class _$QuizResultArgsCopyWithImpl<$Res, $Val extends QuizResultArgs>
     Object? correctAnswers = null,
     Object? level = freezed,
   }) {
-    return _then(_value.copyWith(
-      totalQuestions: null == totalQuestions
-          ? _value.totalQuestions
-          : totalQuestions // ignore: cast_nullable_to_non_nullable
-              as int,
-      correctAnswers: null == correctAnswers
-          ? _value.correctAnswers
-          : correctAnswers // ignore: cast_nullable_to_non_nullable
-              as int,
-      level: freezed == level
-          ? _value.level
-          : level // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            totalQuestions: null == totalQuestions
+                ? _value.totalQuestions
+                : totalQuestions // ignore: cast_nullable_to_non_nullable
+                      as int,
+            correctAnswers: null == correctAnswers
+                ? _value.correctAnswers
+                : correctAnswers // ignore: cast_nullable_to_non_nullable
+                      as int,
+            level: freezed == level
+                ? _value.level
+                : level // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$QuizResultArgsImplCopyWith<$Res>
     implements $QuizResultArgsCopyWith<$Res> {
-  factory _$$QuizResultArgsImplCopyWith(_$QuizResultArgsImpl value,
-          $Res Function(_$QuizResultArgsImpl) then) =
-      __$$QuizResultArgsImplCopyWithImpl<$Res>;
+  factory _$$QuizResultArgsImplCopyWith(
+    _$QuizResultArgsImpl value,
+    $Res Function(_$QuizResultArgsImpl) then,
+  ) = __$$QuizResultArgsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({int totalQuestions, int correctAnswers, String? level});
@@ -93,8 +99,9 @@ class __$$QuizResultArgsImplCopyWithImpl<$Res>
     extends _$QuizResultArgsCopyWithImpl<$Res, _$QuizResultArgsImpl>
     implements _$$QuizResultArgsImplCopyWith<$Res> {
   __$$QuizResultArgsImplCopyWithImpl(
-      _$QuizResultArgsImpl _value, $Res Function(_$QuizResultArgsImpl) _then)
-      : super(_value, _then);
+    _$QuizResultArgsImpl _value,
+    $Res Function(_$QuizResultArgsImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of QuizResultArgs
   /// with the given fields replaced by the non-null parameter values.
@@ -105,29 +112,33 @@ class __$$QuizResultArgsImplCopyWithImpl<$Res>
     Object? correctAnswers = null,
     Object? level = freezed,
   }) {
-    return _then(_$QuizResultArgsImpl(
-      totalQuestions: null == totalQuestions
-          ? _value.totalQuestions
-          : totalQuestions // ignore: cast_nullable_to_non_nullable
-              as int,
-      correctAnswers: null == correctAnswers
-          ? _value.correctAnswers
-          : correctAnswers // ignore: cast_nullable_to_non_nullable
-              as int,
-      level: freezed == level
-          ? _value.level
-          : level // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$QuizResultArgsImpl(
+        totalQuestions: null == totalQuestions
+            ? _value.totalQuestions
+            : totalQuestions // ignore: cast_nullable_to_non_nullable
+                  as int,
+        correctAnswers: null == correctAnswers
+            ? _value.correctAnswers
+            : correctAnswers // ignore: cast_nullable_to_non_nullable
+                  as int,
+        level: freezed == level
+            ? _value.level
+            : level // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$QuizResultArgsImpl extends _QuizResultArgs {
-  const _$QuizResultArgsImpl(
-      {required this.totalQuestions, required this.correctAnswers, this.level})
-      : super._();
+  const _$QuizResultArgsImpl({
+    required this.totalQuestions,
+    required this.correctAnswers,
+    this.level,
+  }) : super._();
 
   /// Total number of questions in the quiz
   @override
@@ -169,14 +180,17 @@ class _$QuizResultArgsImpl extends _QuizResultArgs {
   @pragma('vm:prefer-inline')
   _$$QuizResultArgsImplCopyWith<_$QuizResultArgsImpl> get copyWith =>
       __$$QuizResultArgsImplCopyWithImpl<_$QuizResultArgsImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 }
 
 abstract class _QuizResultArgs extends QuizResultArgs {
-  const factory _QuizResultArgs(
-      {required final int totalQuestions,
-      required final int correctAnswers,
-      final String? level}) = _$QuizResultArgsImpl;
+  const factory _QuizResultArgs({
+    required final int totalQuestions,
+    required final int correctAnswers,
+    final String? level,
+  }) = _$QuizResultArgsImpl;
   const _QuizResultArgs._() : super._();
 
   /// Total number of questions in the quiz

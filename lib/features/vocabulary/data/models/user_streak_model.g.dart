@@ -84,15 +84,15 @@ UserStreakModel _$UserStreakModelFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['streakStartDate'] as String),
     );
 
-Map<String, dynamic> _$UserStreakModelToJson(UserStreakModel instance) =>
-    <String, dynamic>{
-      'currentStreak': instance.currentStreak,
-      'longestStreak': instance.longestStreak,
-      'lastStudyDate': instance.lastStudyDate?.toIso8601String(),
-      'studyDates':
-          instance.studyDates.map((e) => e.toIso8601String()).toList(),
-      'totalStudyDays': instance.totalStudyDays,
-      'studiedToday': instance.studiedToday,
-      'streakFreezesAvailable': instance.streakFreezesAvailable,
-      'streakStartDate': instance.streakStartDate?.toIso8601String(),
-    };
+Map<String, dynamic> _$UserStreakModelToJson(
+  UserStreakModel instance,
+) => <String, dynamic>{
+  'currentStreak': instance.currentStreak,
+  'longestStreak': instance.longestStreak,
+  'lastStudyDate': instance.lastStudyDate?.toIso8601String(),
+  'studyDates': instance.studyDates.map((e) => e.toIso8601String()).toList(),
+  'totalStudyDays': instance.totalStudyDays,
+  'studiedToday': instance.studiedToday,
+  'streakFreezesAvailable': instance.streakFreezesAvailable,
+  'streakStartDate': instance.streakStartDate?.toIso8601String(),
+};

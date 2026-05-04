@@ -12,7 +12,8 @@ part of 'quiz_args.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$QuizArgs {
@@ -51,20 +52,20 @@ class _$QuizArgsCopyWithImpl<$Res, $Val extends QuizArgs>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? level = freezed,
-    Object? numberOfQuestions = null,
-  }) {
-    return _then(_value.copyWith(
-      level: freezed == level
-          ? _value.level
-          : level // ignore: cast_nullable_to_non_nullable
-              as String?,
-      numberOfQuestions: null == numberOfQuestions
-          ? _value.numberOfQuestions
-          : numberOfQuestions // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
+  $Res call({Object? level = freezed, Object? numberOfQuestions = null}) {
+    return _then(
+      _value.copyWith(
+            level: freezed == level
+                ? _value.level
+                : level // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            numberOfQuestions: null == numberOfQuestions
+                ? _value.numberOfQuestions
+                : numberOfQuestions // ignore: cast_nullable_to_non_nullable
+                      as int,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -72,8 +73,9 @@ class _$QuizArgsCopyWithImpl<$Res, $Val extends QuizArgs>
 abstract class _$$QuizArgsImplCopyWith<$Res>
     implements $QuizArgsCopyWith<$Res> {
   factory _$$QuizArgsImplCopyWith(
-          _$QuizArgsImpl value, $Res Function(_$QuizArgsImpl) then) =
-      __$$QuizArgsImplCopyWithImpl<$Res>;
+    _$QuizArgsImpl value,
+    $Res Function(_$QuizArgsImpl) then,
+  ) = __$$QuizArgsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String? level, int numberOfQuestions});
@@ -84,27 +86,27 @@ class __$$QuizArgsImplCopyWithImpl<$Res>
     extends _$QuizArgsCopyWithImpl<$Res, _$QuizArgsImpl>
     implements _$$QuizArgsImplCopyWith<$Res> {
   __$$QuizArgsImplCopyWithImpl(
-      _$QuizArgsImpl _value, $Res Function(_$QuizArgsImpl) _then)
-      : super(_value, _then);
+    _$QuizArgsImpl _value,
+    $Res Function(_$QuizArgsImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of QuizArgs
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? level = freezed,
-    Object? numberOfQuestions = null,
-  }) {
-    return _then(_$QuizArgsImpl(
-      level: freezed == level
-          ? _value.level
-          : level // ignore: cast_nullable_to_non_nullable
-              as String?,
-      numberOfQuestions: null == numberOfQuestions
-          ? _value.numberOfQuestions
-          : numberOfQuestions // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
+  $Res call({Object? level = freezed, Object? numberOfQuestions = null}) {
+    return _then(
+      _$QuizArgsImpl(
+        level: freezed == level
+            ? _value.level
+            : level // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        numberOfQuestions: null == numberOfQuestions
+            ? _value.numberOfQuestions
+            : numberOfQuestions // ignore: cast_nullable_to_non_nullable
+                  as int,
+      ),
+    );
   }
 }
 
@@ -112,7 +114,7 @@ class __$$QuizArgsImplCopyWithImpl<$Res>
 
 class _$QuizArgsImpl extends _QuizArgs {
   const _$QuizArgsImpl({this.level, required this.numberOfQuestions})
-      : super._();
+    : super._();
 
   /// Optional JLPT level filter
   @override
@@ -150,9 +152,10 @@ class _$QuizArgsImpl extends _QuizArgs {
 }
 
 abstract class _QuizArgs extends QuizArgs {
-  const factory _QuizArgs(
-      {final String? level,
-      required final int numberOfQuestions}) = _$QuizArgsImpl;
+  const factory _QuizArgs({
+    final String? level,
+    required final int numberOfQuestions,
+  }) = _$QuizArgsImpl;
   const _QuizArgs._() : super._();
 
   /// Optional JLPT level filter

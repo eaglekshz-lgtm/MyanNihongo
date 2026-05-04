@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myan_nihongo/core/theme/app_theme.dart';
 
 /// Simple feature card for home page navigation
 class HomeFeatureCard extends StatelessWidget {
@@ -19,54 +20,45 @@ class HomeFeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark
+        ? Theme.of(context).colorScheme.darkFeatureSurface
+        : Theme.of(context).colorScheme.surface;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 4),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.white,
-        border: Border.all(color: color.withValues(alpha: 0.15), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(24),
+        color: cardColor,
+        border: Border.all(
+          color: isDark
+              ? Theme.of(context).colorScheme.fixedWhite.withValues(alpha: 0.05)
+              : color.withValues(alpha: 0.15),
+          width: 1,
+        ),
       ),
       child: Material(
-        color: Colors.transparent,
+        color: Theme.of(context).colorScheme.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             child: Row(
               children: [
+                // Flat solid color icon container
                 Container(
-                  width: 56,
-                  height: 56,
+                  width: 64,
+                  height: 64,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [color, color.withValues(alpha: 0.85)],
-                    ),
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [
-                      BoxShadow(
-                        color: color.withValues(alpha: 0.3),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+                    color: color,
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Icon(icon, color: Colors.white, size: 28),
+                  child: Icon(
+                    icon,
+                    color: Theme.of(context).colorScheme.fixedWhite,
+                    size: 30,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -77,32 +69,37 @@ class HomeFeatureCard extends StatelessWidget {
                         title,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black87,
-                              letterSpacing: -0.2,
+                              fontWeight: FontWeight.w800,
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontSize: 18,
+                              letterSpacing: -0.3,
                             ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         description,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.black54,
-                          height: 1.3,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.5),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                 ),
+                // Arrow icon
                 Container(
-                  width: 32,
-                  height: 32,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(10),
+                    color: color.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.arrow_forward_rounded,
-                    size: 16,
+                    size: 20,
                     color: color,
                   ),
                 ),

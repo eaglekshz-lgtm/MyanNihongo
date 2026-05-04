@@ -4,20 +4,21 @@ import '../../../../../../core/theme/app_theme.dart';
 class StartButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const StartButton({
-    super.key,
-    required this.onPressed,
-  });
+  const StartButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.fixedBlack.withValues(
+              alpha: Theme.of(context).brightness == Brightness.dark
+                  ? 0.2
+                  : 0.05,
+            ),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -28,8 +29,8 @@ class StartButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.primaryColor,
-            foregroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),

@@ -38,16 +38,16 @@ class VocabularyLocalDataSource {
   /// Only clears items with the same tag before saving to prevent duplicates
   Future<void> saveVocabulary(List<VocabularyItemModel> items) async {
     if (items.isEmpty) return;
-    
+
     // Get the tag from the first item (all items should have the same tag)
     final tag = items.first.tag.toUpperCase();
-    
+
     // Clear only existing items with the same tag to prevent duplicates
     final existingItemsWithSameTag = _vocabularyBox.values
         .where((item) => item.tag.toUpperCase() == tag)
         .map((item) => item.id)
         .toList();
-    
+
     if (existingItemsWithSameTag.isNotEmpty) {
       AppLogger.data(
         'Clearing ${existingItemsWithSameTag.length} existing items with tag $tag',
@@ -55,12 +55,15 @@ class VocabularyLocalDataSource {
       );
       await _vocabularyBox.deleteAll(existingItemsWithSameTag);
     }
-    
+
     // Now save the new items
-    AppLogger.data('Saving ${items.length} new items with tag $tag', operation: 'SAVE');
+    AppLogger.data(
+      'Saving ${items.length} new items with tag $tag',
+      operation: 'SAVE',
+    );
     final map = {for (var item in items) item.id: item};
     await _vocabularyBox.putAll(map);
-    
+
     // Verify what was saved
     final savedCount = _vocabularyBox.values
         .where((item) => item.tag.toUpperCase() == tag)
@@ -115,7 +118,9 @@ class VocabularyLocalDataSource {
   ) async {
     final type = wordType ?? 'all';
     return _blockProgressBox.values
-        .where((block) => block.level == level && (block.wordType ?? 'all') == type)
+        .where(
+          (block) => block.level == level && (block.wordType ?? 'all') == type,
+        )
         .toList();
   }
 }

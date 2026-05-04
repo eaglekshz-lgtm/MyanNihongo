@@ -59,15 +59,15 @@ class BlockProgress extends Equatable {
 
   @override
   List<Object?> get props => [
-        blockId,
-        blockNumber,
-        level,
-        wordType,
-        startIndex,
-        totalWords,
-        completedWords,
-        completionCount,
-        lastStudied,
-        isCompleted,
-      ];
+    blockId,
+    blockNumber,
+    level,
+    wordType,
+    startIndex,
+    totalWords,
+    completedWords,
+    completionCount,
+    lastStudied,
+    isCompleted,
+  ];
 }

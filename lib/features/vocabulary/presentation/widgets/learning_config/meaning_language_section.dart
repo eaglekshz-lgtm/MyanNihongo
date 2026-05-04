@@ -14,12 +14,18 @@ class MeaningLanguageSection extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Theme.of(context).colorScheme.fixedBlack.withValues(
+              alpha: Theme.of(context).brightness == Brightness.dark
+                  ? 0.15
+                  : 0.03,
+            ),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -33,12 +39,12 @@ class MeaningLanguageSection extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.translate,
-                  color: AppTheme.primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                   size: 20,
                 ),
               ),
@@ -47,7 +53,7 @@ class MeaningLanguageSection extends ConsumerWidget {
                 'Meaning Language',
                 style: AppTheme.titleMedium.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey[900],
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -56,11 +62,13 @@ class MeaningLanguageSection extends ConsumerWidget {
           Text(
             'Choose which language to display for word meanings and example sentences',
             style: AppTheme.bodySmall.copyWith(
-              color: Colors.grey[600],
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Language options
           ...MeaningLanguage.values.map((language) {
             final isSelected = selectedLanguage == language;
@@ -75,13 +83,15 @@ class MeaningLanguageSection extends ConsumerWidget {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? AppTheme.primaryColor.withValues(alpha: 0.05)
-                        : Colors.grey[50],
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.primaryContainer.withValues(alpha: 0.3)
+                        : Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: isSelected
-                          ? AppTheme.primaryColor
-                          : Colors.grey[300]!,
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.outline,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -94,19 +104,19 @@ class MeaningLanguageSection extends ConsumerWidget {
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: isSelected
-                                ? AppTheme.primaryColor
-                                : Colors.grey[400]!,
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.outline,
                             width: 2,
                           ),
                           color: isSelected
-                              ? AppTheme.primaryColor
-                              : Colors.transparent,
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.transparent,
                         ),
                         child: isSelected
-                            ? const Icon(
+                            ? Icon(
                                 Icons.check,
                                 size: 14,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.fixedWhite,
                               )
                             : null,
                       ),
@@ -121,8 +131,8 @@ class MeaningLanguageSection extends ConsumerWidget {
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 color: isSelected
-                                    ? AppTheme.primaryColor
-                                    : Colors.grey[900],
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             const SizedBox(height: 2),
@@ -132,16 +142,18 @@ class MeaningLanguageSection extends ConsumerWidget {
                                   : 'Show meanings in English',
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Colors.grey[600],
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
                             ),
                           ],
                         ),
                       ),
                       if (isSelected)
-                        const Icon(
+                        Icon(
                           Icons.check_circle,
-                          color: AppTheme.primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                           size: 24,
                         ),
                     ],

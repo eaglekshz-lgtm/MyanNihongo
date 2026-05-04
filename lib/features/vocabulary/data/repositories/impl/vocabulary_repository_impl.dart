@@ -5,27 +5,23 @@ import '../../models/user_progress_model.dart';
 import '../../models/block_progress_model.dart';
 import '../../datasources/vocabulary_local_datasource.dart';
 import '../../datasources/vocabulary_remote_datasource.dart';
-import '../../datasources/vocabulary_file_datasource.dart';
 import '../../datasources/system_update_datasource.dart';
 import '../../../../../core/utils/logger.dart';
 
 /// Implementation of VocabularyRepository
-/// Handles data fetching with API fallback to local files and caching
+/// Handles data fetching with remote/cache fallback behavior
 /// Now includes system update checking to avoid unnecessary fetches
 class VocabularyRepositoryImpl implements VocabularyRepository {
   final VocabularyLocalDataSource _localDataSource;
   final VocabularyRemoteDataSource _remoteDataSource;
-  final VocabularyFileDataSource _fileDataSource;
   final SystemUpdateDataSource? _systemUpdateDataSource;
 
   VocabularyRepositoryImpl({
     required VocabularyLocalDataSource localDataSource,
     required VocabularyRemoteDataSource remoteDataSource,
-    required VocabularyFileDataSource fileDataSource,
     SystemUpdateDataSource? systemUpdateDataSource,
   }) : _localDataSource = localDataSource,
        _remoteDataSource = remoteDataSource,
-       _fileDataSource = fileDataSource,
        _systemUpdateDataSource = systemUpdateDataSource;
 
   @override
@@ -121,86 +117,27 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
         }
       }
     } catch (apiError) {
-      try {
-        // If API fails, try to load from local file
-        AppLogger.info(
-          'API failed, loading from local file',
-          'VocabRepository',
+      AppLogger.warning(
+        'Remote vocabulary load failed, checking cache: $apiError',
+        'VocabRepository',
+      );
+      final cachedVocabulary = await _localDataSource.getVocabularyByLevel(
+        filter.level.toUpperCase(),
+      );
+
+      if (cachedVocabulary.isNotEmpty) {
+        AppLogger.data(
+          'Using ${cachedVocabulary.length} items from cache',
+          operation: 'READ',
         );
-        final vocabularyFromFile = await _fileDataSource.loadVocabularyFromFile(
-          filter.level,
-        );
-
-        // Save to cache
-        try {
-          AppLogger.data(
-            'Saving ${vocabularyFromFile.length} items from file to cache',
-            operation: 'SAVE',
-          );
-          await _localDataSource.saveVocabulary(vocabularyFromFile);
-
-          // Verify what was actually saved
-          final savedCount = await _localDataSource.getVocabularyByLevel(
-            filter.level.toUpperCase(),
-          );
-          AppLogger.info(
-            'File: ${vocabularyFromFile.length} items, Cached: ${savedCount.length} items',
-            'VocabRepository',
-          );
-        } catch (saveError) {
-          AppLogger.warning(
-            'Error saving to cache: $saveError',
-            'VocabRepository',
-          );
-          // Continue anyway with the loaded data
-        }
-
-        vocabulary = vocabularyFromFile;
-      } catch (fileError) {
-        // If both fail, check cache using JLPT level (N5, N4, etc.)
+        vocabulary = cachedVocabulary;
+      } else {
         AppLogger.warning(
-          'File loading failed, checking cache',
+          'No vocabulary found for level: ${filter.level}',
           'VocabRepository',
         );
-        final cachedVocabulary = await _localDataSource.getVocabularyByLevel(
-          filter.level.toUpperCase(),
-        );
-
-        if (cachedVocabulary.isNotEmpty) {
-          AppLogger.data(
-            'Using ${cachedVocabulary.length} items from cache',
-            operation: 'READ',
-          );
-          vocabulary = cachedVocabulary;
-        } else {
-          // If everything fails, return empty list instead of throwing
-          AppLogger.warning(
-            'No vocabulary found for level: ${filter.level}',
-            'VocabRepository',
-          );
-          return [];
-        }
+        return [];
       }
-    }
-
-    // Final safety: if still empty, attempt direct file load without saving
-    if (vocabulary.isEmpty) {
-      try {
-        AppLogger.warning(
-          'Repository empty, attempting direct file load for ${filter.level}',
-          'VocabRepository',
-        );
-        final fromFile = await _fileDataSource.loadVocabularyFromFile(
-          filter.level,
-        );
-        if (fromFile.isNotEmpty) {
-          vocabulary = fromFile;
-          AppLogger.info(
-            'Direct file load recovered ${fromFile.length} items',
-            'VocabRepository',
-          );
-        }
-      } catch (_) {}
     }
 
     return vocabulary;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:myan_nihongo/core/theme/app_theme.dart';
+import '../../../../../core/widgets/glass_container.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/providers/meaning_language_provider.dart';
 import '../../../data/models/vocabulary_item_model.dart';
 import 'card_components.dart';
@@ -21,7 +22,7 @@ class RecallCardWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final meaningLanguage = ref.watch(meaningLanguageProvider);
-    
+
     return AnimatedBuilder(
       animation: flipController,
       builder: (context, _) {
@@ -72,35 +73,18 @@ class QuizModeCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(
-        maxWidth: 400,
-        minHeight: 380,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: AppTheme.primaryColor.withValues(alpha: 0.15),
-          width: 3,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: showBack
-                ? AppTheme.primaryColor.withValues(alpha: 0.08)
-                : AppTheme.secondaryColor.withValues(alpha: 0.06),
-            blurRadius: 40,
-            offset: const Offset(0, 12),
-            spreadRadius: -4,
-          ),
-        ],
-      ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return GlassContainer(
+      constraints: const BoxConstraints(maxWidth: 400, minHeight: 380),
+      blur: isDark ? 20.0 : 0.0,
+      tintColor: Theme.of(context).colorScheme.primaryContainer,
+      tintOpacity: isDark ? 0.18 : 1.0,
+      borderRadius: BorderRadius.circular(28),
+      borderColor: isDark
+          ? Theme.of(context).colorScheme.fixedWhite.withValues(alpha: 0.22)
+          : Theme.of(context).colorScheme.outlineVariant,
+      borderWidth: 1.5,
       padding: const EdgeInsets.all(24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -123,5 +107,4 @@ class QuizModeCardContent extends StatelessWidget {
       ),
     );
   }
-
 }

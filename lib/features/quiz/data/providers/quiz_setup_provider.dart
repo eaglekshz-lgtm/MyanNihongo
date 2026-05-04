@@ -1,6 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:equatable/equatable.dart';
 import '../../../../core/enums/app_enums.dart';
+import '../../../vocabulary/data/providers/vocabulary_provider.dart';
+import '../../../vocabulary/data/models/vocabulary_filter.dart';
+
+/// Sentinel value to distinguish between "not passed" and "explicitly null"
+class _Undefined {
+  const _Undefined();
+}
+
+const _undefined = _Undefined();
 
 /// Quiz setup configuration state
 class QuizSetupState extends Equatable {
@@ -28,13 +37,15 @@ class QuizSetupState extends Equatable {
 
   /// Copy with method for immutable updates
   QuizSetupState copyWith({
-    JLPTLevel? selectedLevel,
+    Object? selectedLevel = _undefined,
     int? numberOfQuestions,
     bool? showBurmeseMeaning,
     QuizType? quizType,
   }) {
     return QuizSetupState(
-      selectedLevel: selectedLevel ?? this.selectedLevel,
+      selectedLevel: selectedLevel is _Undefined
+          ? this.selectedLevel
+          : selectedLevel as JLPTLevel?,
       numberOfQuestions: numberOfQuestions ?? this.numberOfQuestions,
       showBurmeseMeaning: showBurmeseMeaning ?? this.showBurmeseMeaning,
       quizType: quizType ?? this.quizType,
@@ -43,11 +54,11 @@ class QuizSetupState extends Equatable {
 
   @override
   List<Object?> get props => [
-        selectedLevel,
-        numberOfQuestions,
-        showBurmeseMeaning,
-        quizType,
-      ];
+    selectedLevel,
+    numberOfQuestions,
+    showBurmeseMeaning,
+    quizType,
+  ];
 }
 
 /// Quiz setup state notifier
@@ -97,5 +108,39 @@ class QuizSetupNotifier extends StateNotifier<QuizSetupState> {
 /// Using autoDispose to clean up when navigating away from setup page
 final quizSetupProvider =
     StateNotifierProvider.autoDispose<QuizSetupNotifier, QuizSetupState>((ref) {
-  return QuizSetupNotifier();
+      return QuizSetupNotifier();
+    });
+
+/// Provider to fetch and cache quiz question counts for all JLPT levels at once
+final quizCountsProvider = FutureProvider.autoDispose<Map<String?, int>>((
+  ref,
+) async {
+  final repository = ref.read(vocabularyRepositoryProvider);
+  final counts = <String?, int>{};
+  int totalAll = 0;
+
+  // Fetch vocabulary for each level concurrently
+  final results = await Future.wait(
+    JLPTLevel.values.map((level) async {
+      try {
+        final vocab = await repository.getVocabularyByLevelAndType(
+          VocabularyFilter(level: level.code, wordType: 'all'),
+        );
+        final quizCount = vocab.where((item) => item.quizzes != null).length;
+        return MapEntry(level.code, quizCount);
+      } catch (e) {
+        // Fallback for individual level failure
+        return MapEntry(level.code, 0);
+      }
+    }),
+  );
+
+  for (final entry in results) {
+    counts[entry.key] = entry.value;
+    totalAll += entry.value;
+  }
+
+  // Store the total for 'All Levels' selection
+  counts[null] = totalAll;
+  return counts;
 });

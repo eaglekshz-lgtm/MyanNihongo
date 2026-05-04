@@ -13,20 +13,17 @@ class SRSCompletionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final successColor = Theme.of(context).colorScheme.success;
+
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Review Complete',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w600, color: cs.onSurface),
         ),
-        backgroundColor: AppTheme.primaryColor,
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: cs.onSurface),
           onPressed: onBack,
         ),
       ),
@@ -36,7 +33,7 @@ class SRSCompletionScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Success animation container
+              // Success icon container
               Container(
                 width: 120,
                 height: 120,
@@ -44,88 +41,83 @@ class SRSCompletionScreen extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      AppTheme.successColor,
-                      AppTheme.successColor.withValues(alpha: 0.8),
-                    ],
+                    colors: [successColor, successColor.withValues(alpha: 0.8)],
                   ),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.successColor.withValues(alpha: 0.3),
-                      blurRadius: 20,
+                      color: successColor.withValues(alpha: 0.35),
+                      blurRadius: 24,
                       offset: const Offset(0, 10),
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check,
                   size: 60,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.fixedWhite,
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
-              // Title
-              const Text(
+
+              Text(
                 'Great job!',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: cs.onSurface,
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
-              // Stats
+
               Text(
                 'You reviewed $totalReviewed cards',
                 style: TextStyle(
                   fontSize: 20,
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: cs.onSurface.withValues(alpha: 0.75),
                 ),
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               Text(
                 'Your progress has been saved',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: cs.onSurface.withValues(alpha: 0.55),
                 ),
               ),
-              
+
               const SizedBox(height: 48),
-              
-              // Achievement badges
-              if (totalReviewed >= 10) _buildAchievementBadge('🔥', '10+ Cards'),
-              if (totalReviewed >= 25) _buildAchievementBadge('⭐', '25+ Cards'),
-              if (totalReviewed >= 50) _buildAchievementBadge('🏆', '50+ Cards'),
-              
+
+              if (totalReviewed >= 10)
+                _buildAchievementBadge(context, '🔥', '10+ Cards'),
+              if (totalReviewed >= 25)
+                _buildAchievementBadge(context, '⭐', '25+ Cards'),
+              if (totalReviewed >= 50)
+                _buildAchievementBadge(context, '🏆', '50+ Cards'),
+
               const SizedBox(height: 48),
-              
-              // Action buttons
+
               _buildActionButton(
                 context,
                 'Review More',
                 Icons.refresh,
-                AppTheme.primaryColor,
+                cs.primary,
                 onBack,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               _buildActionButton(
                 context,
                 'Back to Home',
                 Icons.home,
-                Colors.grey[600]!,
-                () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
+                cs.surfaceContainerHigh,
+                () => Navigator.of(context).popUntil((route) => route.isFirst),
+                foreground: cs.onSurface,
               ),
             ],
           ),
@@ -134,31 +126,28 @@ class SRSCompletionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAchievementBadge(String emoji, String text) {
+  Widget _buildAchievementBadge(
+    BuildContext context,
+    String emoji,
+    String text,
+  ) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
+        color: cs.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: cs.outline),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            emoji,
-            style: const TextStyle(fontSize: 20),
-          ),
+          Text(emoji, style: const TextStyle(fontSize: 20)),
           const SizedBox(width: 8),
           Text(
             text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(color: cs.onSurface, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -170,8 +159,9 @@ class SRSCompletionScreen extends StatelessWidget {
     String text,
     IconData icon,
     Color color,
-    VoidCallback onPressed,
-  ) {
+    VoidCallback onPressed, {
+    Color? foreground,
+  }) {
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -179,12 +169,12 @@ class SRSCompletionScreen extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          foregroundColor: Colors.white,
+          foregroundColor:
+              foreground ?? Theme.of(context).colorScheme.fixedWhite,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           elevation: 0,
-          shadowColor: color.withValues(alpha: 0.3),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -193,10 +183,7 @@ class SRSCompletionScreen extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               text,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ],
         ),

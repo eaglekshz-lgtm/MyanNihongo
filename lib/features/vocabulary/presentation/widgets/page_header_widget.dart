@@ -23,13 +23,13 @@ class PageHeaderWidget extends StatelessWidget {
         Icon(
           icon,
           size: 64,
-          color: iconColor ?? AppTheme.primaryColor,
+          color: iconColor ?? Theme.of(context).colorScheme.primary,
         ),
         const SizedBox(height: 24),
         Text(
           title,
           style: AppTheme.headlineMedium.copyWith(
-            color: AppTheme.primaryColor,
+            color: Theme.of(context).colorScheme.primary,
           ),
           textAlign: TextAlign.center,
         ),
@@ -37,7 +37,9 @@ class PageHeaderWidget extends StatelessWidget {
         Text(
           subtitle,
           style: AppTheme.bodyMedium.copyWith(
-            color: Colors.grey[600],
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           textAlign: TextAlign.center,
         ),

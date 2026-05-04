@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myan_nihongo/core/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../core/theme/app_theme.dart';
 import '../../../data/models/vocabulary_item_model.dart';
 import '../../../data/providers/srs_provider.dart';
 
@@ -31,13 +31,9 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _flipAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _flipController,
-      curve: Curves.easeInOut,
-    ));
+    _flipAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _flipController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -59,27 +55,35 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
 
   void _onQualitySelected(int quality) async {
     // Record the review
-    await ref.read(allSRSCardsProvider.notifier).reviewCard(
-      widget.vocabulary.id.toString(),
-      quality,
-    );
-    
+    await ref
+        .read(allSRSCardsProvider.notifier)
+        .reviewCard(widget.vocabulary.id.toString(), quality);
+
     // Call completion callback
     widget.onReviewComplete();
   }
 
   Color _getQualityColor(int quality) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     switch (quality) {
-      case 2: // Again
-        return Colors.red;
-      case 3: // Hard
-        return Colors.orange;
-      case 4: // Good
-        return Colors.blue;
-      case 5: // Easy
-        return Colors.green;
+      case 2:
+        return isDark
+            ? Theme.of(context).colorScheme.srsAgain
+            : Theme.of(context).colorScheme.error;
+      case 3:
+        return isDark
+            ? Theme.of(context).colorScheme.jlptN3
+            : Theme.of(context).colorScheme.warning;
+      case 4:
+        return isDark
+            ? Theme.of(context).colorScheme.jlptN4
+            : Theme.of(context).colorScheme.info;
+      case 5:
+        return isDark
+            ? Theme.of(context).colorScheme.jlptN5
+            : Theme.of(context).colorScheme.success;
       default:
-        return Colors.grey;
+        return Theme.of(context).colorScheme.outline;
     }
   }
 
@@ -113,7 +117,7 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
               builder: (context, child) {
                 final isFlipped = _flipAnimation.value > 0.5;
                 final angle = _flipAnimation.value * 3.14159;
-                
+
                 return Transform(
                   alignment: Alignment.center,
                   transform: Matrix4.identity()
@@ -123,36 +127,40 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
                     alignment: Alignment.center,
                     transform: Matrix4.identity()
                       ..rotateY(isFlipped ? 3.14159 : 0),
-                    child: isFlipped ? _buildAnswerSide() : _buildQuestionSide(),
+                    child: isFlipped
+                        ? _buildAnswerSide()
+                        : _buildQuestionSide(),
                   ),
                 );
               },
             ),
           ),
-          
+
           const SizedBox(height: 40),
-          
+
           // Instructions
           if (!_showAnswer)
             Text(
               'Tap card to reveal answer',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
                 fontSize: 16,
               ),
             ),
-          
+
           if (_showAnswer) ...[
             Text(
               'How well did you know this?',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 20),
-            
+
             // Quality buttons
             Row(
               children: [2, 3, 4, 5].map((quality) {
@@ -179,14 +187,14 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppTheme.primaryColor,
-            AppTheme.primaryColor.withValues(alpha: 0.8),
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryColor.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -198,38 +206,42 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
           // Japanese word
           Text(
             widget.vocabulary.word,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 48,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.fixedWhite,
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Reading
           if (widget.vocabulary.reading != widget.vocabulary.word)
             Text(
               widget.vocabulary.reading,
               style: TextStyle(
                 fontSize: 24,
-                color: Colors.white.withValues(alpha: 0.9),
+                color: Theme.of(
+                  context,
+                ).colorScheme.fixedWhite.withValues(alpha: 0.9),
                 fontWeight: FontWeight.w500,
               ),
             ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Part of speech
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: Theme.of(
+                context,
+              ).colorScheme.fixedWhite.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               widget.vocabulary.partOfSpeech,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.fixedWhite,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -248,14 +260,16 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppTheme.secondaryColor,
-            AppTheme.secondaryColor.withValues(alpha: 0.8),
+            Theme.of(context).colorScheme.secondary,
+            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.secondaryColor.withValues(alpha: 0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.secondary.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -267,23 +281,25 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
           // Translations
           Text(
             widget.vocabulary.translations.english,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.fixedWhite,
             ),
           ),
           const SizedBox(height: 12),
-          
+
           Text(
             widget.vocabulary.translations.burmese,
             style: TextStyle(
               fontSize: 24,
-              color: Colors.white.withValues(alpha: 0.9),
+              color: Theme.of(
+                context,
+              ).colorScheme.fixedWhite.withValues(alpha: 0.9),
               fontWeight: FontWeight.w500,
             ),
           ),
-          
+
           // Example sentence (if available)
           if (widget.vocabulary.exampleSentences.isNotEmpty) ...[
             const SizedBox(height: 24),
@@ -291,16 +307,18 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
               padding: const EdgeInsets.all(16),
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Theme.of(
+                  context,
+                ).colorScheme.fixedWhite.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 children: [
                   Text(
                     widget.vocabulary.exampleSentences.first.japanese,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.fixedWhite,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -309,7 +327,9 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
                     widget.vocabulary.exampleSentences.first.english,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withValues(alpha: 0.8),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.fixedWhite.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -342,8 +362,8 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
           children: [
             Text(
               _getQualityLabel(quality),
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.fixedWhite,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -351,7 +371,9 @@ class _SRSReviewCardState extends ConsumerState<SRSReviewCard>
             Text(
               quality.toString(),
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
+                color: Theme.of(
+                  context,
+                ).colorScheme.fixedWhite.withValues(alpha: 0.8),
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),

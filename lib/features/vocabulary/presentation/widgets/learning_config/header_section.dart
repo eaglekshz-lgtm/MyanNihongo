@@ -22,32 +22,36 @@ class HeaderSection extends StatelessWidget {
           'Customize Your Learning',
           style: AppTheme.headlineMedium.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppTheme.primaryColor,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           'Choose your card style, then select blocks to study (20 words per block)',
           style: AppTheme.bodyMedium.copyWith(
-            color: Colors.grey[600],
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 16),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withValues(alpha: 0.1),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppTheme.primaryColor.withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.school_rounded,
-                color: AppTheme.primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 size: 24,
               ),
               const SizedBox(width: 12),
@@ -59,14 +63,16 @@ class HeaderSection extends StatelessWidget {
                       'Level: $level',
                       style: AppTheme.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryColor,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     if (wordType != null && wordType != 'all')
                       Text(
                         'Type: $wordType',
                         style: AppTheme.bodySmall.copyWith(
-                          color: Colors.grey[700],
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                   ],

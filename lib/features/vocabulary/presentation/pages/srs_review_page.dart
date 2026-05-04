@@ -7,6 +7,7 @@ import '../../data/providers/vocabulary_provider.dart';
 import '../../data/providers/srs_provider.dart';
 import '../widgets/srs/srs_review_card.dart';
 import '../widgets/srs/srs_completion_screen.dart';
+import '../../../../core/widgets/mesh_background.dart';
 
 class SRSReviewPage extends ConsumerStatefulWidget {
   const SRSReviewPage({super.key});
@@ -92,7 +93,7 @@ class _SRSReviewPageState extends ConsumerState<SRSReviewPage> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Review'),
-          backgroundColor: AppTheme.primaryColor,
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
         body: const Center(child: CircularProgressIndicator()),
       );
@@ -109,27 +110,34 @@ class _SRSReviewPageState extends ConsumerState<SRSReviewPage> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Review'),
-          backgroundColor: AppTheme.primaryColor,
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
-        body: const Center(
+        body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.check_circle, size: 80, color: AppTheme.successColor),
-              SizedBox(height: 16),
+              Icon(
+                Icons.check_circle,
+                size: 80,
+                color: Theme.of(context).colorScheme.success,
+              ),
+              const SizedBox(height: 16),
               Text(
                 'All caught up!',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'No cards due for review right now.\nCome back later!',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.neutralGrey,
+                ),
               ),
             ],
           ),
@@ -140,19 +148,22 @@ class _SRSReviewPageState extends ConsumerState<SRSReviewPage> {
     final currentCard = _dueCards[_currentIndex];
 
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       appBar: AppBar(
         title: Text(
           'Review (${_currentIndex + 1}/${_dueCards.length})',
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.fixedWhite,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: AppTheme.primaryColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
+          icon: Icon(
+            Icons.close,
+            color: Theme.of(context).colorScheme.fixedWhite,
+          ),
           onPressed: _goBack,
         ),
         actions: [
@@ -160,18 +171,24 @@ class _SRSReviewPageState extends ConsumerState<SRSReviewPage> {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: Theme.of(
+                context,
+              ).colorScheme.fixedWhite.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.schedule, color: Colors.white, size: 16),
+                Icon(
+                  Icons.schedule,
+                  color: Theme.of(context).colorScheme.fixedWhite,
+                  size: 16,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   '${_dueCards.length - _currentIndex}',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.fixedWhite,
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                   ),
@@ -181,24 +198,30 @@ class _SRSReviewPageState extends ConsumerState<SRSReviewPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Progress bar
-          LinearProgressIndicator(
-            value: (_currentIndex + 1) / _dueCards.length,
-            backgroundColor: Colors.white.withValues(alpha: 0.3),
-            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-          ),
-
-          // Review card
-          Expanded(
-            child: SRSReviewCard(
-              vocabulary: currentCard,
-              onReviewComplete: _onReviewComplete,
+      body: MeshBackground(
+        child: Column(
+          children: [
+            // Progress bar
+            LinearProgressIndicator(
+              value: (_currentIndex + 1) / _dueCards.length,
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.fixedWhite.withValues(alpha: 0.3),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Theme.of(context).colorScheme.fixedWhite,
+              ),
             ),
-          ),
-        ],
-      ),
+
+            // Review card
+            Expanded(
+              child: SRSReviewCard(
+                vocabulary: currentCard,
+                onReviewComplete: _onReviewComplete,
+              ),
+            ),
+          ],
+        ),
+      ), // MeshBackground
     );
   }
 }

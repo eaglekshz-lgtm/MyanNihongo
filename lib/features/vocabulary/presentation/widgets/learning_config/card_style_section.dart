@@ -54,7 +54,9 @@ class CardStyleSection extends StatelessWidget {
           Text(
             'Choose how you want to view vocabulary cards',
             style: AppTheme.bodySmall.copyWith(
-              color: Colors.grey[600],
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 16),

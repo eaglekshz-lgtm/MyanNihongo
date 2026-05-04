@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../../../../core/theme/app_theme.dart';
 
@@ -19,59 +20,92 @@ class LearningActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFAFAFA), // Brighter background
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -4),
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+          decoration: BoxDecoration(
+            color: isDark
+                ? Theme.of(context).colorScheme.surfaceContainerHigh
+                : Theme.of(
+                    context,
+                  ).colorScheme.fixedWhite.withValues(alpha: 0.80),
+            border: Border(
+              top: BorderSide(
+                color: isDark
+                    ? Theme.of(
+                        context,
+                      ).colorScheme.fixedWhite.withValues(alpha: 0.08)
+                    : Theme.of(
+                        context,
+                      ).colorScheme.fixedBlack.withValues(alpha: 0.05),
+                width: 0.5,
+              ),
+            ),
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          ActionButton(
-            icon: Icons.arrow_back_rounded,
-            label: 'Back',
-            backgroundColor: canGoBack
-                ? const Color(0xFFFFEBEE)
-                : const Color(0xFFF5F5F5), // Light red or grey
-            foregroundColor: canGoBack
-                ? const Color(0xFFD32F2F)
-                : Colors.grey[400]!, // Red or grey
-            borderColor: canGoBack
-                ? const Color(0xFFD32F2F).withValues(alpha: 0.3)
-                : Colors.grey[300]!, // Red or grey
-            onPressed: canGoBack ? onBack : null,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ActionButton(
+                icon: Icons.arrow_back_rounded,
+                label: 'Back',
+                backgroundColor: canGoBack
+                    ? cs.errorMuted
+                    : (isDark
+                          ? cs.surfaceContainerHighest
+                          : Theme.of(context).colorScheme.neutral100),
+                foregroundColor: canGoBack
+                    ? cs.error
+                    : (isDark
+                          ? cs.onSurface.withValues(alpha: 0.3)
+                          : Theme.of(context).colorScheme.neutral400),
+                borderColor: canGoBack
+                    ? cs.error.withValues(alpha: 0.3)
+                    : (isDark
+                          ? cs.outline.withValues(alpha: 0.2)
+                          : Theme.of(context).colorScheme.neutral300),
+                onPressed: canGoBack ? onBack : null,
+              ),
+              ActionButton(
+                icon: isBookmarked
+                    ? Icons.bookmark
+                    : Icons.bookmark_add_rounded,
+                label: isBookmarked ? 'Saved' : 'Save',
+                backgroundColor: isBookmarked
+                    ? cs.warningMuted
+                    : (isDark
+                          ? cs.surfaceContainerHighest
+                          : Theme.of(context).colorScheme.neutral100),
+                foregroundColor: isBookmarked
+                    ? cs.warning
+                    : (isDark
+                          ? cs.onSurface.withValues(alpha: 0.5)
+                          : Theme.of(context).colorScheme.neutral600),
+                borderColor: isBookmarked
+                    ? cs.warning.withValues(alpha: 0.3)
+                    : (isDark
+                          ? cs.outline.withValues(alpha: 0.2)
+                          : Theme.of(
+                              context,
+                            ).colorScheme.neutral400.withValues(alpha: 0.3)),
+                onPressed: onBookmark,
+                isHighlighted: true,
+              ),
+              ActionButton(
+                icon: Icons.arrow_forward_rounded,
+                label: 'Next',
+                backgroundColor: cs.successMuted,
+                foregroundColor: cs.success,
+                borderColor: cs.success.withValues(alpha: 0.3),
+                onPressed: onNext,
+              ),
+            ],
           ),
-          ActionButton(
-            icon: isBookmarked ? Icons.bookmark : Icons.bookmark_add_rounded,
-            label: isBookmarked ? 'Saved' : 'Save',
-            backgroundColor: isBookmarked
-                ? const Color(0xFFFFF3E0) // Light orange when saved
-                : const Color(0xFFF5F5F5), // Light grey when not saved
-            foregroundColor: isBookmarked
-                ? const Color(0xFFFF9800) // Deep orange when saved
-                : const Color(0xFF757575), // Grey when not saved
-            borderColor: isBookmarked
-                ? const Color(0xFFFF9800).withValues(alpha: 0.3) // Orange border
-                : const Color(0xFFBDBDBD).withValues(alpha: 0.3), // Grey border
-            onPressed: onBookmark,
-            isHighlighted: true,
-          ),
-          ActionButton(
-            icon: Icons.arrow_forward_rounded,
-            label: 'Next',
-            backgroundColor: const Color(0xFFE8F5E9), // Light green
-            foregroundColor: const Color(0xFF43A047), // Green
-            borderColor: const Color(0xFF43A047).withValues(alpha: 0.3), // Green border
-            onPressed: onNext,
-          ),
-        ],
+        ),
       ),
     );
   }

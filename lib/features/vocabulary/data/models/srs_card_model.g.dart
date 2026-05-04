@@ -66,15 +66,15 @@ class SRSCardModelAdapter extends TypeAdapter<SRSCardModel> {
 // **************************************************************************
 
 SRSCardModel _$SRSCardModelFromJson(Map<String, dynamic> json) => SRSCardModel(
-      vocabularyId: json['vocabularyId'] as String,
-      easeFactor: (json['easeFactor'] as num).toDouble(),
-      interval: (json['interval'] as num).toInt(),
-      nextReviewDate: DateTime.parse(json['nextReviewDate'] as String),
-      repetitions: (json['repetitions'] as num).toInt(),
-      levelString: json['level'] as String,
-      lastReviewDate: DateTime.parse(json['lastReviewDate'] as String),
-      lapses: (json['lapses'] as num?)?.toInt() ?? 0,
-    );
+  vocabularyId: json['vocabularyId'] as String,
+  easeFactor: (json['easeFactor'] as num).toDouble(),
+  interval: (json['interval'] as num).toInt(),
+  nextReviewDate: DateTime.parse(json['nextReviewDate'] as String),
+  repetitions: (json['repetitions'] as num).toInt(),
+  levelString: json['level'] as String,
+  lastReviewDate: DateTime.parse(json['lastReviewDate'] as String),
+  lapses: (json['lapses'] as num?)?.toInt() ?? 0,
+);
 
 Map<String, dynamic> _$SRSCardModelToJson(SRSCardModel instance) =>
     <String, dynamic>{

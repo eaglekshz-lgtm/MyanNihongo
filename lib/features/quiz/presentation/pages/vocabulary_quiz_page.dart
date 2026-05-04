@@ -7,8 +7,10 @@ import '../../domain/models/vocabulary_quiz_args.dart';
 import '../../domain/models/quiz_result_args.dart';
 import '../../../vocabulary/data/models/vocabulary_item_model.dart';
 import '../../../vocabulary/data/providers/vocabulary_provider.dart';
-import '../../../vocabulary/data/models/vocabulary_filter.dart';
+import '../../data/providers/quiz_providers.dart';
 import '../widgets/quiz_widgets.dart';
+import '../../../../core/widgets/mesh_background.dart';
+import '../../../../core/widgets/glass_container.dart';
 
 /// Quiz Types
 const String kKanjiToHiraganaQuizType = 'kanji_to_hiragana';
@@ -39,7 +41,6 @@ class VocabularyQuizPage extends ConsumerStatefulWidget {
 
 class _VocabularyQuizPageState extends ConsumerState<VocabularyQuizPage> {
   String? _level;
-  String? _wordType;
   int? _numberOfQuestions;
   bool? _showBurmeseMeaning;
   String? _quizType;
@@ -51,7 +52,8 @@ class _VocabularyQuizPageState extends ConsumerState<VocabularyQuizPage> {
   bool hasAnswered = false;
   bool hasPlayedCompletionSound = false;
   List<VocabularyItemModel> quizItems = [];
-  final Map<int, List<String>> _shuffledOptionsCache = {}; // Cache shuffled options per question
+  final Map<int, List<String>> _shuffledOptionsCache =
+      {}; // Cache shuffled options per question
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
@@ -61,7 +63,6 @@ class _VocabularyQuizPageState extends ConsumerState<VocabularyQuizPage> {
       final args =
           ModalRoute.of(context)!.settings.arguments as VocabularyQuizArgs?;
       _level = args?.level ?? kDefaultLevel;
-      _wordType = args?.wordType;
       _numberOfQuestions = args?.numberOfQuestions ?? kDefaultQuestionCount;
       _showBurmeseMeaning =
           args?.showBurmeseMeaning ?? kDefaultShowBurmeseMeaning;
@@ -107,11 +108,7 @@ class _VocabularyQuizPageState extends ConsumerState<VocabularyQuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    final vocabularyAsync = ref.watch(
-      vocabularyByLevelAndTypeProvider(
-        VocabularyFilter(level: _level ?? 'N5', wordType: _wordType ?? 'all'),
-      ),
-    );
+    final vocabularyAsync = ref.watch(quizVocabularyProvider(_level));
 
     return Scaffold(
       appBar: AppBar(
@@ -122,16 +119,18 @@ class _VocabularyQuizPageState extends ConsumerState<VocabularyQuizPage> {
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
               color: _showBurmeseMeaning == true
-                  ? AppTheme.primaryColor.withValues(alpha: 0.1)
-                  : Colors.transparent,
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
+                  : Theme.of(context).colorScheme.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
             child: IconButton(
               icon: Icon(
                 Icons.translate,
                 color: _showBurmeseMeaning == true
-                    ? AppTheme.primaryColor
-                    : Colors.grey[600],
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               tooltip: _showBurmeseMeaning == true
                   ? 'Hide English (Burmese only)'
@@ -145,140 +144,146 @@ class _VocabularyQuizPageState extends ConsumerState<VocabularyQuizPage> {
           ),
         ],
       ),
-      body: vocabularyAsync.when(
-        data: (vocabulary) {
-          // Filter vocabulary items that have quiz data
-          final quizEnabledVocabulary = vocabulary
-              .where(
-                (item) =>
-                    (item.quizzes != null) &&
-                    (item.word.isNotEmpty && item.reading.isNotEmpty),
-              )
-              .toList();
+      body: MeshBackground(
+        child: vocabularyAsync.when(
+          data: (vocabulary) {
+            // Filter vocabulary items that have quiz data
+            final quizEnabledVocabulary = vocabulary
+                .where(
+                  (item) =>
+                      (item.quizzes != null) &&
+                      (item.word.isNotEmpty && item.reading.isNotEmpty),
+                )
+                .toList();
 
-          if (quizEnabledVocabulary.isEmpty) {
-            return const Center(
-              child: Text('No quiz items available for this level'),
-            );
-          }
-
-          // Initialize quiz items on first load
-          if (quizItems.isEmpty) {
-            final shuffled = List<VocabularyItemModel>.from(
-              quizEnabledVocabulary,
-            )..shuffle();
-            // Take only the specified number of questions, or all if less available
-            final questionsToTake = (_numberOfQuestions ?? 10).clamp(
-              1,
-              quizEnabledVocabulary.length,
-            );
-            quizItems = shuffled.take(questionsToTake).toList();
-          }
-
-          if (currentQuestionIndex >= quizItems.length) {
-            // Navigate to result page (no unnecessary setState)
-            if (!hasPlayedCompletionSound) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) {
-                  hasPlayedCompletionSound =
-                      true; // Direct assignment, no rebuild
-                  _playCompletionSound();
-
-                  Navigator.pushReplacementNamed(
-                    context,
-                    RouteNames.quizResult,
-                    arguments: QuizResultArgs(
-                      totalQuestions: quizItems.length,
-                      correctAnswers: correctAnswers,
-                      level: _level,
-                    ),
-                  );
-                }
-              });
+            if (quizEnabledVocabulary.isEmpty) {
+              return const Center(
+                child: Text('No quiz items available for this level'),
+              );
             }
-            return const Center(child: CircularProgressIndicator());
-          }
 
-          final currentQuestion = quizItems[currentQuestionIndex];
-          final currentQuizData = _getCurrentQuizData(currentQuestion);
+            // Initialize quiz items on first load
+            if (quizItems.isEmpty) {
+              final shuffled = List<VocabularyItemModel>.from(
+                quizEnabledVocabulary,
+              )..shuffle();
+              // Take only the specified number of questions, or all if less available
+              final questionsToTake = (_numberOfQuestions ?? 10).clamp(
+                1,
+                quizEnabledVocabulary.length,
+              );
+              quizItems = shuffled.take(questionsToTake).toList();
+            }
 
-          if (currentQuizData == null) {
-            // Skip to next question if quiz data is missing
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) {
-                setState(() {
-                  currentQuestionIndex++;
+            if (currentQuestionIndex >= quizItems.length) {
+              // Navigate to result page (no unnecessary setState)
+              if (!hasPlayedCompletionSound) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    hasPlayedCompletionSound =
+                        true; // Direct assignment, no rebuild
+                    _playCompletionSound();
+
+                    Navigator.pushReplacementNamed(
+                      context,
+                      RouteNames.quizResult,
+                      arguments: QuizResultArgs(
+                        totalQuestions: quizItems.length,
+                        correctAnswers: correctAnswers,
+                        level: _level,
+                      ),
+                    );
+                  }
                 });
               }
-            });
-            return const Center(child: CircularProgressIndicator());
-          }
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          // Get shuffled options for current question (cached, no rebuild)
-          // Extract all options from the map (both correct and incorrect)
-          final optionsList = currentQuizData.options.keys.toList();
-          final shuffledOptions = _getShuffledOptions(currentQuestionIndex, optionsList);
-          // Find the correct answer (the one with value true)
-          final correctAnswer = currentQuizData.options.entries
-              .firstWhere((entry) => entry.value)
-              .key;
+            final currentQuestion = quizItems[currentQuestionIndex];
+            final currentQuizData = _getCurrentQuizData(currentQuestion);
 
-          return SafeArea(
-            child: Column(
-              children: [
-                // Progress header
-                QuizProgressHeader(
-                  currentQuestion: currentQuestionIndex + 1,
-                  totalQuestions: quizItems.length,
-                  correctAnswers: correctAnswers,
-                  wrongAnswers: wrongAnswers,
-                ),
+            if (currentQuizData == null) {
+              // Skip to next question if quiz data is missing
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  setState(() {
+                    currentQuestionIndex++;
+                  });
+                }
+              });
+              return const Center(child: CircularProgressIndicator());
+            }
 
-                // Question and options
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      children: [
-                        // Question card
-                        _QuizQuestionCardNew(
-                          quizData: currentQuizData,
-                          vocabularyItem: currentQuestion,
-                          showBurmeseMeaning: _showBurmeseMeaning ?? false,
-                        ),
-                        const SizedBox(height: 32),
-                        // Answer options (using shuffled options with keys for optimization)
-                        ...shuffledOptions.asMap().entries.map((entry) {
-                          final option = entry.value;
-                          final isSelected = selectedAnswer == option;
-                          final isCorrect = option == correctAnswer;
+            // Get shuffled options for current question (cached, no rebuild)
+            // Extract all options from the map (both correct and incorrect)
+            final optionsList = currentQuizData.options.keys.toList();
+            final shuffledOptions = _getShuffledOptions(
+              currentQuestionIndex,
+              optionsList,
+            );
+            // Find the correct answer (the one with value true)
+            final correctAnswer = currentQuizData.options.entries
+                .firstWhere((entry) => entry.value)
+                .key;
 
-                          return Padding(
-                            key: ValueKey('option_${entry.key}_$option'),
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: QuizOptionButton(
-                              key: ValueKey(
-                                'button_${entry.key}_${isSelected}_$hasAnswered',
+            return SafeArea(
+              child: Column(
+                children: [
+                  // Progress header
+                  QuizProgressHeader(
+                    currentQuestion: currentQuestionIndex + 1,
+                    totalQuestions: quizItems.length,
+                    correctAnswers: correctAnswers,
+                    wrongAnswers: wrongAnswers,
+                  ),
+
+                  // Question and options
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        children: [
+                          // Question card
+                          _QuizQuestionCardNew(
+                            quizData: currentQuizData,
+                            vocabularyItem: currentQuestion,
+                            showBurmeseMeaning: _showBurmeseMeaning ?? false,
+                          ),
+                          const SizedBox(height: 32),
+                          // Answer options (using shuffled options with keys for optimization)
+                          ...shuffledOptions.asMap().entries.map((entry) {
+                            final option = entry.value;
+                            final isSelected = selectedAnswer == option;
+                            final isCorrect = option == correctAnswer;
+
+                            return Padding(
+                              key: ValueKey('option_${entry.key}_$option'),
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: QuizOptionButton(
+                                key: ValueKey(
+                                  'button_${entry.key}_${isSelected}_$hasAnswered',
+                                ),
+                                option: option,
+                                optionIndex: entry.key,
+                                isSelected: isSelected,
+                                isCorrect: isCorrect,
+                                hasAnswered: hasAnswered,
+                                onTap: () =>
+                                    _selectAnswer(option, correctAnswer),
                               ),
-                              option: option,
-                              optionIndex: entry.key,
-                              isSelected: isSelected,
-                              isCorrect: isCorrect,
-                              hasAnswered: hasAnswered,
-                              onTap: () => _selectAnswer(option, correctAnswer),
-                            ),
-                          );
-                        }),
-                      ],
+                            );
+                          }),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
+                ],
+              ),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(child: Text('Error: $error')),
+        ),
       ),
     );
   }
@@ -294,7 +299,11 @@ class _VocabularyQuizPageState extends ConsumerState<VocabularyQuizPage> {
     _scheduleNextQuestion(isCorrect);
   }
 
-  void _updateQuizState(String answer, bool isCorrect, VocabularyItemModel question) {
+  void _updateQuizState(
+    String answer,
+    bool isCorrect,
+    VocabularyItemModel question,
+  ) {
     setState(() {
       selectedAnswer = answer;
       hasAnswered = true;
@@ -344,9 +353,9 @@ class _VocabularyQuizPageState extends ConsumerState<VocabularyQuizPage> {
   Future<void> _saveProgress(VocabularyItemModel item, bool isCorrect) async {
     // Use repository method instead of direct data source access
     final repository = ref.read(vocabularyRepositoryProvider);
-    
+
     await repository.updateUserProgress(item.id.toString(), isCorrect);
-    
+
     // Invalidate user progress provider to trigger UI updates if needed
     ref.invalidate(userProgressProvider(item.id.toString()));
   }
@@ -358,9 +367,6 @@ class _VocabularyQuizPageState extends ConsumerState<VocabularyQuizPage> {
 
 // New quiz question card that uses embedded quiz data
 class _QuizQuestionCardNew extends StatelessWidget {
-  static const _cardGradientColors = [AppTheme.primaryColor, AppTheme.primaryVariant];
-  static const _shadowColor = AppTheme.primaryColor;
-
   final QuizQuestionModel quizData;
   final VocabularyItemModel vocabularyItem;
   final bool showBurmeseMeaning;
@@ -371,78 +377,59 @@ class _QuizQuestionCardNew extends StatelessWidget {
     required this.showBurmeseMeaning,
   });
 
-  BoxDecoration _buildCardDecoration() {
-    return BoxDecoration(
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: _cardGradientColors,
-      ),
-      borderRadius: BorderRadius.circular(kCardBorderRadius),
-      boxShadow: [
-        BoxShadow(
-          color: _shadowColor.withValues(alpha: 0.3),
-          blurRadius: 20,
-          offset: const Offset(0, 10),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInstructionText() {
-    return Text(
-      'Choose the correct answer:',
-      style: AppTheme.bodyMedium.copyWith(
-        color: Colors.white.withValues(alpha: 0.9),
-        fontWeight: FontWeight.w500,
-      ),
-    );
-  }
-
-  Widget _buildQuestionText(String question) {
-    return Text(
-      question,
-      style: AppTheme.japaneseText.copyWith(
-        fontSize: kQuestionFontSize,
-        fontWeight: FontWeight.w800,
-        color: Colors.white,
-        height: 1.2,
-      ),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  BoxDecoration _buildTranslationBoxDecoration() {
-    return BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.2),
-      borderRadius: BorderRadius.circular(20),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     // Wrap with RepaintBoundary since this card doesn't change during answer selection
     return RepaintBoundary(
-      child: Container(
+      child: GlassContainer(
         width: double.infinity,
         padding: const EdgeInsets.all(kQuestionCardPadding),
-        decoration: _buildCardDecoration(),
+        borderRadius: BorderRadius.circular(kCardBorderRadius),
+        tintColor: Theme.of(context).colorScheme.primary,
+        tintOpacity: 0.18,
+        borderColor: Theme.of(
+          context,
+        ).colorScheme.fixedWhite.withValues(alpha: 0.22),
+        borderWidth: 1.5,
+        blur: 20.0,
         child: Column(
           children: [
-            _buildInstructionText(),
+            Text(
+              'Choose the correct answer:',
+              style: AppTheme.bodyMedium.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.8),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             const SizedBox(height: 24),
-            _buildQuestionText(quizData.question),
+            Text(
+              quizData.question,
+              style: AppTheme.japaneseText.copyWith(
+                fontSize: kQuestionFontSize,
+                fontWeight: FontWeight.w800,
+                color: Theme.of(context).colorScheme.onSurface,
+                height: 1.2,
+              ),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: _buildTranslationBoxDecoration(),
+              decoration: BoxDecoration(
+                color: Theme.of(
+                  context,
+                ).colorScheme.surface.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: Column(
                 children: [
                   // Always show Burmese
                   Text(
                     vocabularyItem.translations.burmese,
                     style: AppTheme.burmeseText.copyWith(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                     ),
@@ -454,7 +441,9 @@ class _QuizQuestionCardNew extends StatelessWidget {
                     Text(
                       vocabularyItem.translations.english,
                       style: AppTheme.bodyLarge.copyWith(
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.8),
                         fontWeight: FontWeight.w600,
                       ),
                       textAlign: TextAlign.center,

@@ -31,15 +31,15 @@ class SummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.secondaryColor.withValues(alpha: 0.1),
-            AppTheme.primaryColor.withValues(alpha: 0.1),
+            Theme.of(context).colorScheme.surface.withValues(alpha: 0.1),
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.primaryColor.withValues(alpha: 0.2),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
           width: 1.5,
         ),
       ),
@@ -48,9 +48,9 @@ class SummaryCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.summarize_rounded,
-                color: AppTheme.primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 size: 24,
               ),
               const SizedBox(width: 8),
@@ -58,7 +58,7 @@ class SummaryCard extends StatelessWidget {
                 'Learning Summary',
                 style: AppTheme.bodyLarge.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ],
