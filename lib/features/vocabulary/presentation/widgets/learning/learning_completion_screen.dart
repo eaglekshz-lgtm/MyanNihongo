@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../vocabulary_learning_widgets.dart';
+import 'vocabulary_completion_screen.dart';
 
-class CompletionScreenWidget extends ConsumerWidget {
-  final String level;
-  final String? wordType;
+class LearningCompletionScreen extends ConsumerWidget {
   final int totalCards;
   final int? blockNumber;
   final bool hasPlayedCompletionSound;
@@ -12,10 +10,8 @@ class CompletionScreenWidget extends ConsumerWidget {
   final VoidCallback onRestart;
   final VoidCallback onExit;
 
-  const CompletionScreenWidget({
+  const LearningCompletionScreen({
     super.key,
-    required this.level,
-    required this.wordType,
     required this.totalCards,
     this.blockNumber,
     required this.hasPlayedCompletionSound,
@@ -34,7 +30,6 @@ class CompletionScreenWidget extends ConsumerWidget {
     }
 
     return VocabularyCompletionScreen(
-      level: level,
       totalCards: totalCards,
       blockNumber: blockNumber,
       onRestart: onRestart,

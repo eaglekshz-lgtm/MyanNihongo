@@ -2,14 +2,19 @@ import '../bookmark_repository.dart';
 import '../../models/bookmark_model.dart';
 import '../../models/vocabulary_item_model.dart';
 import '../../datasources/bookmark_datasource.dart';
+import '../../datasources/vocabulary_local_datasource.dart';
 
 /// Implementation of BookmarkRepository
 /// Handles bookmark data operations
 class BookmarkRepositoryImpl implements BookmarkRepository {
   final BookmarkDataSource _dataSource;
+  final VocabularyLocalDataSource _vocabularyDataSource;
 
-  BookmarkRepositoryImpl({required BookmarkDataSource dataSource})
-    : _dataSource = dataSource;
+  BookmarkRepositoryImpl({
+    required BookmarkDataSource dataSource,
+    required VocabularyLocalDataSource vocabularyDataSource,
+  }) : _dataSource = dataSource,
+       _vocabularyDataSource = vocabularyDataSource;
 
   @override
   Future<List<BookmarkModel>> getAllBookmarks() async {
@@ -45,10 +50,20 @@ class BookmarkRepositoryImpl implements BookmarkRepository {
 
   @override
   Future<List<VocabularyItemModel>> getBookmarkedVocabulary() async {
-    // This would need to be implemented by fetching vocabulary items
-    // based on bookmarked IDs. For now, return empty list.
-    // TODO: Implement by fetching from vocabulary repository
-    return [];
+    final bookmarks = await _dataSource.getAllBookmarks();
+    bookmarks.sort((a, b) => b.bookmarkedAt.compareTo(a.bookmarkedAt));
+    final vocabulary = <VocabularyItemModel>[];
+
+    for (final bookmark in bookmarks) {
+      final item = await _vocabularyDataSource.getVocabularyById(
+        bookmark.vocabularyId,
+      );
+      if (item != null) {
+        vocabulary.add(item);
+      }
+    }
+
+    return vocabulary;
   }
 
   @override

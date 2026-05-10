@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_theme.dart';
+import 'package:myan_nihongo/core/theme/app_theme.dart';
 
 class HeaderSection extends StatelessWidget {
   final String level;
@@ -27,7 +27,7 @@ class HeaderSection extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Choose your card style, then select blocks to study (20 words per block)',
+          'Choose your card style, then select a set to study (20 words per set)',
           style: AppTheme.bodyMedium.copyWith(
             color: Theme.of(
               context,

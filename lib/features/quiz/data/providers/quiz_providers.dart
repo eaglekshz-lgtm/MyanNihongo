@@ -38,15 +38,17 @@ final quizQuestionsProvider = FutureProvider.family
         return [];
       }
 
-      // Shuffle and take requested number of questions
-      final shuffled = List<VocabularyItemModel>.from(quizVocabulary)
-        ..shuffle(Random());
-      final selectedItems = shuffled.take(config.numberOfQuestions).toList();
+      final random = Random();
+      final selectedItems = _sampleItems(
+        quizVocabulary,
+        config.numberOfQuestions,
+        random,
+      );
 
       // Generate questions using embedded quiz data
       final questions = <QuizQuestion>[];
       for (var item in selectedItems) {
-        final quizQuestion = _generateQuestionFromEmbeddedData(item);
+        final quizQuestion = _generateQuestionFromEmbeddedData(item, random);
         if (quizQuestion != null) {
           questions.add(quizQuestion);
         }
@@ -55,8 +57,28 @@ final quizQuestionsProvider = FutureProvider.family
       return questions;
     });
 
+List<T> _sampleItems<T>(List<T> items, int count, Random random) {
+  if (count >= items.length) {
+    return List<T>.from(items)..shuffle(random);
+  }
+
+  final selected = List<T>.from(items.take(count));
+  for (var index = count; index < items.length; index++) {
+    final replacementIndex = random.nextInt(index + 1);
+    if (replacementIndex < count) {
+      selected[replacementIndex] = items[index];
+    }
+  }
+
+  selected.shuffle(random);
+  return selected;
+}
+
 /// Generate a quiz question from embedded quiz data
-QuizQuestion? _generateQuestionFromEmbeddedData(VocabularyItemModel item) {
+QuizQuestion? _generateQuestionFromEmbeddedData(
+  VocabularyItemModel item,
+  Random random,
+) {
   if (item.quizzes == null) {
     AppLogger.warning(
       'No quiz data for vocabulary item ${item.id} (${item.word})',
@@ -64,8 +86,6 @@ QuizQuestion? _generateQuestionFromEmbeddedData(VocabularyItemModel item) {
     );
     return null;
   }
-
-  final random = Random();
 
   // Randomly choose between kanji_to_hiragana and hiragana_to_kanji
   final useKanjiToHiragana = random.nextBool();

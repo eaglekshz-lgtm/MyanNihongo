@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myan_nihongo/core/enums/app_enums.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/routes/route_names.dart';
-import '../../../../arguments/batch_selection_args.dart';
-import '../../../../arguments/vocabulary_learning_args.dart';
+import '../../../../core/routes/arguments/batch_selection_args.dart';
+import '../../../../core/routes/arguments/vocabulary_learning_args.dart';
 import '../../data/providers/vocabulary_provider.dart';
 import '../../data/models/block_progress_model.dart';
 import '../../../../core/widgets/mesh_background.dart';
@@ -24,9 +26,15 @@ class BatchSelectionPage extends ConsumerWidget {
       vocabularyCountByLevelProvider(level),
     );
 
-    ref.watch(prefetchVocabularyProvider(level));
+    ref.watch(
+      prefetchVocabularyRangeProvider((
+        level: level,
+        offset: 0,
+        limit: blockSize,
+      )),
+    );
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -45,13 +53,7 @@ class BatchSelectionPage extends ConsumerWidget {
             borderRadius: BorderRadius.circular(30),
             child: Container(
               decoration: BoxDecoration(
-                color: isDark
-                    ? Theme.of(
-                        context,
-                      ).colorScheme.fixedWhite.withValues(alpha: 0.1)
-                    : Theme.of(
-                        context,
-                      ).colorScheme.fixedBlack.withValues(alpha: 0.05),
+                color: cs.batchBackButtonSurface,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -149,64 +151,38 @@ class BatchSelectionPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _navigateToLearning(
+  void _navigateToLearning(
     BuildContext context,
     WidgetRef ref,
     String level,
     String learningMode,
     int startIndex,
     int count,
-  ) async {
-    try {
-      final repository = ref.read(vocabularyRepositoryProvider);
-      final cachedData = await repository.getAllVocabulary();
-      final hasLevelData = cachedData
-          .where((v) => v.tag.toUpperCase() == level.toUpperCase())
-          .isNotEmpty;
+  ) {
+    unawaited(
+      ref
+          .read(
+            prefetchVocabularyRangeProvider((
+              level: level,
+              offset: startIndex,
+              limit: count,
+            )).future,
+          )
+          .catchError((Object error, StackTrace stackTrace) => false),
+    );
 
-      if (!hasLevelData) {
-        if (context.mounted) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) =>
-                const Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        await repository.getVocabularyByLevelWithRange(
-          level,
-          startIndex,
-          count,
-        );
-
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
-      }
-
-      if (context.mounted) {
-        Navigator.pushNamed(
-          context,
-          RouteNames.vocabularyLearning,
-          arguments: VocabularyLearningArgs(
-            level: level,
-            wordType: null,
-            learningMode: learningMode,
-            startIndex: startIndex,
-            batchSize: count,
-          ),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to load vocabulary: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
+    if (context.mounted) {
+      Navigator.pushNamed(
+        context,
+        RouteNames.vocabularyLearning,
+        arguments: VocabularyLearningArgs(
+          level: level,
+          wordType: null,
+          learningMode: learningMode,
+          startIndex: startIndex,
+          batchSize: count,
+        ),
+      );
     }
   }
 }
@@ -329,7 +305,7 @@ class _BlockCard extends StatelessWidget {
     final isCompleted = progress?.isCompleted ?? false;
     final progressValue = progress?.progress ?? 0.0;
     final hasProgress = progress != null && progressValue > 0 && !isCompleted;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cs = Theme.of(context).colorScheme;
 
     Color bgColor;
     Color borderColor;
@@ -341,58 +317,48 @@ class _BlockCard extends StatelessWidget {
     Color subtitleColor;
 
     if (isLocked) {
-      bgColor = Theme.of(context).colorScheme.batchLockedSurface;
-      borderColor = Theme.of(context).colorScheme.batchLockedContainer;
-      circleBgColor = Theme.of(context).colorScheme.batchLockedCircle;
-      circleTextColor = Theme.of(context).colorScheme.batchLockedText;
+      bgColor = cs.batchLockedSurface;
+      borderColor = cs.batchLockedContainer;
+      circleBgColor = cs.batchLockedCircle;
+      circleTextColor = cs.batchLockedText;
       badgeBgColor = circleBgColor;
       badgeIconColor = circleTextColor;
-      titleColor = Theme.of(context).colorScheme.batchLockedTitle;
-      subtitleColor = Theme.of(context).colorScheme.batchLockedText;
+      titleColor = cs.batchLockedTitle;
+      subtitleColor = cs.batchLockedText;
     } else if (isCompleted) {
-      bgColor = Theme.of(context).colorScheme.batchCompletedSurface;
-      borderColor = Theme.of(context).colorScheme.batchCompletedOutline;
-      circleBgColor = Theme.of(context).colorScheme.batchCompletedContainer;
-      circleTextColor = Theme.of(context).colorScheme.batchCompletedForeground;
-      badgeBgColor = Theme.of(context).colorScheme.batchCompletedBadge;
-      badgeIconColor = Theme.of(context).colorScheme.fixedWhite;
-      titleColor = Theme.of(context).colorScheme.onSurface;
-      subtitleColor = Theme.of(
-        context,
-      ).colorScheme.onSurface.withValues(alpha: 0.5);
+      bgColor = cs.batchCompletedSurface;
+      borderColor = cs.batchCompletedOutline;
+      circleBgColor = cs.batchCompletedContainer;
+      circleTextColor = cs.batchCompletedForeground;
+      badgeBgColor = cs.batchCompletedBadge;
+      badgeIconColor = cs.fixedWhite;
+      titleColor = cs.onSurface;
+      subtitleColor = cs.onSurface.withValues(alpha: 0.5);
     } else {
-      bgColor = Theme.of(context).colorScheme.batchActiveSurface;
-      borderColor = Theme.of(context).colorScheme.batchActiveOutline;
-      circleBgColor = Theme.of(context).colorScheme.batchActiveContainer;
-      circleTextColor = Theme.of(context).colorScheme.batchActiveForeground;
+      bgColor = cs.batchActiveSurface;
+      borderColor = cs.batchActiveOutline;
+      circleBgColor = cs.batchActiveContainer;
+      circleTextColor = cs.batchActiveForeground;
       badgeBgColor = circleBgColor;
       badgeIconColor = circleTextColor;
-      titleColor = Theme.of(context).colorScheme.onSurface;
-      subtitleColor = Theme.of(
-        context,
-      ).colorScheme.onSurface.withValues(alpha: 0.5);
+      titleColor = cs.onSurface;
+      subtitleColor = cs.onSurface.withValues(alpha: 0.5);
     }
 
     return Material(
-      color: Theme.of(context).colorScheme.transparent,
+      color: cs.transparent,
       child: InkWell(
         onTap: isLocked
             ? () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Complete previous block to unlock this one',
-                      style: TextStyle(
-                        color: isDark
-                            ? Theme.of(context).colorScheme.fixedWhite
-                            : Theme.of(context).colorScheme.fixedBlack,
-                      ),
+                      'Complete previous set to unlock this one',
+                      style: TextStyle(color: cs.batchLockedSnackForeground),
                     ),
                     duration: const Duration(seconds: 1),
                     behavior: SnackBarBehavior.floating,
-                    backgroundColor: isDark
-                        ? Theme.of(context).colorScheme.learningDarkElevated
-                        : Theme.of(context).colorScheme.fixedWhite,
+                    backgroundColor: cs.batchLockedSnackBackground,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -461,7 +427,7 @@ class _BlockCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Block $blockNumber',
+                    'Set $blockNumber',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -492,9 +458,7 @@ class _BlockCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark
-                        ? Theme.of(context).colorScheme.batchCompletedContainer
-                        : Theme.of(context).colorScheme.batchCompletedContainer,
+                    color: cs.batchCompletedContainer,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -502,13 +466,7 @@ class _BlockCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: isDark
-                          ? Theme.of(
-                              context,
-                            ).colorScheme.batchCompletedForeground
-                          : Theme.of(
-                              context,
-                            ).colorScheme.batchCompletedForeground,
+                      color: cs.batchCompletedForeground,
                     ),
                   ),
                 )
@@ -555,11 +513,7 @@ class _BlockCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: isLocked
-                        ? (isDark
-                              ? Theme.of(context).colorScheme.neutral800
-                              : Theme.of(
-                                  context,
-                                ).colorScheme.batchLockedContainer)
+                        ? cs.batchLockedRangeSurface
                         : circleBgColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -569,9 +523,7 @@ class _BlockCard extends StatelessWidget {
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: isLocked
-                          ? (isDark
-                                ? Theme.of(context).colorScheme.neutral400
-                                : Theme.of(context).colorScheme.batchLockedText)
+                          ? cs.batchLockedRangeForeground
                           : circleTextColor,
                     ),
                   ),
@@ -592,7 +544,6 @@ class _TopBannerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
@@ -600,15 +551,7 @@ class _TopBannerCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: isDark
-              ? [
-                  colorScheme.primary.withValues(alpha: 0.8),
-                  colorScheme.primary.withValues(alpha: 0.4),
-                ]
-              : [
-                  colorScheme.bannerGradientStart,
-                  colorScheme.bannerGradientEnd,
-                ],
+          colors: colorScheme.batchBannerGradientColors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -670,7 +613,7 @@ class _TopBannerCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'SELECT BLOCK',
+                        'SELECT SET',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.fixedWhite,
                           fontSize: 12,
@@ -683,7 +626,7 @@ class _TopBannerCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Choose a Block to Study',
+                  'Select a Vocabulary Set',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.fixedWhite,
                     fontSize: 24,
@@ -692,7 +635,7 @@ class _TopBannerCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '$totalWords words available · $totalBlocks total blocks',
+                  '$totalWords words available · $totalBlocks total sets',
                   style: TextStyle(
                     color: Theme.of(
                       context,

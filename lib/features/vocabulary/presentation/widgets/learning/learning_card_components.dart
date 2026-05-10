@@ -1,5 +1,36 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_theme.dart';
+import 'package:myan_nihongo/core/theme/app_theme.dart';
+import 'package:myan_nihongo/core/widgets/glass_container.dart';
+
+class LearningCardShell extends StatelessWidget {
+  final Widget child;
+  final bool isBookmarked;
+  final EdgeInsetsGeometry padding;
+
+  const LearningCardShell({
+    super.key,
+    required this.child,
+    required this.isBookmarked,
+    this.padding = const EdgeInsets.all(24),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return GlassContainer(
+      constraints: const BoxConstraints(maxWidth: 420, minHeight: 400),
+      blur: 0.0,
+      tintColor: cs.learningFlashcardSurface,
+      tintOpacity: 1.0,
+      borderRadius: BorderRadius.circular(28),
+      borderColor: cs.learningFlashcardTransparentBorder,
+      borderWidth: isBookmarked ? 1.8 : 1.1,
+      padding: padding,
+      child: child,
+    );
+  }
+}
 
 class CategoryBadge extends StatelessWidget {
   final String category;
@@ -8,27 +39,18 @@ class CategoryBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: isDark
-            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12)
-            : Theme.of(context).colorScheme.secondaryContainer,
+        color: cs.categoryBadgeSurface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDark
-              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.25)
-              : Theme.of(context).colorScheme.outlineVariant,
-          width: 1.2,
-        ),
+        border: Border.all(color: cs.categoryBadgeBorder, width: 1.2),
       ),
       child: Text(
         category.toUpperCase(),
         style: AppTheme.bodySmall.copyWith(
-          color: isDark
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.onPrimaryContainer,
+          color: cs.categoryBadgeForeground,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
           fontSize: 13,
@@ -62,7 +84,7 @@ class BurmeseSide extends StatelessWidget {
   Widget _buildMainContent(BuildContext context) {
     // Replace "၊ " with newline for proper line breaks
     final formattedText = burmeseWord.replaceAll('၊ ', '၊\n');
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cs = Theme.of(context).colorScheme;
 
     return SingleChildScrollView(
       child: Column(
@@ -84,20 +106,9 @@ class BurmeseSide extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.08)
-                  : Theme.of(context).colorScheme.surfaceContainerHighest,
+              color: cs.readingPillSurface,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isDark
-                    ? Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.15)
-                    : Theme.of(context).colorScheme.outlineVariant,
-                width: 1,
-              ),
+              border: Border.all(color: cs.readingPillBorder, width: 1),
             ),
             child: Text(
               japaneseReading,
@@ -139,7 +150,7 @@ class EnglishSide extends StatelessWidget {
   }
 
   Widget _buildMainContent(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cs = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -160,20 +171,9 @@ class EnglishSide extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.08)
-                  : Theme.of(context).colorScheme.surfaceContainerHighest,
+              color: cs.readingPillSurface,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isDark
-                    ? Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.15)
-                    : Theme.of(context).colorScheme.outlineVariant,
-                width: 1,
-              ),
+              border: Border.all(color: cs.readingPillBorder, width: 1),
             ),
             child: Text(
               japaneseReading,
@@ -236,4 +236,43 @@ class JapaneseSide extends StatelessWidget {
       ),
     );
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Painter
+//
+// Draws the visible top of a backing card behind the main learning card. The
+// foreground card is offset slightly downward by its parent, leaving this blue
+// rounded top edge visible like a stacked flashcard.
+// ─────────────────────────────────────────────────────────────────────────────
+class OuterTopBorderPainter extends CustomPainter {
+  final Color color;
+  final double borderRadius;
+  final Color backgroundColor;
+
+  const OuterTopBorderPainter({
+    required this.color,
+    required this.borderRadius,
+    required this.backgroundColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double r = borderRadius;
+    final double plateHeight = (r + 22).clamp(0.0, size.height);
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, size.width, plateHeight),
+        Radius.circular(r),
+      ),
+      Paint()..color = color,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant OuterTopBorderPainter old) =>
+      old.color != color ||
+      old.borderRadius != borderRadius ||
+      old.backgroundColor != backgroundColor;
 }

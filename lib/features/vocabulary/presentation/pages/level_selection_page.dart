@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myan_nihongo/core/theme/app_theme.dart';
 import '../../../../core/routes/route_names.dart';
-import '../../../../arguments/learning_mode_config_args.dart';
+import '../../../../core/routes/arguments/learning_mode_config_args.dart';
 import '../widgets/level_card_widget.dart';
 
 class LevelSelectionPage extends StatelessWidget {

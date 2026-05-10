@@ -3,11 +3,29 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/utils/logger.dart';
 import '../models/vocabulary_item_model.dart';
 
+const int _supabasePageSize = 1000;
+
 /// Remote data source for vocabulary items using Supabase
 class VocabularyRemoteDataSource {
-  final SupabaseClient _supabase;
+  final SupabaseClient? _supabase;
 
   VocabularyRemoteDataSource(this._supabase);
+
+  SupabaseClient get _client {
+    final client = _supabase;
+    if (client == null) {
+      throw const ServerException(message: 'Supabase is not configured');
+    }
+    return client;
+  }
+
+  List<VocabularyItemModel> _parseVocabularyResponse(Object response) {
+    return (response as List)
+        .map(
+          (json) => VocabularyItemModel.fromJson(json as Map<String, dynamic>),
+        )
+        .toList();
+  }
 
   /// Fetch vocabulary items by JLPT level from Supabase
   /// Uses the 'japanese_words' table and filters by 'tag' column
@@ -18,23 +36,35 @@ class VocabularyRemoteDataSource {
         'VocabularyRemoteDataSource',
       );
 
-      final response = await _supabase
-          .from('japanese_words')
-          .select()
-          .eq('tag', level)
-          .order('id', ascending: true);
+      final vocabulary = <VocabularyItemModel>[];
+      var offset = 0;
+
+      while (true) {
+        final response = await _client
+            .from('japanese_words')
+            .select()
+            .eq('tag', level)
+            .order('id', ascending: true)
+            .range(offset, offset + _supabasePageSize - 1);
+
+        final page = _parseVocabularyResponse(response);
+        vocabulary.addAll(page);
+
+        if (page.length < _supabasePageSize) {
+          break;
+        }
+
+        offset += _supabasePageSize;
+      }
 
       AppLogger.data(
-        'Retrieved ${response.length} vocabulary items for level $level',
+        'Retrieved ${vocabulary.length} vocabulary items for level $level',
         operation: 'READ',
       );
 
-      return (response as List)
-          .map(
-            (json) =>
-                VocabularyItemModel.fromJson(json as Map<String, dynamic>),
-          )
-          .toList();
+      return vocabulary;
+    } on ServerException {
+      rethrow;
     } on PostgrestException catch (e) {
       AppLogger.error(
         'Supabase error fetching vocabulary: ${e.message}',
@@ -63,22 +93,34 @@ class VocabularyRemoteDataSource {
         'VocabularyRemoteDataSource',
       );
 
-      final response = await _supabase
-          .from('japanese_words')
-          .select()
-          .order('id', ascending: true);
+      final vocabulary = <VocabularyItemModel>[];
+      var offset = 0;
+
+      while (true) {
+        final response = await _client
+            .from('japanese_words')
+            .select()
+            .order('id', ascending: true)
+            .range(offset, offset + _supabasePageSize - 1);
+
+        final page = _parseVocabularyResponse(response);
+        vocabulary.addAll(page);
+
+        if (page.length < _supabasePageSize) {
+          break;
+        }
+
+        offset += _supabasePageSize;
+      }
 
       AppLogger.data(
-        'Retrieved ${response.length} total vocabulary items',
+        'Retrieved ${vocabulary.length} total vocabulary items',
         operation: 'READ',
       );
 
-      return (response as List)
-          .map(
-            (json) =>
-                VocabularyItemModel.fromJson(json as Map<String, dynamic>),
-          )
-          .toList();
+      return vocabulary;
+    } on ServerException {
+      rethrow;
     } on PostgrestException catch (e) {
       AppLogger.error(
         'Supabase error fetching all vocabulary: ${e.message}',
@@ -108,13 +150,10 @@ class VocabularyRemoteDataSource {
         'VocabularyRemoteDataSource',
       );
 
-      final response = await _supabase
+      final count = await _client
           .from('japanese_words')
-          .select('id')
-          .eq('tag', level)
-          .count(CountOption.exact);
-
-      final count = response.count;
+          .count(CountOption.exact)
+          .eq('tag', level);
 
       AppLogger.data(
         'Vocabulary count for level $level: $count',
@@ -122,6 +161,8 @@ class VocabularyRemoteDataSource {
       );
 
       return count;
+    } on ServerException {
+      rethrow;
     } on PostgrestException catch (e) {
       AppLogger.error(
         'Supabase error fetching vocabulary count: ${e.message}',
@@ -155,7 +196,7 @@ class VocabularyRemoteDataSource {
         'VocabularyRemoteDataSource',
       );
 
-      final response = await _supabase
+      final response = await _client
           .from('japanese_words')
           .select()
           .eq('tag', level)
@@ -167,12 +208,9 @@ class VocabularyRemoteDataSource {
         operation: 'READ',
       );
 
-      return (response as List)
-          .map(
-            (json) =>
-                VocabularyItemModel.fromJson(json as Map<String, dynamic>),
-          )
-          .toList();
+      return _parseVocabularyResponse(response);
+    } on ServerException {
+      rethrow;
     } on PostgrestException catch (e) {
       AppLogger.error(
         'Supabase error fetching vocabulary range: ${e.message}',

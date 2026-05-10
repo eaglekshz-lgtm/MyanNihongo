@@ -54,21 +54,18 @@ class GlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
 
-    final effectiveTint =
-        (tintColor ??
-                (isDark
-                    ? Theme.of(context).colorScheme.fixedWhite
-                    : cs.primary))
-            .withValues(alpha: tintOpacity);
+    final effectiveTint = (tintColor ?? cs.glassTintBase).withValues(
+      alpha: tintOpacity,
+    );
 
-    final effectiveBorder =
-        borderColor ??
-        (isDark
-            ? Theme.of(context).colorScheme.fixedWhite.withValues(alpha: 0.28)
-            : cs.primary.withValues(alpha: 0.30));
+    final effectiveBorder = borderColor ?? cs.glassBorder;
+    final content = Container(
+      padding: padding,
+      color: effectiveTint,
+      child: child,
+    );
 
     return Container(
       margin: margin,
@@ -79,9 +76,7 @@ class GlassContainer extends StatelessWidget {
               borderRadius: borderRadius,
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.fixedBlack.withValues(
-                    alpha: isDark ? 0.28 : 0.10,
-                  ),
+                  color: cs.fixedBlack.withValues(alpha: cs.glassShadowAlpha),
                   blurRadius: 28,
                   offset: const Offset(0, 8),
                   spreadRadius: -4,
@@ -97,14 +92,12 @@ class GlassContainer extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: borderRadius,
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-            child: Container(
-              padding: padding,
-              color: effectiveTint,
-              child: child,
-            ),
-          ),
+          child: blur <= 0
+              ? content
+              : BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                  child: content,
+                ),
         ),
       ),
     );

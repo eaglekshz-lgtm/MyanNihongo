@@ -5,20 +5,14 @@ import 'package:flutter_tts/flutter_tts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/logger.dart';
 
-import '../../../../arguments/vocabulary_learning_args.dart';
-import '../../data/models/block_progress_model.dart';
+import '../../../../core/routes/arguments/vocabulary_learning_args.dart';
 import '../../data/models/vocabulary_filter.dart';
 import '../../data/models/vocabulary_item_model.dart';
+import '../../data/providers/vocabulary_learning_controller.dart';
 import '../../data/providers/vocabulary_provider.dart';
 import '../constants/vocabulary_learning_constants.dart';
-import '../widgets/learning/completion_screen.dart';
+import '../widgets/learning/learning_completion_screen.dart';
 import '../widgets/learning/learning_screen.dart';
-
-// Constants
-const kDefaultLevel = 'N5';
-const kCardBorderRadius = 28.0;
-const kJapaneseFontSize = 62.0;
-const kSuccessAnimationDuration = Duration(milliseconds: 1500);
 
 class VocabularyLearningPage extends ConsumerStatefulWidget {
   const VocabularyLearningPage({super.key});
@@ -29,32 +23,15 @@ class VocabularyLearningPage extends ConsumerStatefulWidget {
 }
 
 class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
-    with SingleTickerProviderStateMixin {
-  // ============================================================================
-  // State Variables
-  // ============================================================================
-
-  // Audio player
+    with TickerProviderStateMixin {
   final AudioPlayer _audioPlayer = AudioPlayer();
   final FlutterTts _tts = FlutterTts();
   late AnimationController _flipController;
+  late AnimationController _flashController;
+  Color? _flashColor;
+  bool _isSwipeLeft = false;
 
-  // Configuration from arguments
-  String? _level;
-  String? _wordType;
-  String? _learningMode;
-  int? _startIndex;
-  int? _batchSize;
-
-  // Learning progress
-  bool showAnswer = false;
-  bool hasPlayedCompletionSound = false;
-  bool _hasLoadedCheckpoint = false;
-  bool _isInitializing = true;
-  int _lastCompletedCount = 0; // Track actual completed count
-  int _viewingIndex =
-      0; // Track actual viewing position (separate from completion)
-  bool _isFinishing = false; // Show success animation on last advance
+  VocabularyLearningConfig? _config;
 
   @override
   void initState() {
@@ -63,24 +40,20 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
       vsync: this,
       duration: VocabularyLearningConstants.flipDuration,
     );
+    _flashController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    );
     _initializeTts();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_level == null) {
+    if (_config == null) {
       final args =
           ModalRoute.of(context)!.settings.arguments as VocabularyLearningArgs?;
-      _level = args?.level ?? VocabularyLearningConstants.defaultLevel;
-      _wordType = args?.wordType;
-      _learningMode =
-          args?.learningMode ?? VocabularyLearningConstants.defaultLearningMode;
-      _startIndex = args?.startIndex;
-      _batchSize = args?.batchSize;
-
-      // Initialize block progress
-      _initializeBlockProgress();
+      _config = VocabularyLearningConfig.fromArgs(args);
     }
   }
 
@@ -89,10 +62,9 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
     _audioPlayer.dispose();
     _tts.stop();
     _flipController.dispose();
+    _flashController.dispose();
     super.dispose();
-  } // ============================================================================
-  // Helper Methods
-  // ============================================================================
+  }
 
   Future<void> _initializeTts() async {
     try {
@@ -101,18 +73,14 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
       await _tts.setVolume(VocabularyLearningConstants.ttsVolume);
       await _tts.setPitch(VocabularyLearningConstants.ttsPitch);
     } catch (e) {
-      debugPrint('TTS init error: $e');
+      AppLogger.warning('TTS init error: $e', 'VocabLearning');
     }
   }
 
-  // ============================================================================
-  // UI Helper Methods
-  // ============================================================================
-
-  String _getAppBarTitle() {
-    if (_startIndex != null && _batchSize != null) {
-      final blockNumber = (_startIndex! / _batchSize!).floor() + 1;
-      return 'Block $blockNumber - $_batchSize words';
+  String _getAppBarTitle(VocabularyLearningConfig config) {
+    final blockNumber = config.blockNumber;
+    if (blockNumber != null) {
+      return 'Set $blockNumber · ${config.batchSize} words';
     }
     return 'Vocabulary Learning';
   }
@@ -122,45 +90,41 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
       await _tts.stop();
       await _tts.speak(text);
     } catch (e) {
-      debugPrint('TTS speak error: $e');
+      AppLogger.warning('TTS speak error: $e', 'VocabLearning');
     }
   }
 
-  // ============================================================================
-  // Card Interaction Methods
-  // ============================================================================
-
-  /// Handle flip card tap - extracted for reusability
   void _handleFlipTap() {
-    // Allow flipping for both 'flip' and 'simple' modes
+    if ((_config?.learningMode ?? 'recall') == 'recall') {
+      if (_flipController.value < 1) {
+        _flipController.forward();
+      }
+      return;
+    }
+
     if (_flipController.status == AnimationStatus.dismissed ||
         _flipController.value == 0) {
       _flipController.forward();
-      setState(() => showAnswer = true);
     } else if (_flipController.status == AnimationStatus.completed ||
         _flipController.value == 1) {
       _flipController.reverse();
-      setState(() => showAnswer = false);
     } else {
       if (_flipController.value < 0.5) {
         _flipController.forward();
-        setState(() => showAnswer = true);
       } else {
         _flipController.reverse();
-        setState(() => showAnswer = false);
       }
     }
   }
 
-  /// Show reset confirmation dialog
-  void _showResetDialog(BuildContext context) {
+  void _showResetDialog(BuildContext context, VocabularyLearningConfig config) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Reset Progress'),
           content: const Text(
-            'Are you sure you want to restart this block from the beginning? Your current progress will be reset.',
+            'Are you sure you want to restart this set from the beginning? Your current progress will be reset.',
           ),
           actions: [
             TextButton(
@@ -170,7 +134,7 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _resetBlockProgress();
+                _resetBlockProgress(config);
               },
               child: const Text('Reset'),
             ),
@@ -180,335 +144,291 @@ class _VocabularyLearningPageState extends ConsumerState<VocabularyLearningPage>
     );
   }
 
-  /// Reset block progress to start from beginning
-  Future<void> _resetBlockProgress() async {
-    if (_startIndex == null || _batchSize == null) return;
-
-    final repository = ref.read(vocabularyRepositoryProvider);
-    final blockNumber = (_startIndex! / _batchSize!).floor() + 1;
-    final blockId = BlockProgressModel.generateBlockId(
-      _level ?? 'N5',
-      _wordType,
-      blockNumber,
-    );
-
-    // Use repository method to reset block progress
-    await repository.resetBlockProgress(blockId);
-
-    // Invalidate the block progress provider to update UI
-    ref.invalidate(blockProgressProvider);
-
-    // Reset UI state
-    setState(() {
-      showAnswer = false;
-      hasPlayedCompletionSound = false;
-      _hasLoadedCheckpoint = true;
-      _viewingIndex = 0;
-      _lastCompletedCount = 0;
-    });
-
-    // Reset flip animation
+  Future<void> _resetBlockProgress(VocabularyLearningConfig config) async {
+    await ref
+        .read(vocabularyLearningControllerProvider(config).notifier)
+        .resetBlockProgress();
     _flipController.reset();
-  }
-
-  // ============================================================================
-  // Block Progress Management
-  // ============================================================================
-
-  Future<void> _initializeBlockProgress() async {
-    if (_startIndex == null || _batchSize == null) return;
-
-    final repository = ref.read(vocabularyRepositoryProvider);
-    final blockNumber = (_startIndex! / _batchSize!).floor() + 1;
-    final blockId = BlockProgressModel.generateBlockId(
-      _level ?? 'N5',
-      _wordType,
-      blockNumber,
-    );
-
-    var blockProgress = await repository.getBlockProgress(blockId);
-
-    if (blockProgress == null) {
-      // Create new block progress using repository method
-      blockProgress = await repository.updateBlockProgress(
-        blockId,
-        _level ?? 'N5',
-        blockNumber,
-        _startIndex!,
-        0, // completedWords
-        _batchSize!, // totalWords
-        wordType: _wordType,
-        isCompleted: false,
-      );
-    } else if (blockProgress.isCompleted) {
-      // If block is completed, DON'T reset isCompleted or completedWords
-      // Just update lastStudied - no progress tracking for completed blocks
-      blockProgress = blockProgress.copyWith(lastStudied: DateTime.now());
-      await repository.saveBlockProgress(blockProgress);
-      setState(() {
-        _viewingIndex = 0;
-        _lastCompletedCount = 0;
-        _hasLoadedCheckpoint = true;
-      });
-    } else if (!blockProgress.isCompleted &&
-        blockProgress.completedWords > 0 &&
-        !_hasLoadedCheckpoint) {
-      // Resume from last checkpoint if block is in progress
-      final checkpointIndex = blockProgress.completedWords;
-      AppLogger.info(
-        'Loading checkpoint: $checkpointIndex / ${blockProgress.totalWords}',
-        'VocabLearning',
-      );
-      setState(() {
-        // Resume viewing at the next-to-study card which equals completedWords (0-based)
-        _viewingIndex = checkpointIndex;
-        // Keep progress based on the completed count
-        _lastCompletedCount = checkpointIndex;
-        _hasLoadedCheckpoint = true; // Ensure we only load checkpoint once
-      });
-    } else {
-      AppLogger.debug(
-        'Starting fresh: isCompleted=${blockProgress.isCompleted}, completedWords=${blockProgress.completedWords}',
-        'VocabLearning',
-      );
-    }
-
-    // Mark initialization as complete
-    if (mounted) {
-      setState(() {
-        _isInitializing = false;
-      });
-    }
-  }
-
-  Future<void> _updateBlockProgress(int completedCount) async {
-    if (_startIndex == null || _batchSize == null) return;
-
-    final blockProgress = await _getBlockProgress();
-    if (blockProgress == null) return;
-
-    final updatedProgress = _calculateUpdatedProgress(
-      blockProgress,
-      completedCount,
-      _batchSize!,
-    );
-
-    await _saveAndInvalidateProgress(updatedProgress);
-  }
-
-  Future<BlockProgressModel?> _getBlockProgress() async {
-    final repository = ref.read(vocabularyRepositoryProvider);
-    final blockNumber = (_startIndex! / _batchSize!).floor() + 1;
-    final blockId = BlockProgressModel.generateBlockId(
-      _level ?? kDefaultLevel,
-      _wordType,
-      blockNumber,
-    );
-
-    return await repository.getBlockProgress(blockId);
-  }
-
-  BlockProgressModel _calculateUpdatedProgress(
-    BlockProgressModel currentProgress,
-    int completedCount,
-    int batchSize,
-  ) {
-    final wasCompleted = currentProgress.isCompleted;
-    final isCompleted = completedCount >= batchSize;
-
-    if (wasCompleted && isCompleted) {
-      return currentProgress.copyWith(
-        completionCount: currentProgress.completionCount + 1,
-        lastStudied: DateTime.now(),
-      );
-    } else if (!wasCompleted) {
-      return currentProgress.copyWith(
-        completedWords: completedCount,
-        completionCount: isCompleted
-            ? currentProgress.completionCount + 1
-            : currentProgress.completionCount,
-        lastStudied: DateTime.now(),
-        isCompleted: isCompleted,
-      );
-    }
-    return currentProgress;
-  }
-
-  Future<void> _saveAndInvalidateProgress(BlockProgressModel progress) async {
-    final repository = ref.read(vocabularyRepositoryProvider);
-    await repository.saveBlockProgress(progress);
-    ref.invalidate(blockProgressProvider);
   }
 
   Future<void> _playCompletionSound() async {
     try {
-      debugPrint('Playing vocabulary completion sound');
       await _audioPlayer.play(AssetSource('audio/complete.wav'));
     } catch (e) {
-      debugPrint('Completion sound error: $e');
+      AppLogger.warning('Completion sound error: $e', 'VocabLearning');
     }
   }
 
-  Future<void> _handleNext(
-    VocabularyItemModel item,
+  void _triggerFlash(Color color, {bool swipeLeft = false}) {
+    _flashColor = color;
+    _isSwipeLeft = swipeLeft;
+    _flashController.forward(from: 0.0);
+  }
+
+  /// Swipe Left = Hard, then advance.
+  Future<void> _handleSwipeLeft(
+    VocabularyLearningConfig config,
+    VocabularyItemModel currentItem,
     int totalVocabularyLength,
   ) async {
-    // If this is the last card, play finish animation then go to completion
-    if (_viewingIndex == totalVocabularyLength - 1) {
-      setState(() {
-        _isFinishing = true;
-        showAnswer = false;
-        _flipController.value = 0;
-        _lastCompletedCount = totalVocabularyLength;
-      });
-      await _updateBlockProgress(_lastCompletedCount);
-      Future.delayed(VocabularyLearningConstants.successAnimationDuration, () {
-        if (!mounted) return;
-        setState(() {
-          _isFinishing = false;
-          _viewingIndex++; // triggers completion screen
-        });
-      });
-    } else {
-      setState(() {
-        _viewingIndex++;
-        showAnswer = false;
-        _flipController.value = 0;
-      });
-      // Update block progress after moving forward
-      if (_viewingIndex > _lastCompletedCount) {
-        _lastCompletedCount = _viewingIndex;
-        await _updateBlockProgress(_lastCompletedCount);
-      }
-    }
+    _triggerFlash(
+      Theme.of(context).colorScheme.learningHardFlash,
+      swipeLeft: true,
+    );
+    _flipController.value = 0;
+    await ref
+        .read(vocabularyLearningControllerProvider(config).notifier)
+        .goNext(totalVocabularyLength);
   }
 
-  // ============================================================================
-  // Build Methods
-  // ============================================================================
+  /// Swipe Right = Easy, then advance.
+  Future<void> _handleSwipeRight(
+    VocabularyLearningConfig config,
+    VocabularyItemModel currentItem,
+    int totalVocabularyLength,
+  ) async {
+    _triggerFlash(
+      Theme.of(context).colorScheme.learningEasyFlash,
+      swipeLeft: false,
+    );
+    _flipController.value = 0;
+    await ref
+        .read(vocabularyLearningControllerProvider(config).notifier)
+        .goNext(totalVocabularyLength);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final vocabularyAsync = ref.watch(
-      vocabularyByLevelAndTypeProvider(
-        VocabularyFilter(level: _level ?? 'N5', wordType: _wordType ?? 'all'),
-      ),
+    final config = _config;
+    if (config == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final vocabularyAsync = config.hasBlock
+        ? ref.watch(
+            vocabularyRangeProvider((
+              level: config.level,
+              offset: config.startIndex!,
+              limit: config.batchSize!,
+            )),
+          )
+        : ref.watch(
+            vocabularyByLevelAndTypeProvider(
+              VocabularyFilter(
+                level: config.level,
+                wordType: config.wordType ?? 'all',
+              ),
+            ),
+          );
+
+    if (config.hasBlock && vocabularyAsync.hasValue) {
+      ref.watch(
+        prefetchVocabularyRangeProvider((
+          level: config.level,
+          offset: config.startIndex! + config.batchSize!,
+          limit: config.batchSize!,
+        )),
+      );
+    }
+
+    final learningAsync = ref.watch(
+      vocabularyLearningControllerProvider(config),
     );
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cs = Theme.of(context).colorScheme;
+    final learningBackground = cs.learningPageScaffold;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      backgroundColor: learningBackground,
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
-        title: Text(_getAppBarTitle()),
-        backgroundColor: Theme.of(context).colorScheme.transparent,
+        title: Text(_getAppBarTitle(config)),
+        centerTitle: true,
+        titleTextStyle: AppTheme.headlineMedium.copyWith(
+          color: cs.learningAppBarForeground,
+          fontSize: 18,
+          fontWeight: FontWeight.w800,
+        ),
+        backgroundColor: learningBackground,
+        foregroundColor: cs.learningAppBarForeground,
+        iconTheme: IconThemeData(color: cs.learningAppBarIcon),
+        actionsIconTheme: IconThemeData(color: cs.learningAppBarIcon),
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded),
             tooltip: 'Reset to start',
-            onPressed: () => _showResetDialog(context),
+            onPressed: () => _showResetDialog(context, config),
           ),
         ],
       ),
       body: Stack(
         children: [
-          // Base: pure black / light background from palette
-          Positioned.fill(
-            child: Container(
-              color: isDark
-                  ? Theme.of(context).colorScheme.learningDeepScaffold
-                  : Theme.of(context).colorScheme.surface,
-            ),
-          ),
-          SafeArea(
-            child: _isInitializing
-                ? const Center(child: CircularProgressIndicator())
-                : vocabularyAsync.when(
-                    data: (allVocabulary) =>
-                        _buildLearningContent(allVocabulary),
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (error, _) => Center(child: Text('Error: $error')),
-                  ),
-          ),
+          // Base background
+          Positioned.fill(child: Container(color: learningBackground)),
+          SafeArea(child: _buildBody(config, vocabularyAsync, learningAsync)),
+          // Flash overlay
+          Positioned.fill(child: _buildFlashOverlay()),
         ],
       ),
     );
   }
 
-  Widget _buildLearningContent(List<VocabularyItemModel> allVocabulary) {
+  Widget _buildFlashOverlay() {
+    return AnimatedBuilder(
+      animation: _flashController,
+      builder: (context, _) {
+        if (!_flashController.isAnimating && _flashController.isDismissed) {
+          return const SizedBox.shrink();
+        }
+        final flashColor =
+            _flashColor ?? Theme.of(context).colorScheme.transparent;
+        // Quick flash curve: peak at 15%, then fade out
+        final t = _flashController.value;
+        final double opacity;
+        if (t < 0.15) {
+          opacity = (t / 0.15) * 0.35;
+        } else {
+          opacity = (1.0 - ((t - 0.15) / 0.85)) * 0.35;
+        }
+        final clampedOpacity = opacity.clamp(0.0, 1.0);
+
+        return IgnorePointer(
+          child: Stack(
+            children: [
+              Container(
+                color: flashColor.withValues(alpha: clampedOpacity * 0.05),
+              ),
+              Positioned(
+                left: _isSwipeLeft ? 0 : null,
+                right: _isSwipeLeft ? null : 0,
+                top: 0,
+                bottom: 0,
+                width: 6,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: flashColor.withValues(alpha: clampedOpacity),
+                    boxShadow: [
+                      BoxShadow(
+                        color: flashColor.withValues(
+                          alpha: clampedOpacity * 0.42,
+                        ),
+                        blurRadius: 18,
+                        spreadRadius: 4,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(
+    VocabularyLearningConfig config,
+    AsyncValue<List<VocabularyItemModel>> vocabularyAsync,
+    AsyncValue<VocabularyLearningState> learningAsync,
+  ) {
+    if (vocabularyAsync.isLoading || learningAsync.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final vocabularyError = vocabularyAsync.error;
+    if (vocabularyError != null) {
+      return Center(child: Text('Error: $vocabularyError'));
+    }
+
+    final learningError = learningAsync.error;
+    if (learningError != null) {
+      return Center(child: Text('Error: $learningError'));
+    }
+
+    final allVocabulary = vocabularyAsync.valueOrNull ?? const [];
+    final learningState = learningAsync.valueOrNull;
+    if (learningState == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return _buildLearningContent(config, allVocabulary, learningState);
+  }
+
+  Widget _buildLearningContent(
+    VocabularyLearningConfig config,
+    List<VocabularyItemModel> allVocabulary,
+    VocabularyLearningState learningState,
+  ) {
     if (allVocabulary.isEmpty) {
       return const Center(child: Text('No vocabulary items available'));
     }
 
-    final vocabulary = (_startIndex != null && _batchSize != null)
-        ? allVocabulary.skip(_startIndex!).take(_batchSize!).toList()
-        : allVocabulary;
+    final vocabulary = allVocabulary;
 
     if (vocabulary.isEmpty) {
       return const Center(child: Text('No vocabulary items in this batch'));
     }
 
-    if (_viewingIndex >= vocabulary.length) {
-      return _buildCompletionScreen(vocabulary.length);
+    if (learningState.viewingIndex >= vocabulary.length) {
+      return _buildCompletionScreen(config, learningState, vocabulary.length);
     }
 
-    return _buildLearningScreen(vocabulary);
+    return _buildLearningScreen(config, learningState, vocabulary);
   }
 
-  Widget _buildCompletionScreen(int totalCards) {
-    final blockNumber = _startIndex != null && _batchSize != null
-        ? (_startIndex! / _batchSize!).floor() + 1
-        : null;
-
-    return CompletionScreenWidget(
-      level: _level ?? 'N5',
-      wordType: _wordType,
+  Widget _buildCompletionScreen(
+    VocabularyLearningConfig config,
+    VocabularyLearningState learningState,
+    int totalCards,
+  ) {
+    return LearningCompletionScreen(
       totalCards: totalCards,
-      blockNumber: blockNumber,
-      hasPlayedCompletionSound: hasPlayedCompletionSound,
+      blockNumber: config.blockNumber,
+      hasPlayedCompletionSound: learningState.hasPlayedCompletionSound,
       onSoundPlayed: () {
-        if (!hasPlayedCompletionSound) {
-          setState(() => hasPlayedCompletionSound = true);
+        if (!learningState.hasPlayedCompletionSound) {
+          ref
+              .read(vocabularyLearningControllerProvider(config).notifier)
+              .markCompletionSoundPlayed();
           _playCompletionSound();
         }
       },
       onRestart: () {
-        setState(() {
-          _viewingIndex = 0;
-          _lastCompletedCount = 0;
-          showAnswer = false;
-          hasPlayedCompletionSound = false;
-        });
+        _flipController.reset();
+        ref
+            .read(vocabularyLearningControllerProvider(config).notifier)
+            .restart();
       },
       onExit: () => Navigator.pop(context),
     );
   }
 
-  Widget _buildLearningScreen(List<VocabularyItemModel> vocabulary) {
+  Widget _buildLearningScreen(
+    VocabularyLearningConfig config,
+    VocabularyLearningState learningState,
+    List<VocabularyItemModel> vocabulary,
+  ) {
     return LearningScreen(
       vocabulary: vocabulary,
-      viewingIndex: _viewingIndex,
-      lastCompletedCount: _lastCompletedCount,
-      isFinishing: _isFinishing,
-      level: _level,
-      learningMode: _learningMode,
+      viewingIndex: learningState.viewingIndex,
+      lastCompletedCount: learningState.lastCompletedCount,
+      isFinishing: learningState.isFinishing,
+      level: config.level,
+      learningMode: config.learningMode,
       flipController: _flipController,
       onSpeak: _speak,
       onFlipTap: _handleFlipTap,
-      onBack: _handleBack,
-      onNext: () => _handleNext(vocabulary[_viewingIndex], vocabulary.length),
+      onSwipeLeft: () => _handleSwipeLeft(
+        config,
+        vocabulary[learningState.viewingIndex],
+        vocabulary.length,
+      ),
+      onSwipeRight: () => _handleSwipeRight(
+        config,
+        vocabulary[learningState.viewingIndex],
+        vocabulary.length,
+      ),
     );
-  }
-
-  void _handleBack() {
-    if (_viewingIndex > 0) {
-      setState(() {
-        _viewingIndex--;
-        showAnswer = false;
-        _flipController.value = 0;
-      });
-    }
   }
 }

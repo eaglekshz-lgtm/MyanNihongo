@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_theme.dart';
+import 'package:myan_nihongo/core/theme/app_theme.dart';
 
 class ModeCard extends StatelessWidget {
   final String title;

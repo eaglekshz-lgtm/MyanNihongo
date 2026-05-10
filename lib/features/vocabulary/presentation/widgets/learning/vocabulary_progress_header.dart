@@ -9,6 +9,9 @@ class VocabularyProgressHeader extends StatelessWidget {
   final bool highlightSuccess;
   final bool animate;
   final double? forcedProgress;
+  final double swipeProgress;
+  final bool isSwipingRight;
+  final bool isSwiping;
 
   const VocabularyProgressHeader({
     super.key,
@@ -19,6 +22,9 @@ class VocabularyProgressHeader extends StatelessWidget {
     this.highlightSuccess = false,
     this.animate = false,
     this.forcedProgress,
+    this.swipeProgress = 0.0,
+    this.isSwipingRight = false,
+    this.isSwiping = false,
   });
 
   @override
@@ -28,7 +34,7 @@ class VocabularyProgressHeader extends StatelessWidget {
     final progress = forcedProgress ?? (displayIndex + 1) / totalCount;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      padding: const EdgeInsets.fromLTRB(28, 18, 28, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -36,33 +42,31 @@ class VocabularyProgressHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [_buildProgressText(context), _buildLevel()],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           _buildProgressBar(progress),
+          const SizedBox(height: 14),
+          _buildDifficultyLabels(context),
         ],
       ),
     );
   }
 
   Widget _buildProgressText(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return RichText(
       text: TextSpan(
         style: TextStyle(
-          fontSize: isDark ? 20 : 15,
-          fontWeight: isDark ? FontWeight.w700 : FontWeight.w600,
-          color: isDark
-              ? Theme.of(context).colorScheme.secondary
-              : Theme.of(context).colorScheme.onSurface,
+          fontSize: colorScheme.learningProgressNumberFontSize,
+          fontWeight: colorScheme.learningProgressNumberFontWeight,
+          color: colorScheme.learningProgressForeground,
         ),
         children: [
           TextSpan(
             text: '${displayIndex + 1}',
-            style: isDark
-                ? null
-                : TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 16,
-                  ),
+            style: TextStyle(
+              color: colorScheme.learningProgressCurrentForeground,
+              fontSize: colorScheme.learningProgressCurrentFontSize,
+            ),
           ),
           const TextSpan(text: ' / '),
           TextSpan(text: totalCount.toString()),
@@ -73,28 +77,29 @@ class VocabularyProgressHeader extends StatelessWidget {
 
   Widget _buildLevel() {
     return Builder(
-      builder: (context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: Theme.of(
-              context,
-            ).colorScheme.primary.withValues(alpha: 0.12),
-            width: 1.5,
+      builder: (context) {
+        final colorScheme = Theme.of(context).colorScheme;
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            color: colorScheme.learningLevelPillSurface,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: colorScheme.learningLevelPillBorder,
+              width: 1.5,
+            ),
           ),
-        ),
-        child: Text(
-          level,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.5,
+          child: Text(
+            level,
+            style: TextStyle(
+              color: colorScheme.learningLevelPillForeground,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -106,42 +111,66 @@ class VocabularyProgressHeader extends StatelessWidget {
       tween: Tween<double>(begin: 0, end: progress),
       curve: animate ? Curves.easeOutCubic : Curves.easeInOut,
       builder: (context, value, _) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Container(
-          height: 6,
-          decoration: BoxDecoration(
-            color: isDark
-                ? Theme.of(context).colorScheme.learningDarkSurface
-                : Theme.of(context).dividerColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(3),
-          ),
-          child: FractionallySizedBox(
-            alignment: Alignment.centerLeft,
-            widthFactor: value,
-            child: Container(
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Theme.of(context).colorScheme.secondary
-                    : (highlightSuccess
-                          ? Theme.of(context).colorScheme.success
-                          : Theme.of(context).colorScheme.primary),
-                borderRadius: BorderRadius.circular(3),
-                boxShadow: isDark
-                    ? [
-                        BoxShadow(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.secondary.withValues(alpha: 0.6),
-                          blurRadius: 8,
-                          offset: const Offset(0, 0),
-                        ),
-                      ]
-                    : null,
+        final colorScheme = Theme.of(context).colorScheme;
+        final segmentCount = totalCount < 5 ? totalCount : 5;
+        final filledSegments = (value * segmentCount).ceil();
+
+        return Row(
+          children: List.generate(segmentCount, (index) {
+            final isFilled = index < filledSegments;
+            return Expanded(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                height: 4.5,
+                margin: EdgeInsets.only(
+                  right: index == segmentCount - 1 ? 0 : 10,
+                ),
+                decoration: BoxDecoration(
+                  color: isFilled
+                      ? colorScheme.learningProgressFill(highlightSuccess)
+                      : colorScheme.learningProgressTrack,
+                  borderRadius: BorderRadius.circular(99),
+                  boxShadow: isFilled ? colorScheme.learningProgressGlow : null,
+                ),
               ),
-            ),
-          ),
+            );
+          }),
         );
       },
+    );
+  }
+
+  Widget _buildDifficultyLabels(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final mutedColor = cs.learningDifficultyMutedForeground;
+
+    final hardActive = isSwiping && !isSwipingRight;
+    final easyActive = isSwiping && isSwipingRight;
+
+    return Row(
+      children: [
+        AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 150),
+          style: AppTheme.bodyMedium.copyWith(
+            color: hardActive ? cs.error : mutedColor,
+            fontSize: 14,
+            fontWeight: hardActive ? FontWeight.w900 : FontWeight.w700,
+            letterSpacing: 1.0,
+          ),
+          child: const Text('‹ HARD'),
+        ),
+        const Spacer(),
+        AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 150),
+          style: AppTheme.bodyMedium.copyWith(
+            color: easyActive ? cs.success : mutedColor,
+            fontSize: 14,
+            fontWeight: easyActive ? FontWeight.w900 : FontWeight.w700,
+            letterSpacing: 1.0,
+          ),
+          child: const Text('EASY ›'),
+        ),
+      ],
     );
   }
 }

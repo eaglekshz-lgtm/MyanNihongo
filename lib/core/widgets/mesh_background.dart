@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:myan_nihongo/core/theme/app_theme.dart';
 
 /// Renders soft, blurred ambient orbs behind the page content.
 /// Glass cards placed above this widget will blur these colours,
@@ -11,76 +12,65 @@ class MeshBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = Theme.of(context).colorScheme;
     final size = MediaQuery.sizeOf(context);
 
-    // If light mode, return solid background without orbs (no gradient background)
-    if (!isDark) {
-      return ColoredBox(
-        color: Theme.of(context).colorScheme.surface,
-        child: child,
-      );
-    }
+    return RepaintBoundary(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // ── Base scaffold background ──────────────────────────────────────
+          ColoredBox(color: cs.surface),
 
-    // Ambient orb opacity — stronger in dark mode so the blur reads clearly
-    const double darkA = 0.30;
-    const double lightA = 0.18;
-
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        // ── Base scaffold background ──────────────────────────────────────
-        ColoredBox(color: Theme.of(context).colorScheme.surface),
-
-        // ── Orb 1 — primary, top-right ───────────────────────────────────
-        Positioned(
-          top: -100,
-          right: -80,
-          child: _Orb(
-            size: 380,
-            color: cs.primary.withValues(alpha: isDark ? darkA : lightA),
-            blur: 80,
-          ),
-        ),
-
-        // ── Orb 2 — primary, bottom-left ─────────────────────────────────
-        Positioned(
-          bottom: -80,
-          left: -60,
-          child: _Orb(
-            size: 300,
-            color: cs.primary.withValues(
-              alpha: isDark ? darkA * 0.7 : lightA * 0.7,
+          // ── Orb 1 — primary, top-right ───────────────────────────────────
+          Positioned(
+            top: -100,
+            right: -80,
+            child: _Orb(
+              size: 380,
+              color: cs.primary.withValues(alpha: cs.meshPrimaryOrbAlpha),
+              blur: 80,
             ),
-            blur: 70,
           ),
-        ),
 
-        // ── Orb 3 — secondary accent, centre ─────────────────────────────
-        Positioned(
-          top: size.height * 0.35,
-          left: size.width * 0.1,
-          child: _Orb(
-            size: 240,
-            color: cs.secondary.withValues(alpha: isDark ? 0.20 : 0.12),
-            blur: 60,
+          // ── Orb 2 — primary, bottom-left ─────────────────────────────────
+          Positioned(
+            bottom: -80,
+            left: -60,
+            child: _Orb(
+              size: 300,
+              color: cs.primary.withValues(
+                alpha: cs.meshPrimaryOrbSecondaryAlpha,
+              ),
+              blur: 70,
+            ),
           ),
-        ),
 
-        // ── Scrim: darkens/lightens to keep content readable ─────────────
-        // Plain ColoredBox — NOT a BackdropFilter to avoid artefacts
-        Positioned.fill(
-          child: ColoredBox(
-            color: Theme.of(
-              context,
-            ).scaffoldBackgroundColor.withValues(alpha: isDark ? 0.50 : 0.45),
+          // ── Orb 3 — secondary accent, centre ─────────────────────────────
+          Positioned(
+            top: size.height * 0.35,
+            left: size.width * 0.1,
+            child: _Orb(
+              size: 240,
+              color: cs.secondary.withValues(alpha: cs.meshSecondaryOrbAlpha),
+              blur: 60,
+            ),
           ),
-        ),
 
-        // ── Page content ──────────────────────────────────────────────────
-        Positioned.fill(child: child),
-      ],
+          // ── Scrim: darkens/lightens to keep content readable ─────────────
+          // Plain ColoredBox — NOT a BackdropFilter to avoid artefacts
+          Positioned.fill(
+            child: ColoredBox(
+              color: Theme.of(
+                context,
+              ).scaffoldBackgroundColor.withValues(alpha: cs.meshScrimAlpha),
+            ),
+          ),
+
+          // ── Page content ──────────────────────────────────────────────────
+          Positioned.fill(child: child),
+        ],
+      ),
     );
   }
 }

@@ -20,25 +20,17 @@ class HomeFeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark
-        ? Theme.of(context).colorScheme.darkFeatureSurface
-        : Theme.of(context).colorScheme.surface;
+    final cs = Theme.of(context).colorScheme;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        color: cardColor,
-        border: Border.all(
-          color: isDark
-              ? Theme.of(context).colorScheme.fixedWhite.withValues(alpha: 0.05)
-              : color.withValues(alpha: 0.15),
-          width: 1,
-        ),
+        color: cs.homeFeatureSurface,
+        border: Border.all(color: cs.homeFeatureBorder(color), width: 1),
       ),
       child: Material(
-        color: Theme.of(context).colorScheme.transparent,
+        color: cs.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(24),
@@ -54,11 +46,7 @@ class HomeFeatureCard extends StatelessWidget {
                     color: color,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Icon(
-                    icon,
-                    color: Theme.of(context).colorScheme.fixedWhite,
-                    size: 30,
-                  ),
+                  child: Icon(icon, color: cs.fixedWhite, size: 30),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -70,7 +58,7 @@ class HomeFeatureCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               fontWeight: FontWeight.w800,
-                              color: Theme.of(context).colorScheme.onSurface,
+                              color: cs.onSurface,
                               fontSize: 18,
                               letterSpacing: -0.3,
                             ),
@@ -79,9 +67,7 @@ class HomeFeatureCard extends StatelessWidget {
                       Text(
                         description,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.5),
+                          color: cs.onSurface.withValues(alpha: 0.5),
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                         ),

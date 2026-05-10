@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_theme.dart';
+import 'package:myan_nihongo/core/theme/app_theme.dart';
 
 class ConfigSection extends StatelessWidget {
   final String title;
@@ -23,9 +23,7 @@ class ConfigSection extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).colorScheme.fixedBlack.withValues(
-              alpha: Theme.of(context).brightness == Brightness.dark
-                  ? 0.2
-                  : 0.05,
+              alpha: Theme.of(context).colorScheme.configSectionShadowAlpha,
             ),
             blurRadius: 10,
             offset: const Offset(0, 2),

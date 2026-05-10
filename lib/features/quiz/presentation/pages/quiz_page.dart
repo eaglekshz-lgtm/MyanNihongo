@@ -159,36 +159,51 @@ class _QuizContent extends ConsumerStatefulWidget {
 }
 
 class _QuizContentState extends ConsumerState<_QuizContent> {
+  ProviderSubscription<QuizState>? _quizSubscription;
+
   @override
   void initState() {
     super.initState();
+    _listenForCompletion();
+  }
 
-    // ✅ BEST PRACTICE: Use ref.listen for side effects (navigation)
-    // This runs once on initialization and listens for state changes
-    Future.microtask(() {
-      ref.listen<QuizState>(quizStateProvider(widget.questions), (
-        previous,
-        next,
-      ) {
-        // Navigate to results when quiz is completed
-        if (next.isCompleted && context.mounted) {
-          Navigator.pushReplacementNamed(
-            context,
-            RouteNames.quizResult,
-            arguments: QuizResultArgs(
-              totalQuestions: widget.questions.length,
-              correctAnswers: next.correctAnswers,
-              level: widget.level,
-            ),
-          );
-        }
-      });
-    });
+  @override
+  void didUpdateWidget(covariant _QuizContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.questions != widget.questions ||
+        oldWidget.level != widget.level) {
+      _quizSubscription?.close();
+      _listenForCompletion();
+    }
+  }
+
+  void _listenForCompletion() {
+    _quizSubscription = ref.listenManual<QuizState>(
+      quizStateProvider(widget.questions),
+      (previous, next) {
+        if (!next.isCompleted || !context.mounted) return;
+
+        Navigator.pushReplacementNamed(
+          context,
+          RouteNames.quizResult,
+          arguments: QuizResultArgs(
+            totalQuestions: widget.questions.length,
+            correctAnswers: next.correctAnswers,
+            level: widget.level,
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _quizSubscription?.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // ✅ FIXED: Use .family provider instead of creating provider in initState
     final quizStateNotifier = quizStateProvider(widget.questions);
     final quizState = ref.watch(quizStateNotifier);
 
@@ -305,7 +320,6 @@ class _QuizContentState extends ConsumerState<_QuizContent> {
                           selectedAnswerIndex: quizState.selectedAnswerIndex,
                           hasAnswered: quizState.hasAnswered,
                           onSelectAnswer: (answerIndex) {
-                            // ✅ FIXED: Use proper family provider
                             ref
                                 .read(quizStateNotifier.notifier)
                                 .selectAnswer(answerIndex);

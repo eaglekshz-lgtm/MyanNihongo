@@ -2,6 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/quiz_question.dart';
 
+class _Unset {
+  const _Unset();
+}
+
+const _unset = _Unset();
+
 /// Quiz state model - Immutable state for the quiz
 class QuizState extends Equatable {
   final int currentQuestionIndex;
@@ -18,7 +24,6 @@ class QuizState extends Equatable {
     required this.questions,
   });
 
-  // Initial state factory
   factory QuizState.initial(List<QuizQuestion> questions) {
     return QuizState(
       currentQuestionIndex: 0,
@@ -29,27 +34,26 @@ class QuizState extends Equatable {
     );
   }
 
-  // Copy method for immutable updates
   QuizState copyWith({
     int? currentQuestionIndex,
-    int? selectedAnswerIndex,
+    Object? selectedAnswerIndex = _unset,
     bool? hasAnswered,
     int? correctAnswers,
     List<QuizQuestion>? questions,
   }) {
     return QuizState(
       currentQuestionIndex: currentQuestionIndex ?? this.currentQuestionIndex,
-      selectedAnswerIndex: selectedAnswerIndex,
+      selectedAnswerIndex: selectedAnswerIndex == _unset
+          ? this.selectedAnswerIndex
+          : selectedAnswerIndex as int?,
       hasAnswered: hasAnswered ?? this.hasAnswered,
       correctAnswers: correctAnswers ?? this.correctAnswers,
       questions: questions ?? this.questions,
     );
   }
 
-  // Check if quiz is completed
   bool get isCompleted => currentQuestionIndex >= questions.length;
 
-  // Get current question (null-safe)
   QuizQuestion? get currentQuestion => currentQuestionIndex < questions.length
       ? questions[currentQuestionIndex]
       : null;
@@ -99,7 +103,6 @@ class QuizStateNotifier extends StateNotifier<QuizState> {
   }
 }
 
-/// ✅ FIXED: Provider for quiz state using .family modifier
 /// This allows creating quiz state for different question sets
 final quizStateProvider = StateNotifierProvider.autoDispose
     .family<QuizStateNotifier, QuizState, List<QuizQuestion>>((ref, questions) {

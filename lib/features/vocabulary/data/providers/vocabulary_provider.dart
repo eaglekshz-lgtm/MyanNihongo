@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/logger.dart';
 import '../repositories/vocabulary_repository.dart';
@@ -19,8 +20,8 @@ import '../datasources/system_update_datasource.dart';
 // ============================================================================
 
 /// Provider for vocabulary box
-final vocabularyBoxProvider = Provider<Box<VocabularyItemModel>>((ref) {
-  return Hive.box<VocabularyItemModel>(AppConstants.vocabularyBoxName);
+final vocabularyBoxProvider = Provider<LazyBox<VocabularyItemModel>>((ref) {
+  return Hive.lazyBox<VocabularyItemModel>(AppConstants.vocabularyBoxName);
 });
 
 /// Provider for user progress box
@@ -33,6 +34,11 @@ final blockProgressBoxProvider = Provider<Box<BlockProgressModel>>((ref) {
   return Hive.box<BlockProgressModel>(AppConstants.blockProgressBoxName);
 });
 
+/// Provider for app preferences box
+final appPreferencesBoxProvider = Provider<Box<dynamic>>((ref) {
+  return Hive.box<dynamic>(AppConstants.appPreferencesBoxName);
+});
+
 /// Provider for vocabulary local data source
 /// Note: Using ref.read for box providers since they don't change after initialization
 final vocabularyLocalDataSourceProvider = Provider<VocabularyLocalDataSource>((
@@ -41,17 +47,21 @@ final vocabularyLocalDataSourceProvider = Provider<VocabularyLocalDataSource>((
   final vocabularyBox = ref.read(vocabularyBoxProvider);
   final progressBox = ref.read(userProgressBoxProvider);
   final blockProgressBox = ref.read(blockProgressBoxProvider);
+  final appPreferencesBox = ref.read(appPreferencesBoxProvider);
   return VocabularyLocalDataSource(
     vocabularyBox,
     progressBox,
     blockProgressBox,
+    appPreferencesBox,
   );
 });
 
 /// Provider for vocabulary remote data source
 final vocabularyRemoteDataSourceProvider = Provider<VocabularyRemoteDataSource>(
   (ref) {
-    final supabase = Supabase.instance.client;
+    final supabase = SupabaseConfig.isConfigured
+        ? Supabase.instance.client
+        : null;
     return VocabularyRemoteDataSource(supabase);
   },
 );
@@ -62,7 +72,11 @@ final systemUpdateBoxProvider = Provider<Box<SystemUpdateModel>>((ref) {
 });
 
 /// Provider for system update data source
-final systemUpdateDataSourceProvider = Provider<SystemUpdateDataSource>((ref) {
+final systemUpdateDataSourceProvider = Provider<SystemUpdateDataSource?>((ref) {
+  if (!SupabaseConfig.isConfigured) {
+    return null;
+  }
+
   final supabase = Supabase.instance.client;
   final box = ref.read(systemUpdateBoxProvider);
   return SystemUpdateDataSource(supabase, box);
@@ -90,12 +104,42 @@ final vocabularyRepositoryProvider = Provider<VocabularyRepository>((ref) {
 // Vocabulary Data Providers
 // ============================================================================
 
+typedef VocabularyRangeRequest = ({String level, int offset, int limit});
+
 /// Provider for getting vocabulary by level with API fallback to local file
 /// Uses autoDispose to prevent memory leaks when navigating away
 final vocabularyByLevelProvider = FutureProvider.family
     .autoDispose<List<VocabularyItemModel>, String>((ref, level) async {
       final repository = ref.read(vocabularyRepositoryProvider);
       return repository.getVocabularyByLevel(level);
+    });
+
+/// Provider for getting only one vocabulary range.
+/// This is the preferred provider for learning batches because it avoids
+/// loading an entire JLPT level into widget state.
+final vocabularyRangeProvider = FutureProvider.family
+    .autoDispose<List<VocabularyItemModel>, VocabularyRangeRequest>((
+      ref,
+      request,
+    ) async {
+      final repository = ref.read(vocabularyRepositoryProvider);
+      return repository.getVocabularyByLevelWithRange(
+        request.level,
+        request.offset,
+        request.limit,
+      );
+    });
+
+/// Provider for prefetching one vocabulary range in the background.
+final prefetchVocabularyRangeProvider = FutureProvider.family
+    .autoDispose<bool, VocabularyRangeRequest>((ref, request) async {
+      final repository = ref.read(vocabularyRepositoryProvider);
+      await repository.getVocabularyByLevelWithRange(
+        request.level,
+        request.offset,
+        request.limit,
+      );
+      return true;
     });
 
 /// Provider for prefetching vocabulary by level
@@ -107,32 +151,22 @@ final prefetchVocabularyProvider = FutureProvider.family.autoDispose<bool, Strin
 ) async {
   final repository = ref.read(vocabularyRepositoryProvider);
 
-  // First check if we already have this level cached
-  final cachedVocabulary = await repository.getAllVocabulary();
-  final hasLevelCache = cachedVocabulary
-      .where((v) => v.tag.toUpperCase() == level.toUpperCase())
-      .isNotEmpty;
-
-  if (hasLevelCache) {
-    AppLogger.info(
-      'Prefetch: Vocabulary for $level already cached',
-      'PrefetchProvider',
-    );
-    return true; // Already cached, no need to fetch
-  }
-
   // Prefetch the vocabulary
   AppLogger.info(
-    'Prefetch: Loading vocabulary for $level...',
+    'Prefetch: Loading first vocabulary batch for $level...',
     'PrefetchProvider',
   );
   final stopwatch = Stopwatch()..start();
 
-  await repository.getVocabularyByLevel(level);
+  await repository.getVocabularyByLevelWithRange(
+    level,
+    0,
+    AppConstants.defaultVocabularyBatchSize,
+  );
 
   stopwatch.stop();
   AppLogger.info(
-    'Prefetch: Vocabulary for $level loaded in ${stopwatch.elapsedMilliseconds}ms',
+    'Prefetch: First vocabulary batch for $level loaded in ${stopwatch.elapsedMilliseconds}ms',
     'PrefetchProvider',
   );
   return true;

@@ -16,7 +16,6 @@ import 'features/vocabulary/data/models/user_progress_model.dart';
 import 'features/vocabulary/data/models/block_progress_model.dart';
 import 'features/vocabulary/data/models/bookmark_model.dart';
 import 'features/vocabulary/data/models/user_streak_model.dart';
-import 'features/vocabulary/data/models/srs_card_model.dart';
 import 'features/vocabulary/data/models/system_update_model.dart';
 
 void main() async {
@@ -79,18 +78,16 @@ Future<void> _initializeApp() async {
     Hive.registerAdapter(ExampleSentenceModelAdapter());
     Hive.registerAdapter(TranslationModelAdapter());
     Hive.registerAdapter(UserStreakModelAdapter());
-    Hive.registerAdapter(SRSCardModelAdapter());
     Hive.registerAdapter(SystemUpdateModelAdapter());
 
     // Open Hive boxes with error handling
     await Future.wait([
-      Hive.openBox<VocabularyItemModel>(AppConstants.vocabularyBoxName),
+      Hive.openLazyBox<VocabularyItemModel>(AppConstants.vocabularyBoxName),
       Hive.openBox<UserProgressModel>(AppConstants.userProgressBoxName),
       Hive.openBox<BlockProgressModel>(AppConstants.blockProgressBoxName),
       Hive.openBox<dynamic>(AppConstants.appPreferencesBoxName),
       Hive.openBox<BookmarkModel>(AppConstants.bookmarksBoxName),
       Hive.openBox<UserStreakModel>(AppConstants.userStreakBoxName),
-      Hive.openBox<SRSCardModel>(AppConstants.srsCardsBoxName),
       Hive.openBox<SystemUpdateModel>(AppConstants.systemUpdateBoxName),
     ]);
 
@@ -138,7 +135,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _initializeApp() {
-    _navigationTimer = Timer(const Duration(seconds: 2), () {
+    _navigationTimer = Timer(const Duration(milliseconds: 700), () {
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed(RouteNames.home);
     });

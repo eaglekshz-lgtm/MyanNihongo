@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../vocabulary_repository.dart';
 import '../../models/vocabulary_item_model.dart';
 import '../../models/vocabulary_filter.dart';
@@ -6,6 +8,7 @@ import '../../models/block_progress_model.dart';
 import '../../datasources/vocabulary_local_datasource.dart';
 import '../../datasources/vocabulary_remote_datasource.dart';
 import '../../datasources/system_update_datasource.dart';
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/utils/logger.dart';
 
 /// Implementation of VocabularyRepository
@@ -23,6 +26,32 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
   }) : _localDataSource = localDataSource,
        _remoteDataSource = remoteDataSource,
        _systemUpdateDataSource = systemUpdateDataSource;
+
+  Future<bool> _hasCompleteCache(String level, int cachedCount) async {
+    if (cachedCount == 0) return false;
+
+    try {
+      final remoteCount = await _remoteDataSource.getVocabularyCountByLevel(
+        level,
+      );
+      final isComplete = cachedCount >= remoteCount;
+
+      if (!isComplete) {
+        AppLogger.info(
+          'Cache for $level is incomplete: cached $cachedCount of $remoteCount',
+          'VocabRepository',
+        );
+      }
+
+      return isComplete;
+    } catch (e) {
+      AppLogger.warning(
+        'Unable to verify vocabulary cache completeness for $level: $e',
+        'VocabRepository',
+      );
+      return true;
+    }
+  }
 
   @override
   Future<List<VocabularyItemModel>> getVocabularyByLevelAndType(
@@ -48,13 +77,17 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
           final cachedVocabulary = await _localDataSource.getVocabularyByLevel(
             filter.level.toUpperCase(),
           );
-          if (cachedVocabulary.isNotEmpty) {
+          final hasCompleteCache = await _hasCompleteCache(
+            filter.level,
+            cachedVocabulary.length,
+          );
+          if (hasCompleteCache) {
             return cachedVocabulary;
           }
-          // If cache is empty, fetch from server anyway
+          // If cache is empty or incomplete, fetch from server anyway
           shouldFetchFromServer = true;
           AppLogger.warning(
-            'Cache is empty despite update check, fetching from server',
+            'Cache is empty or incomplete despite update check, fetching from server',
             'VocabRepository',
           );
         }
@@ -152,7 +185,6 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
   @override
   Future<int> getVocabularyCountByLevel(String level) async {
     try {
-      // Try to get count from remote datasource first
       final count = await _remoteDataSource.getVocabularyCountByLevel(level);
       AppLogger.data(
         'Retrieved count from remote: $count for level $level',
@@ -165,10 +197,9 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
         'Failed to get count from remote, using local cache: $e',
         'VocabRepository',
       );
-      final cachedVocabulary = await _localDataSource.getVocabularyByLevel(
+      return _localDataSource.getCachedVocabularyCountByLevel(
         level.toUpperCase(),
       );
-      return cachedVocabulary.length;
     }
   }
 
@@ -178,64 +209,51 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
     int offset,
     int limit,
   ) async {
-    // First, check if we have this data in cache
+    if (limit <= 0) return [];
+
+    final normalizedLevel = level.toUpperCase();
+    final safeOffset = offset < 0 ? 0 : offset;
+    var cachedVocabulary = <VocabularyItemModel>[];
+
+    // First, return a complete cached range immediately when available.
     try {
-      final cachedVocabulary = await _localDataSource.getVocabularyByLevel(
-        level.toUpperCase(),
+      cachedVocabulary = await _localDataSource.getVocabularyByLevelRange(
+        normalizedLevel,
+        safeOffset,
+        limit,
       );
 
+      if (cachedVocabulary.length == limit) {
+        AppLogger.info(
+          'Using cached range for $normalizedLevel (offset: $safeOffset, limit: $limit)',
+          'VocabRepository',
+        );
+        _refreshVocabularyRangeInBackground(normalizedLevel, safeOffset, limit);
+        return cachedVocabulary;
+      }
+
       if (cachedVocabulary.isNotEmpty) {
-        // Check if cache has the requested range
-        final endIndex = offset + limit;
-        if (cachedVocabulary.length >= endIndex) {
-          AppLogger.info(
-            'Using cached data for range (offset: $offset, limit: $limit)',
-            'VocabRepository',
-          );
-          return cachedVocabulary.sublist(offset, endIndex);
-        } else if (offset < cachedVocabulary.length) {
-          // Partial cache hit - we have some data but need more
-          AppLogger.info(
-            'Partial cache hit: have ${cachedVocabulary.length}, need up to $endIndex',
-            'VocabRepository',
-          );
-        }
+        AppLogger.info(
+          'Partial cached range for $normalizedLevel: ${cachedVocabulary.length}/$limit items',
+          'VocabRepository',
+        );
       }
     } catch (e) {
       AppLogger.warning('Error checking cache: $e', 'VocabRepository');
     }
 
-    // Fetch from remote if not in cache
+    // Fetch only the requested range when cache is missing or incomplete.
     try {
-      final vocabulary = await _remoteDataSource.getVocabularyByLevelWithRange(
-        level,
-        offset,
+      final vocabulary = await _fetchVocabularyRangeFromRemote(
+        normalizedLevel,
+        safeOffset,
         limit,
       );
-
-      AppLogger.data(
-        'Retrieved ${vocabulary.length} items from remote (offset: $offset, limit: $limit)',
-        operation: 'READ',
-      );
-
-      // Save fetched data to cache
       if (vocabulary.isNotEmpty) {
-        try {
-          await _localDataSource.saveVocabulary(vocabulary);
-          AppLogger.info(
-            'Saved ${vocabulary.length} items to cache',
-            'VocabRepository',
-          );
-        } catch (saveError) {
-          AppLogger.warning(
-            'Failed to save to cache: $saveError',
-            'VocabRepository',
-          );
-          // Continue anyway with the fetched data
-        }
+        return vocabulary;
       }
 
-      return vocabulary;
+      return cachedVocabulary;
     } catch (e) {
       AppLogger.error(
         'Failed to fetch vocabulary with range: $e',
@@ -243,22 +261,62 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
         error: e,
       );
 
-      // Final fallback: try to get from local cache within the range
-      final cachedVocabulary = await _localDataSource.getVocabularyByLevel(
-        level.toUpperCase(),
-      );
-      if (cachedVocabulary.isEmpty) {
-        return [];
-      }
-      // Return the range from cached data if available
-      final endIndex = (offset + limit > cachedVocabulary.length)
-          ? cachedVocabulary.length
-          : offset + limit;
-      if (offset >= cachedVocabulary.length) {
-        return [];
-      }
-      return cachedVocabulary.sublist(offset, endIndex);
+      return cachedVocabulary;
     }
+  }
+
+  void _refreshVocabularyRangeInBackground(
+    String level,
+    int offset,
+    int limit,
+  ) {
+    unawaited(() async {
+      try {
+        await _fetchVocabularyRangeFromRemote(level, offset, limit);
+      } catch (e) {
+        AppLogger.warning(
+          'Background vocabulary refresh failed for $level '
+              '(offset: $offset, limit: $limit): $e',
+          'VocabRepository',
+        );
+      }
+    }());
+  }
+
+  Future<List<VocabularyItemModel>> _fetchVocabularyRangeFromRemote(
+    String level,
+    int offset,
+    int limit,
+  ) async {
+    final vocabulary = await _remoteDataSource.getVocabularyByLevelWithRange(
+      level,
+      offset,
+      limit,
+    );
+
+    AppLogger.data(
+      'Retrieved ${vocabulary.length} items from remote (offset: $offset, limit: $limit)',
+      operation: 'READ',
+    );
+
+    if (vocabulary.isEmpty) {
+      return vocabulary;
+    }
+
+    try {
+      await _localDataSource.saveVocabulary(vocabulary, replaceLevel: false);
+      AppLogger.info(
+        'Saved ${vocabulary.length} range items to cache',
+        'VocabRepository',
+      );
+    } catch (saveError) {
+      AppLogger.warning(
+        'Failed to save range to cache: $saveError',
+        'VocabRepository',
+      );
+    }
+
+    return vocabulary;
   }
 
   @override
@@ -326,16 +384,19 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
         isMastered: false,
       );
     } else {
-      // Update existing progress
+      final correctAnswers =
+          progress.timesAnsweredCorrectly + (isCorrect ? 1 : 0);
+      final incorrectAnswers =
+          progress.timesAnsweredIncorrectly + (isCorrect ? 0 : 1);
+      final totalAnswers = correctAnswers + incorrectAnswers;
+      final accuracy = totalAnswers == 0 ? 0.0 : correctAnswers / totalAnswers;
+
       progress = progress.copyWith(
         timesViewed: progress.timesViewed + 1,
-        timesAnsweredCorrectly:
-            progress.timesAnsweredCorrectly + (isCorrect ? 1 : 0),
-        timesAnsweredIncorrectly:
-            progress.timesAnsweredIncorrectly + (isCorrect ? 0 : 1),
+        timesAnsweredCorrectly: correctAnswers,
+        timesAnsweredIncorrectly: incorrectAnswers,
         lastReviewed: DateTime.now(),
-        // Mark as mastered if accuracy >= 80%
-        isMastered: progress.accuracy >= 0.8,
+        isMastered: accuracy >= AppConstants.masteryThreshold,
       );
     }
 

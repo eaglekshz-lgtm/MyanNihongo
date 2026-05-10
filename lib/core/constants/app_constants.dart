@@ -20,7 +20,6 @@ class AppConstants {
   static const String appPreferencesBoxName = 'app_preferences_box';
   static const String bookmarksBoxName = 'bookmarks_box';
   static const String userStreakBoxName = 'user_streak_box';
-  static const String srsCardsBoxName = 'srs_cards_box';
   static const String systemUpdateBoxName = 'system_update_box';
 
   // Quiz Configuration
@@ -68,6 +67,7 @@ class AppConstants {
   // Caching
   static const Duration cacheValidityDuration = Duration(days: 7);
   static const int maxCacheSize = 10000; // Maximum number of items to cache
+  static const int defaultVocabularyBatchSize = 50;
 
   // Error Messages
   static const String networkErrorMessage =

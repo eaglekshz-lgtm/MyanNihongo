@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/vocabulary_item_model.dart';
@@ -34,10 +35,20 @@ class BookmarkedVocabularyPage extends ConsumerWidget {
           ),
           bookmarkedVocabularyAsync.when(
             data: (vocabulary) => vocabulary.isNotEmpty
-                ? IconButton(
-                    icon: const Icon(Icons.delete_sweep),
-                    tooltip: 'Clear all bookmarks',
-                    onPressed: () => _showClearConfirmation(context, ref),
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.data_object_rounded),
+                        tooltip: 'Extract Bookmarks',
+                        onPressed: () => _showExtractDialog(context, vocabulary),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_sweep),
+                        tooltip: 'Clear all bookmarks',
+                        onPressed: () => _showClearConfirmation(context, ref),
+                      ),
+                    ],
                   )
                 : const SizedBox.shrink(),
             loading: () => const SizedBox.shrink(),
@@ -48,7 +59,6 @@ class BookmarkedVocabularyPage extends ConsumerWidget {
       body: MeshBackground(
         child: bookmarkedVocabularyAsync.when(
           data: (vocabulary) {
-            debugPrint('Bookmarked vocabulary count: ${vocabulary.length}');
             if (vocabulary.isEmpty) {
               return const _EmptyStateWidget();
             }
@@ -67,11 +77,7 @@ class BookmarkedVocabularyPage extends ConsumerWidget {
               ],
             ),
           ),
-          error: (error, stack) {
-            debugPrint('Error loading bookmarks: $error');
-            debugPrint('Stack trace: $stack');
-            return _ErrorStateWidget(error: error.toString());
-          },
+          error: (error, stack) => _ErrorStateWidget(error: error.toString()),
         ),
       ),
     );
@@ -93,11 +99,9 @@ class BookmarkedVocabularyPage extends ConsumerWidget {
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
-              // Use repository method instead of direct data source access
               final repository = ref.read(bookmarkRepositoryProvider);
               await repository.clearAllBookmarks();
 
-              // Invalidate providers to trigger UI updates
               ref.invalidate(allBookmarksProvider);
               ref.invalidate(bookmarkCountProvider);
               ref.invalidate(bookmarkedVocabularyProvider);
@@ -125,20 +129,75 @@ class BookmarkedVocabularyPage extends ConsumerWidget {
       ),
     );
   }
+
+  void _showExtractDialog(BuildContext context, List<VocabularyItemModel> vocabulary) {
+    final buffer = StringBuffer();
+    for (final item in vocabulary) {
+      buffer.writeln('- `${item.id}` **${item.word}** (${item.reading})');
+    }
+    final markdownContent = buffer.toString();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Extracted Bookmarks'),
+        content: Container(
+          width: double.maxFinite,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
+          ),
+          child: SingleChildScrollView(
+            child: SelectableText(
+              markdownContent,
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: markdownContent));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      Icon(Icons.check_circle, color: Theme.of(context).colorScheme.onInverseSurface),
+                      const SizedBox(width: 8),
+                      const Text('Copied to clipboard'),
+                    ],
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+                  duration: const Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.copy),
+            label: const Text('Copy All'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // Private Widget Classes
 
-/// Empty state widget displayed when no bookmarks exist
-class _EmptyStateWidget extends ConsumerWidget {
+class _EmptyStateWidget extends StatelessWidget {
   const _EmptyStateWidget();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Debug info
-    final bookmarkCount = ref.watch(bookmarkCountProvider);
-    final allBookmarks = ref.watch(allBookmarksProvider);
-
+  Widget build(BuildContext context) {
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
@@ -171,52 +230,6 @@ class _EmptyStateWidget extends ConsumerWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
-            // Debug info
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.outline.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Debug Info:',
-                    style: AppTheme.bodySmall.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  bookmarkCount.when(
-                    data: (count) => Text(
-                      'Bookmark count in DB: $count',
-                      style: AppTheme.bodySmall,
-                    ),
-                    loading: () => const Text('Loading count...'),
-                    error: (e, _) => Text('Count error: $e'),
-                  ),
-                  const SizedBox(height: 4),
-                  allBookmarks.when(
-                    data: (bookmarks) => Text(
-                      'Bookmark IDs: ${bookmarks.map((b) => b.vocabularyId).join(', ')}',
-                      style: AppTheme.bodySmall,
-                    ),
-                    loading: () => const Text('Loading IDs...'),
-                    error: (e, _) => Text('IDs error: $e'),
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
               onPressed: () => Navigator.pop(context),
@@ -236,16 +249,13 @@ class _EmptyStateWidget extends ConsumerWidget {
   }
 }
 
-/// Error state widget displayed when bookmark loading fails
-class _ErrorStateWidget extends ConsumerWidget {
+class _ErrorStateWidget extends StatelessWidget {
   const _ErrorStateWidget({required this.error});
 
   final String error;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final bookmarkCount = ref.watch(bookmarkCountProvider);
-
+  Widget build(BuildContext context) {
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
@@ -282,7 +292,7 @@ class _ErrorStateWidget extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Error Details:',
+                    'Error Details',
                     style: AppTheme.bodySmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onErrorContainer,
@@ -294,15 +304,6 @@ class _ErrorStateWidget extends ConsumerWidget {
                     style: AppTheme.bodySmall.copyWith(
                       color: Theme.of(context).colorScheme.error,
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  bookmarkCount.when(
-                    data: (count) => Text(
-                      'Bookmarks in DB: $count',
-                      style: AppTheme.bodySmall,
-                    ),
-                    loading: () => const Text('Loading...'),
-                    error: (e, _) => Text('Count error: $e'),
                   ),
                 ],
               ),
@@ -400,7 +401,7 @@ class _VocabularyCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassContainer(
-      blur: 15.0,
+      blur: 0.0,
       tintColor: Theme.of(context).colorScheme.primary,
       tintOpacity: 0.08,
       borderRadius: BorderRadius.circular(16),
@@ -408,7 +409,7 @@ class _VocabularyCardWidget extends StatelessWidget {
         context,
       ).colorScheme.primary.withValues(alpha: 0.15),
       borderWidth: 1.0,
-      shadow: true,
+      shadow: false,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -517,7 +518,7 @@ class _VocabularyCardWidget extends StatelessWidget {
                         style: AppTheme.japaneseText.copyWith(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 6),

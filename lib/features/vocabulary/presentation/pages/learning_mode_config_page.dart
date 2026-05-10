@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/routes/route_names.dart';
-import '../../../../arguments/learning_mode_config_args.dart';
-import '../../../../arguments/batch_selection_args.dart';
+import '../../../../core/routes/arguments/learning_mode_config_args.dart';
+import '../../../../core/routes/arguments/batch_selection_args.dart';
 import '../../data/providers/vocabulary_provider.dart';
 import '../widgets/learning_config/header_section.dart';
 import '../widgets/learning_config/card_style_section.dart';
@@ -78,7 +78,7 @@ class _LearningModeConfigPageState
 
     // Calculate number of blocks based on fixed block size of 20
     final totalBlocks = (_totalWords / kDefaultBlockSize).ceil();
-    return '$totalBlocks ${totalBlocks == 1 ? 'block' : 'blocks'}';
+    return '$totalBlocks ${totalBlocks == 1 ? 'set' : 'sets'}';
   }
 
   void _startLearning() async {

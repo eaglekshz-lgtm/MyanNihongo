@@ -32,7 +32,11 @@ final bookmarkDataSourceProvider = Provider<BookmarkDataSource>((ref) {
 /// This is the main provider that should be used by the presentation layer
 final bookmarkRepositoryProvider = Provider<BookmarkRepository>((ref) {
   final dataSource = ref.read(bookmarkDataSourceProvider);
-  return BookmarkRepositoryImpl(dataSource: dataSource);
+  final vocabularyDataSource = ref.read(vocabularyLocalDataSourceProvider);
+  return BookmarkRepositoryImpl(
+    dataSource: dataSource,
+    vocabularyDataSource: vocabularyDataSource,
+  );
 });
 
 // ============================================================================
@@ -46,22 +50,15 @@ List<VocabularyItemModel> _sortVocabularyByBookmarkDate(
 ) {
   if (vocabulary.isEmpty || bookmarks.isEmpty) return vocabulary;
 
+  final bookmarkDates = {
+    for (final bookmark in bookmarks)
+      bookmark.vocabularyId: bookmark.bookmarkedAt,
+  };
+
   return vocabulary..sort((a, b) {
-    final bookmarkA = bookmarks.firstWhere(
-      (bm) => bm.vocabularyId == a.id.toString(),
-      orElse: () => BookmarkModel(
-        vocabularyId: a.id.toString(),
-        bookmarkedAt: DateTime.now(),
-      ),
-    );
-    final bookmarkB = bookmarks.firstWhere(
-      (bm) => bm.vocabularyId == b.id.toString(),
-      orElse: () => BookmarkModel(
-        vocabularyId: b.id.toString(),
-        bookmarkedAt: DateTime.now(),
-      ),
-    );
-    return bookmarkB.bookmarkedAt.compareTo(bookmarkA.bookmarkedAt);
+    final bookmarkA = bookmarkDates[a.id.toString()] ?? DateTime(0);
+    final bookmarkB = bookmarkDates[b.id.toString()] ?? DateTime(0);
+    return bookmarkB.compareTo(bookmarkA);
   });
 }
 
@@ -70,16 +67,10 @@ Future<List<VocabularyItemModel>> _fetchVocabularyForBookmarks(
   List<String> bookmarkIds,
   VocabularyLocalDataSource vocabularyDataSource,
 ) async {
-  final vocabulary = <VocabularyItemModel>[];
-
-  for (final id in bookmarkIds) {
-    final vocab = await vocabularyDataSource.getVocabularyById(id);
-    if (vocab != null) {
-      vocabulary.add(vocab);
-    }
-  }
-
-  return vocabulary;
+  final vocabulary = await Future.wait(
+    bookmarkIds.map(vocabularyDataSource.getVocabularyById),
+  );
+  return vocabulary.nonNulls.toList();
 }
 
 // ============================================================================
@@ -113,6 +104,17 @@ final bookmarkedIdsProvider = StreamProvider<Set<String>>((ref) async* {
     yield box.values.map((bm) => bm.vocabularyId).toSet();
   }
 });
+
+/// Provider for checking one vocabulary item's bookmark status.
+/// The selector keeps learning cards from rebuilding for unrelated bookmark IDs.
+final isVocabularyBookmarkedProvider =
+    Provider.family<AsyncValue<bool>, String>((ref, vocabularyId) {
+      return ref.watch(
+        bookmarkedIdsProvider.select(
+          (idsAsync) => idsAsync.whenData((ids) => ids.contains(vocabularyId)),
+        ),
+      );
+    });
 
 /// Provider for bookmarked vocabulary items
 /// ✅ FIXED: Refactored to use helper functions and reduce duplication
@@ -183,22 +185,28 @@ class BookmarkNotifier extends StateNotifier<AsyncValue<Set<String>>> {
 
   /// ✅ FIXED: Added loading state during toggle operation
   Future<bool> toggleBookmark(String vocabularyId) async {
-    // Store current state to restore on error
     final previousState = state;
-
-    // Set loading state
-    state = const AsyncValue.loading();
+    final previousIds = previousState.valueOrNull ?? const <String>{};
+    final optimisticIds = Set<String>.from(previousIds);
+    final willAdd = !optimisticIds.remove(vocabularyId);
+    if (willAdd) {
+      optimisticIds.add(vocabularyId);
+    }
+    state = AsyncValue.data(optimisticIds);
 
     try {
       final isBookmarked = await _dataSource.toggleBookmark(vocabularyId);
-
-      // Reload bookmarks to get updated state
-      final ids = await _dataSource.getBookmarkedIds();
-      state = AsyncValue.data(ids.toSet());
-
+      if (isBookmarked != willAdd) {
+        final correctedIds = Set<String>.from(optimisticIds);
+        if (isBookmarked) {
+          correctedIds.add(vocabularyId);
+        } else {
+          correctedIds.remove(vocabularyId);
+        }
+        state = AsyncValue.data(correctedIds);
+      }
       return isBookmarked;
     } catch (e, stack) {
-      // Restore previous state and rethrow
       state = previousState;
       state = AsyncValue.error(e, stack);
       rethrow;
@@ -207,13 +215,17 @@ class BookmarkNotifier extends StateNotifier<AsyncValue<Set<String>>> {
 
   /// ✅ FIXED: Added loading state during add operation
   Future<void> addBookmark(String vocabularyId) async {
-    state = const AsyncValue.loading();
+    final previousState = state;
+    final optimisticIds = {
+      ...(previousState.valueOrNull ?? const <String>{}),
+      vocabularyId,
+    };
+    state = AsyncValue.data(optimisticIds);
 
     try {
       await _dataSource.addBookmark(vocabularyId);
-      final ids = await _dataSource.getBookmarkedIds();
-      state = AsyncValue.data(ids.toSet());
     } catch (e, stack) {
+      state = previousState;
       state = AsyncValue.error(e, stack);
       rethrow;
     }
@@ -221,13 +233,16 @@ class BookmarkNotifier extends StateNotifier<AsyncValue<Set<String>>> {
 
   /// ✅ FIXED: Added loading state during remove operation
   Future<void> removeBookmark(String vocabularyId) async {
-    state = const AsyncValue.loading();
+    final previousState = state;
+    final optimisticIds = Set<String>.from(
+      previousState.valueOrNull ?? const <String>{},
+    )..remove(vocabularyId);
+    state = AsyncValue.data(optimisticIds);
 
     try {
       await _dataSource.removeBookmark(vocabularyId);
-      final ids = await _dataSource.getBookmarkedIds();
-      state = AsyncValue.data(ids.toSet());
     } catch (e, stack) {
+      state = previousState;
       state = AsyncValue.error(e, stack);
       rethrow;
     }

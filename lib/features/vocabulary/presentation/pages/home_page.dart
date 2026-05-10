@@ -3,11 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/routes/route_names.dart';
 import '../../data/providers/streak_provider.dart';
-import '../../data/providers/srs_provider.dart';
 import '../widgets/home_feature_card.dart';
 import '../widgets/streak_card_widget.dart';
-import '../widgets/srs_stats_widget.dart';
-import 'srs_review_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -28,12 +25,10 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? Theme.of(context).colorScheme.fixedBlack
-          : Theme.of(context).colorScheme.softBlueSurface, // Cool #f0f5ff base
+      backgroundColor: cs.homeScaffold,
       body: SingleChildScrollView(
         child: Stack(
           children: [
@@ -48,25 +43,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: isDark
-                        ? [
-                            Theme.of(
-                              context,
-                            ).colorScheme.homePurple, // Deep purple
-                            Theme.of(context).colorScheme.fixedBlack,
-                          ]
-                        : [
-                            Theme.of(
-                              context,
-                            ).colorScheme.homePrimary, // Crisp top
-                            Theme.of(
-                              context,
-                            ).colorScheme.homeSecondary, // Mid hero
-                            Theme.of(
-                              context,
-                            ).colorScheme.softBlueSurface, // Fade to base
-                          ],
-                    stops: isDark ? const [0.0, 1.0] : const [0.0, 0.6, 1.0],
+                    colors: cs.homeGradientColors,
+                    stops: cs.homeGradientStops,
                   ),
                 ),
               ),
@@ -83,10 +61,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                     children: [
                       // Streak Card
                       const StreakCardWidget(),
-                      const SizedBox(height: 24),
-
-                      // SRS Stats Widget
-                      const SRSStatsWidget(),
                       const SizedBox(height: 32),
 
                       Row(
@@ -94,12 +68,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: isDark
-                                  ? Theme.of(context).colorScheme.fixedWhite
-                                        .withValues(alpha: 0.1)
-                                  : const Color(
-                                      0xFF1D6BF3,
-                                    ).withValues(alpha: 0.1),
+                              color: cs.homeSectionIconSurface,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Text(
@@ -123,56 +92,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      Consumer(
-                        builder: (context, ref, child) {
-                          final stats = ref.watch(srsStatsProvider);
-
-                          if (stats.dueCards > 0) {
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 24),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SRSReviewPage(),
-                                    ),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Theme.of(
-                                    context,
-                                  ).colorScheme.error,
-                                  foregroundColor: Theme.of(
-                                    context,
-                                  ).colorScheme.onError,
-                                  padding: const EdgeInsets.all(16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(Icons.fact_check, size: 20),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Review ${stats.dueCards} Cards Now',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }
-
-                          return const SizedBox.shrink();
-                        },
-                      ),
                       const _FeaturesSection(),
                       const SizedBox(height: 40),
                     ],
@@ -313,7 +232,10 @@ class _FeaturesSection extends StatelessWidget {
           title: 'Vocabulary Cards',
           description: 'Learn with swipeable flashcards',
           color: Theme.of(context).colorScheme.primary,
-          onTap: () => Navigator.pushNamed(context, RouteNames.levelSelection),
+          onTap: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            Navigator.pushNamed(context, RouteNames.levelSelection);
+          },
         ),
         const SizedBox(height: 12),
         HomeFeatureCard(
@@ -321,16 +243,21 @@ class _FeaturesSection extends StatelessWidget {
           title: 'Take a Quiz',
           description: 'Test your knowledge',
           color: Theme.of(context).colorScheme.secondary,
-          onTap: () => Navigator.pushNamed(context, RouteNames.quizSetup),
+          onTap: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            Navigator.pushNamed(context, RouteNames.quizSetup);
+          },
         ),
         const SizedBox(height: 12),
         HomeFeatureCard(
           icon: Icons.bookmark,
-          title: 'Bookmarked Words',
+          title: 'Bookmarks',
           description: 'Review your saved vocabulary',
           color: Theme.of(context).colorScheme.error,
-          onTap: () =>
-              Navigator.pushNamed(context, RouteNames.bookmarkedVocabulary),
+          onTap: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            Navigator.pushNamed(context, RouteNames.bookmarkedVocabulary);
+          },
         ),
         const SizedBox(height: 12),
         HomeFeatureCard(

@@ -185,7 +185,6 @@ class AppConstants {
 
 - [ ] Implement actual API integration
 - [ ] Add user authentication
-- [ ] Implement spaced repetition algorithm
 - [ ] Add audio pronunciation
 - [ ] Create flashcard study mode
 - [ ] Add social features (leaderboards, sharing)

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../arguments/learning_mode_config_args.dart';
+import '../../../../core/routes/arguments/learning_mode_config_args.dart';
 import '../../../../core/routes/route_names.dart';
 import '../../../../core/widgets/mesh_background.dart';
 import '../widgets/page_header_widget.dart';

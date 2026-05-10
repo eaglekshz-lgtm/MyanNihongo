@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/enums/app_enums.dart';
+import 'package:myan_nihongo/core/enums/app_enums.dart';
+import 'package:myan_nihongo/core/theme/app_theme.dart';
 import 'summary_row.dart';
 
 class SummaryCard extends StatelessWidget {
@@ -78,20 +78,20 @@ class SummaryCard extends StatelessWidget {
           const SizedBox(height: 12),
           const SummaryRow(
             icon: Icons.grid_view_rounded,
-            label: 'Words Per Block',
+            label: 'Words Per Set',
             value: '20 words',
           ),
           const SizedBox(height: 12),
           SummaryRow(
             icon: Icons.apps_rounded,
-            label: 'Total Blocks',
+            label: 'Total Sets',
             value: blocksCount,
           ),
           const SizedBox(height: 12),
           const SummaryRow(
             icon: Icons.info_outline,
             label: 'Next Step',
-            value: 'Choose blocks to study',
+            value: 'Choose a set to study',
           ),
         ],
       ),

@@ -21,9 +21,7 @@ class StartQuizButton extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).colorScheme.fixedBlack.withValues(
-              alpha: Theme.of(context).brightness == Brightness.dark
-                  ? 0.2
-                  : 0.05,
+              alpha: Theme.of(context).colorScheme.bottomActionBarShadowAlpha,
             ),
             blurRadius: 10,
             offset: const Offset(0, -5),

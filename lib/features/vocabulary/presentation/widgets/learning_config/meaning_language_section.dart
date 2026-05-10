@@ -22,9 +22,7 @@ class MeaningLanguageSection extends ConsumerWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).colorScheme.fixedBlack.withValues(
-              alpha: Theme.of(context).brightness == Brightness.dark
-                  ? 0.15
-                  : 0.03,
+              alpha: Theme.of(context).colorScheme.meaningLanguageShadowAlpha,
             ),
             blurRadius: 8,
             offset: const Offset(0, 2),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/enums/app_enums.dart';
+import 'package:myan_nihongo/core/enums/app_enums.dart';
+import 'package:myan_nihongo/core/theme/app_theme.dart';
 import 'config_section.dart';
 import 'mode_card.dart';
 
@@ -33,7 +33,7 @@ class CardStyleSection extends StatelessWidget {
   static const List<CardStyleConfig> _cardStyleConfigs = [
     CardStyleConfig(
       style: CardStyle.recallMode,
-      description: 'Recall & test\nFlip to reveal',
+      description: 'Active recall\nTap to reveal',
       icon: Icons.psychology_rounded,
     ),
     CardStyleConfig(
